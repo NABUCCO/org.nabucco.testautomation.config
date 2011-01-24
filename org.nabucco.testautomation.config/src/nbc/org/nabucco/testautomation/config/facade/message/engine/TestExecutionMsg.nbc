@@ -1,0 +1,21 @@
+/*
+*  PRODYNA NABUCCO
+*  Copyright 2010, PRODYNA AG
+*/
+package org.nabucco.testautomation.config.facade.message.engine;
+
+import org.nabucco.framework.base.facade.datatype.security.User;
+import org.nabucco.testautomation.config.facade.datatype.TestConfiguration;
+
+@Author			Steffen Schmidt
+@Company		PRODYNA AG
+@Date			2010-06-25
+@Version		1.0
+@Description	Message to start the execution of a TestConfiguration
+public Message TestExecutionMsg {
+
+	private Datatype User[1] user;
+	
+	private Datatype TestConfiguration[1] testConfiguration;
+	
+}

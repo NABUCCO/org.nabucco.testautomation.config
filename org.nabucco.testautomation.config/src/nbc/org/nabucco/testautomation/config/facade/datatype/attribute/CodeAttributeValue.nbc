@@ -1,0 +1,18 @@
+/*
+ *	PRODYNA NABUCCO
+ *  Copyright 2010, PRODYNA AG
+ */
+package org.nabucco.testautomation.config.facade.datatype.attribute;
+
+import org.nabucco.framework.base.facade.datatype.code.Code;
+import org.nabucco.testautomation.config.facade.datatype.attribute.AttributeValue;
+
+@Author			Steffen Schmidt
+@Company		PRODYNA AG
+@Date			2010-04-09
+@Description	The code value of an attribute
+public Datatype CodeAttributeValue extends AttributeValue {
+	
+	private Datatype Code[1] value;
+	
+}

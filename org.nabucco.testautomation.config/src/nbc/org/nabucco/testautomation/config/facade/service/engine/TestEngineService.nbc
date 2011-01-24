@@ -1,0 +1,35 @@
+/*
+ *	PRODYNA NABUCCO
+ *  Copyright 2010, PRODYNA AG
+ */
+package org.nabucco.testautomation.config.facade.service.engine;
+
+import org.nabucco.testautomation.facade.exception.engine.TestEngineException;
+import org.nabucco.testautomation.config.facade.message.engine.TestInfoMsg;
+import org.nabucco.testautomation.config.facade.message.engine.TestExecutionMsg;
+import org.nabucco.testautomation.config.facade.message.engine.TestResultMsg;
+import org.nabucco.testautomation.config.facade.message.engine.ManualTestResultMsg;
+
+@Author				Steffen Schmidt
+@Company			PRODYNA AG
+@Date				2010-06-25
+@Version			1.0
+@Description		The Service to interact with a remote TestEngine
+public Service TestEngineService {
+	
+	@ManualImplementation
+	public TestInfoMsg executeTestConfiguration(TestExecutionMsg testExecutionMsg) throws TestEngineException;
+	
+	@ManualImplementation
+	public TestInfoMsg getTestStatus(TestInfoMsg testInfoMsg) throws TestEngineException;
+	
+	@ManualImplementation
+	public TestResultMsg getTestConfigurationResult(TestInfoMsg testInfoMsg) throws TestEngineException;
+	
+	@ManualImplementation
+	public TestInfoMsg cancelTestConfiguration(TestInfoMsg testInfoMsg) throws TestEngineException;
+	
+	@ManualImplementation
+	public TestInfoMsg returnManualTestResult(ManualTestResultMsg resultMsg) throws TestEngineException;
+
+}

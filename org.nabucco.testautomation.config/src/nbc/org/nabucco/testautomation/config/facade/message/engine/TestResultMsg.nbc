@@ -1,0 +1,18 @@
+/*
+*  PRODYNA NABUCCO
+*  Copyright 2010, PRODYNA AG
+*/
+package org.nabucco.testautomation.config.facade.message.engine;
+
+import org.nabucco.testautomation.result.facade.datatype.TestConfigurationResult;
+
+@Author			Steffen Schmidt
+@Company		PRODYNA AG
+@Date			2010-06-25
+@Version		1.0
+@Description	Message to transport a TestConfigurationResult-object
+public Message TestResultMsg {
+
+	private Datatype TestConfigurationResult[1] testResult;
+	
+}

@@ -1,0 +1,24 @@
+/*
+ *  PRODYNA NABUCCO
+ *  Copyright 2010, PRODYNA AG
+ */
+package org.nabucco.testautomation.config.facade.datatype;
+
+import org.nabucco.framework.base.facade.datatype.NabuccoDatatype;
+import org.nabucco.framework.base.facade.datatype.Order;
+import org.nabucco.testautomation.config.facade.datatype.TestConfigElement;
+
+@Author         sschmidt
+@Company        PRODYNA AG
+@Date           2010-09-30
+@Version        1.0
+@Description    Container holding a TestConfigElement and its order position
+public Datatype TestConfigElementContainer extends NabuccoDatatype {
+
+	@FetchStrategy			EAGER
+	@AssociationStrategy	AGGREGATION
+	private Datatype TestConfigElement[1] element;
+	
+	private Basetype Order[1] orderIndex;
+
+}

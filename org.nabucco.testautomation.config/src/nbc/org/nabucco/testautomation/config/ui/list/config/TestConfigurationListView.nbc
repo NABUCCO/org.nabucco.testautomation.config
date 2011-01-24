@@ -1,0 +1,28 @@
+/*
+*  PRODYNA NABUCCO
+*  Copyright 2010, PRODYNA AG
+*/
+package org.nabucco.testautomation.config.ui.list.config;
+
+import org.nabucco.testautomation.config.facade.datatype.TestConfiguration;
+
+@Author			Stefan Huettenrauch
+@Company		PRODYNA AG
+@Date			2010-05-25
+@Description	ListView for Test Configuration
+@Id				org.nabucco.testautomation.config.ui.list.config.TestConfigListView
+public ListView TestConfigurationListView {
+
+	private Datatype TestConfiguration[1] testConfiguration;
+	
+	@MappedField 			testConfiguration.name
+	@ColumnLabelId			testConfiguration.name 
+	@ColumnLabelDefault 	"Config Name"
+	private Column testConfigurationName;
+	
+	@MappedField 			testConfiguration.description
+	@ColumnLabelId			testConfiguration.description 
+	@ColumnLabelDefault 	"Config Description"
+	private Column testConfigurationDescription;
+	 
+}

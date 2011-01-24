@@ -1,0 +1,17 @@
+/*
+*  PRODYNA NABUCCO
+*  Copyright 2010, PRODYNA AG
+*/
+package org.nabucco.testautomation.config.ui.command.config;
+
+@Author			Marco Sussek
+@Company		PRODYNA AG
+@Date			2010-10-19
+@Description	This command should reload a TestConfig
+@Id				org.nabucco.testautomation.config.ui.command.config.ReloadTestConfigCommand
+public Command ReloadTestConfigCommand {
+
+	@ManualImplementation
+	public void reloadTestConfig();
+
+}

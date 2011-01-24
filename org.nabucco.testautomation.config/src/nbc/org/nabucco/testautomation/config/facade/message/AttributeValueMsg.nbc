@@ -1,0 +1,18 @@
+/*
+*  PRODYNA NABUCCO
+*  Copyright 2010, PRODYNA AG
+*/
+package org.nabucco.testautomation.config.facade.message;
+
+import org.nabucco.testautomation.config.facade.datatype.attribute.AttributeValue;
+
+@Author			Steffen Schmidt
+@Company		PRODYNA AG
+@Date			2010-04-15
+@Version		1.0
+@Description	Message for transportation of an AttributeValue
+public Message AttributeValueMsg {
+
+	private Datatype AttributeValue[1] attributeValue;
+
+}

@@ -1,0 +1,18 @@
+/*
+ *	PRODYNA NABUCCO
+ *  Copyright 2010, PRODYNA AG
+ */
+package org.nabucco.testautomation.config.facade.datatype.attribute;
+
+import org.nabucco.testautomation.facade.datatype.base.StringValue;
+import org.nabucco.testautomation.config.facade.datatype.attribute.AttributeValue;
+
+@Author			Steffen Schmidt
+@Company		PRODYNA AG
+@Date			2010-04-09
+@Description	The string value of an attribute
+public Datatype StringAttributeValue extends AttributeValue {
+	
+	private Basetype StringValue[1] value;
+	
+}

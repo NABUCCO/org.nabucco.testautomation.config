@@ -1,0 +1,78 @@
+package org.nabucco.testautomation.config.facade.component;
+
+import org.nabucco.framework.common.dynamiccode.facade.component.DynamicCodeComponent;
+import org.nabucco.testautomation.schema.facade.component.SchemaComponent;
+import org.nabucco.testautomation.script.facade.component.ScriptComponent;
+import org.nabucco.testautomation.facade.component.TestautomationComponent;
+import org.nabucco.testautomation.config.facade.datatype.TestConfiguration;
+import org.nabucco.testautomation.config.facade.datatype.TestConfigElement;
+import org.nabucco.testautomation.config.facade.datatype.TestConfigElementContainer;
+import org.nabucco.testautomation.config.facade.datatype.TestScriptContainer;
+import org.nabucco.testautomation.config.facade.datatype.Dependency;
+import org.nabucco.testautomation.config.facade.datatype.attribute.AttributeValue;
+import org.nabucco.testautomation.config.facade.datatype.attribute.StringAttributeValue;
+import org.nabucco.testautomation.config.facade.datatype.attribute.CodeAttributeValue;
+import org.nabucco.testautomation.config.facade.service.maintain.MaintainTestConfiguration;
+import org.nabucco.testautomation.config.facade.service.produce.ProduceTestConfiguration;
+import org.nabucco.testautomation.config.facade.service.produce.ProduceTestConfigElement;
+import org.nabucco.testautomation.config.facade.service.produce.ProduceTestConfigElementContainer;
+import org.nabucco.testautomation.config.facade.service.produce.ProduceDependency;
+import org.nabucco.testautomation.config.facade.service.produce.ProduceTestScriptContainer;
+import org.nabucco.testautomation.config.facade.service.produce.ProduceAttributeValue;
+import org.nabucco.testautomation.config.facade.service.search.SearchTestConfiguration;
+import org.nabucco.testautomation.config.facade.service.search.SearchTestConfigElement;
+import org.nabucco.testautomation.config.facade.service.engine.TestEngineService;
+
+@Author			Steffen Schmidt
+@Company		PRODYNA AG
+@Date			2010-04-16
+@Version		1.0
+@Description	Component for testautomation config
+@ComponentPrefix conf
+public Component ConfigComponent {
+
+	public Component TestautomationComponent testautomation;
+
+	public Component SchemaComponent schema;
+	
+	public Component DynamicCodeComponent dynamicCode;
+	
+	public Component ScriptComponent script;
+
+	private persistent Datatype TestConfigElement[1] testConfigElement;
+
+	private persistent Datatype TestConfigElementContainer[1] testConfigElementContainer;
+	
+	private persistent Datatype TestConfiguration[1] testConfiguration;
+	
+	private persistent Datatype TestScriptContainer[1] testScriptContainer;
+	
+	private persistent Datatype AttributeValue[1] attributeValue;
+	
+	private persistent Datatype StringAttributeValue[1] stringAttributeValue;
+	
+	private persistent Datatype CodeAttributeValue[1] codeAttributeValue;
+
+	private persistent Datatype Dependency[1] dependency;
+
+	public Service MaintainTestConfiguration;
+	
+	public Service ProduceTestConfiguration;
+	
+	public Service ProduceTestConfigElement;
+
+	public Service ProduceTestConfigElementContainer;
+	
+	public Service ProduceDependency;
+
+	public Service ProduceAttributeValue;
+
+	public Service ProduceTestScriptContainer;
+	
+	public Service SearchTestConfiguration;
+	
+	public Service SearchTestConfigElement;
+	
+	public Service TestEngineService;
+
+}

@@ -1,0 +1,23 @@
+/*
+ *	PRODYNA NABUCCO
+ *  Copyright 2010, PRODYNA AG
+ */
+package org.nabucco.testautomation.config.facade.datatype;
+
+import org.nabucco.framework.base.facade.datatype.NabuccoDatatype;
+import org.nabucco.framework.base.facade.datatype.Order;
+import org.nabucco.testautomation.script.facade.datatype.dictionary.TestScript;
+
+@Author			Steffen Schmidt
+@Company		PRODYNA AG
+@Date			2010-30-09
+@Version        1.0
+@Description	Container holding a TestScript and its order position
+public Datatype TestScriptContainer extends NabuccoDatatype {
+
+	@AssociationStrategy AGGREGATION
+	private Datatype TestScript[1] testScript;
+	
+	private Basetype Order[1] orderIndex;
+
+}

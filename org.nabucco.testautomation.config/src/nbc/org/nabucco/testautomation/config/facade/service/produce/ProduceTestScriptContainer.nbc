@@ -1,0 +1,20 @@
+/*
+ *	PRODYNA NABUCCO
+ *  Copyright 2010, PRODYNA AG
+ */
+package org.nabucco.testautomation.config.facade.service.produce;
+
+import org.nabucco.framework.base.facade.exception.service.ProduceException;
+import org.nabucco.testautomation.config.facade.message.ProduceTestScriptContainerMsg;
+
+@Author				Steffen Schmidt
+@Company			PRODYNA AG
+@Date				2010-04-15
+@Version			1.0
+@Description		Service to produce TestScriptContainer
+public Service ProduceTestScriptContainer {
+	
+	@ManualImplementation
+	public ProduceTestScriptContainerMsg produceTestScriptContainer(ProduceTestScriptContainerMsg msg) throws ProduceException;
+	
+}

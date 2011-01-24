@@ -1,0 +1,29 @@
+/*
+ *	PRODYNA NABUCCO
+ *  Copyright 2010, PRODYNA AG
+ */
+package org.nabucco.testautomation.config.ui.search.config;
+
+import org.nabucco.testautomation.config.facade.datatype.TestConfiguration;
+
+@Author			Steffen Schmidt
+@Company		PRODYNA AG
+@Date			2010-04-15
+@Version		1.0
+@Description 	Search view for datatype TestConfiguration
+@Id				org.nabucco.testautomation.config.ui.search.config.TestConfigSearchView
+public SearchView TestConfigurationSearchView {
+
+	private Datatype TestConfiguration[1] testConfiguration;
+	
+	@MappedField 		testConfiguration.name
+	@FieldLabelId		testConfiguration.name 
+	@FieldLabelDefault 	"Name"
+	private LabeledInputField testConfigurationName;
+	
+	@MappedField 		testConfiguration.description
+	@FieldLabelId		testConfiguration.description
+	@FieldLabelDefault 	"Description"
+	private LabeledInputField testConfigurationDescription;
+	
+}

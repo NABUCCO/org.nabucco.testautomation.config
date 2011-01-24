@@ -1,0 +1,24 @@
+/*
+ *	PRODYNA NABUCCO
+ *  Copyright 2010, PRODYNA AG
+ */
+package org.nabucco.testautomation.config.facade.service.produce;
+
+import org.nabucco.framework.base.facade.exception.service.ProduceException;
+import org.nabucco.testautomation.config.facade.message.TestConfigElementMsg;
+import org.nabucco.testautomation.config.facade.message.ProduceTestConfigElementMsg;
+
+@Author				Steffen Schmidt
+@Company			PRODYNA AG
+@Date				2010-04-15
+@Version			1.0
+@Description		Service to produce and clone TestConfigElements
+public Service ProduceTestConfigElement {
+	
+	@ManualImplementation
+	public TestConfigElementMsg produceTestConfigElement(ProduceTestConfigElementMsg msg) throws ProduceException;
+	
+	@ManualImplementation
+	public TestConfigElementMsg produceTestConfigElementClone(TestConfigElementMsg request) throws ProduceException;
+	
+}

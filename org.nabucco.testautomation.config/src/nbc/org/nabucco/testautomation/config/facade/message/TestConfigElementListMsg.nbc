@@ -1,0 +1,18 @@
+/*
+*  PRODYNA NABUCCO
+*  Copyright 2010, PRODYNA AG
+*/
+package org.nabucco.testautomation.config.facade.message;
+
+import org.nabucco.testautomation.config.facade.datatype.TestConfigElement;
+
+@Author			Steffen Schmidt
+@Company		PRODYNA AG
+@Date			2010-04-15
+@Version		1.0
+@Description	Message containing a list of TestConfigElements
+public Message TestConfigElementListMsg {
+
+	private Datatype TestConfigElement[0..*] testConfigElementList;
+
+}

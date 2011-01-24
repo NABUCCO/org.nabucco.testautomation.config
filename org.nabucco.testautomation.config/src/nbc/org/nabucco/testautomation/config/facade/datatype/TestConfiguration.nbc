@@ -1,0 +1,39 @@
+/*
+ *	PRODYNA NABUCCO
+ *  Copyright 2010, PRODYNA AG
+ */
+package org.nabucco.testautomation.config.facade.datatype;
+
+import org.nabucco.framework.base.facade.datatype.Name;
+import org.nabucco.framework.base.facade.datatype.Description;
+import org.nabucco.framework.base.facade.datatype.NabuccoDatatype;
+import org.nabucco.framework.base.facade.datatype.code.Code;
+import org.nabucco.testautomation.schema.facade.datatype.SchemaConfig;
+import org.nabucco.testautomation.config.facade.datatype.TestConfigElementContainer;
+import org.nabucco.testautomation.facade.datatype.engine.TestEngineConfiguration;
+
+@Author			Steffen Schmidt
+@Company		PRODYNA AG
+@Date			2010-04-14
+@Description	A Configuration containing a complete Test
+public Datatype TestConfiguration extends NabuccoDatatype {
+
+	private Basetype Name[1] name;
+	
+	private Basetype Description[0..1] description;
+	
+	private Datatype TestConfigElementContainer[0..*] testConfigElementList;
+	
+	private Datatype SchemaConfig[1] schemaConfig;
+	
+	@Description		Environment of the TestConfiguration
+	@CodePath nabucco.testautomation.environment
+	private Datatype Code[0..1] environmentType;
+
+	@Description		Release of the TestConfiguration
+	@CodePath nabucco.testautomation.release
+	private Datatype Code[0..1] releaseType;
+	
+	private transient Datatype TestEngineConfiguration[0..1] testEngineConfiguration;
+	
+}

@@ -1,0 +1,17 @@
+/*
+*  PRODYNA NABUCCO
+*  Copyright 2010, PRODYNA AG
+*/
+package org.nabucco.testautomation.config.ui.command.config;
+
+@Author			Steffen Schmidt
+@Company		PRODYNA AG
+@Date			2010-04-15
+@Description	This command should save a TestConfig
+@Id				org.nabucco.testautomation.config.ui.command.config.SaveTestConfigCommand
+public Command SaveTestConfigCommand {
+
+	@ManualImplementation
+	public void saveTestConfig();
+
+}

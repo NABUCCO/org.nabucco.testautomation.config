@@ -1,0 +1,17 @@
+/*
+*  PRODYNA NABUCCO
+*  Copyright 2010, PRODYNA AG
+*/
+package org.nabucco.testautomation.config.ui.command.config;
+
+@Author			Nicolas Moser
+@Company		PRODYNA AG
+@Date			2010-10-15
+@Description	Command for executing a Test Configuration
+@Id				org.nabucco.testautomation.config.ui.command.config.ExecuteTestConfigCommand
+public Command ExecuteTestConfigCommand {
+
+	@ManualImplementation
+	public void executeTestConfig();
+
+}

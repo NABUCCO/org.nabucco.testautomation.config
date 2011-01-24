@@ -1,0 +1,61 @@
+/*
+ *	PRODYNA NABUCCO
+ *  Copyright 2010, PRODYNA AG
+ */
+package org.nabucco.testautomation.config.facade.datatype;
+
+import org.nabucco.framework.base.facade.datatype.Name;
+import org.nabucco.framework.base.facade.datatype.Key;
+import org.nabucco.framework.base.facade.datatype.Flag;
+import org.nabucco.framework.base.facade.datatype.Description;
+import org.nabucco.framework.base.facade.datatype.documentation.Documentation;
+import org.nabucco.framework.base.facade.datatype.NabuccoDatatype;
+import org.nabucco.framework.base.facade.datatype.code.Code;
+import org.nabucco.testautomation.facade.datatype.property.PropertyList;
+import org.nabucco.testautomation.config.facade.datatype.TestConfigElementContainer;
+import org.nabucco.testautomation.config.facade.datatype.TestScriptContainer;
+import org.nabucco.testautomation.config.facade.datatype.attribute.AttributeValue;
+import org.nabucco.testautomation.schema.facade.datatype.SchemaElement;
+import org.nabucco.testautomation.config.facade.datatype.Dependency;
+import org.nabucco.testautomation.result.facade.datatype.ExecutionType;
+
+@Author			Steffen Schmidt
+@Company		PRODYNA AG
+@Date			2010-04-14
+@Description	One Element of a test configuration
+public Datatype TestConfigElement extends NabuccoDatatype {
+
+	@Default AUTOMATED
+	private Enumeration ExecutionType[1] executionType;
+
+	private Basetype Flag[0..1] skip;
+
+	private Basetype Name[1] name;
+
+	@MaxLength 16
+	private Basetype Key[0..1] elementKey;
+	
+	@Description Brand of the TestConfiguration
+	@CodePath nabucco.testautomation.brand
+	private Datatype Code[0..1] brandType;
+
+	private Basetype Description[0..1] description;
+	
+	private Datatype AttributeValue[0..*] attributeValueList;
+
+	@MaxLength 100000
+	private Basetype Documentation[0..1] documentation;
+	
+	private Datatype PropertyList[0..1] propertyList;
+	
+	private Datatype SchemaElement[1] schemaElement;
+	
+	private Datatype TestConfigElementContainer[0..*] testConfigElementList;
+	
+	private Datatype Dependency[0..*] dependencyList;
+	
+	private Basetype Flag[0..1] reused;
+	
+	private Datatype TestScriptContainer[0..*] testScriptList;
+		
+}

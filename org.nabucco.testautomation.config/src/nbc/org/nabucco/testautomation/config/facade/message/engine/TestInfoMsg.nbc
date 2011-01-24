@@ -1,0 +1,21 @@
+/*
+*  PRODYNA NABUCCO
+*  Copyright 2010, PRODYNA AG
+*/
+package org.nabucco.testautomation.config.facade.message.engine;
+
+import org.nabucco.testautomation.facade.datatype.engine.TestEngineConfiguration;
+import org.nabucco.testautomation.facade.datatype.engine.TestExecutionInfo;
+
+@Author			Steffen Schmidt
+@Company		PRODYNA AG
+@Date			2010-06-25
+@Version		1.0
+@Description	Message to transport a TestExecutionInfo-object
+public Message TestInfoMsg {
+
+	private Datatype TestExecutionInfo[1] testExecutionInfo;
+
+	private Datatype TestEngineConfiguration[1] testEngineConfiguration;
+	
+}
