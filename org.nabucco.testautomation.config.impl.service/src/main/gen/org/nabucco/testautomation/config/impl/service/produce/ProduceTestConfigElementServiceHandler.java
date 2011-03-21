@@ -62,7 +62,7 @@ public abstract class ProduceTestConfigElementServiceHandler extends ServiceHand
             throw wrappedException;
         } catch (Exception e) {
             super.getLogger().error(e);
-            throw new ProduceException(e.getMessage());
+            throw new ProduceException("Error during service invocation.", e);
         }
     }
 

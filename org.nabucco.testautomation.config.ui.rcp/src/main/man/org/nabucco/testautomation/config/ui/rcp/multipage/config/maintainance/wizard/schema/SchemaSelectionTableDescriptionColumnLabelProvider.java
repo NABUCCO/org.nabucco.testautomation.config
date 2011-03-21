@@ -21,6 +21,11 @@ import org.eclipse.jface.viewers.LabelProvider;
 
 import org.nabucco.testautomation.schema.facade.datatype.SchemaConfig;
 
+/**
+ * SchemaSelectionTableDescriptionColumnLabelProvider
+ * 
+ * @author Markus Jorroch, PRODYNA AG
+ */
 public class SchemaSelectionTableDescriptionColumnLabelProvider extends LabelProvider implements ILabelProvider {
 
 

@@ -18,6 +18,11 @@ package org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.m
 
 import org.nabucco.framework.plugin.base.component.list.view.NabuccoTableSorter;
 
+/**
+ * ConfigSingleColumnTableSorter
+ * 
+ * @author Markus Jorroch, PRODYNA AG
+ */
 public class ConfigSingleColumnTableSorter extends NabuccoTableSorter {
 
 	@Override

@@ -58,6 +58,11 @@ public class SearchTestConfigElementServiceHandlerImpl extends SearchTestConfigE
 
 		List<String> filter = new ArrayList<String>();
 
+		// filter for owner
+		if (msg.getOwner() != null && msg.getOwner().getValue() != null) {
+			filter.add("e.owner = :owner");
+		}
+		
 		// filter for Id
 		if (msg.getId() != null && msg.getId().getValue() != null) {
 			filter.add("e.id = :id");
@@ -122,6 +127,10 @@ public class SearchTestConfigElementServiceHandlerImpl extends SearchTestConfigE
 		Query query = super.getEntityManager().createQuery(
 				queryString.toString());
 
+		if (msg.getOwner() != null && msg.getOwner().getValue() != null) {
+			query.setParameter("owner", msg.getOwner());
+		}
+		
 		if (msg.getId() != null && msg.getId().getValue() != null) {
 			query.setParameter("id", msg.getId().getValue());
 		}

@@ -18,6 +18,7 @@ package org.nabucco.testautomation.config.impl.service.engine;
 
 import java.rmi.RemoteException;
 
+import org.nabucco.framework.base.facade.component.NabuccoInstance;
 import org.nabucco.testautomation.config.facade.message.engine.TestInfoMsg;
 import org.nabucco.testautomation.config.facade.message.engine.TestResultMsg;
 import org.nabucco.testautomation.engine.TestEngine;
@@ -75,10 +76,13 @@ public class GetTestConfigurationResultServiceHandlerImpl extends
 			}
 		} finally {
 			
-			if (result != null
-					&& (result.getStatus() == TestConfigurationStatusType.FINISHED || result
-							.getStatus() == TestConfigurationStatusType.CANCELLED)) {
-				TestEngineSupport.returnTestEngine(config);
+			if (result != null) {
+				result.setOwner(NabuccoInstance.getInstance().getOwner());
+				
+				if (result.getStatus() == TestConfigurationStatusType.FINISHED || result
+						.getStatus() == TestConfigurationStatusType.CANCELLED) {
+					TestEngineSupport.returnTestEngine(config);
+				}
 			}
 		}
 	}

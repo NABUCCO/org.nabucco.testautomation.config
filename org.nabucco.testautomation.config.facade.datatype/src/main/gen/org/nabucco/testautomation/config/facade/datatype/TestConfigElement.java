@@ -3,27 +3,30 @@
  */
 package org.nabucco.testautomation.config.facade.datatype;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.nabucco.framework.base.facade.datatype.Datatype;
 import org.nabucco.framework.base.facade.datatype.Description;
 import org.nabucco.framework.base.facade.datatype.Flag;
-import org.nabucco.framework.base.facade.datatype.Key;
-import org.nabucco.framework.base.facade.datatype.NabuccoDatatype;
 import org.nabucco.framework.base.facade.datatype.Name;
 import org.nabucco.framework.base.facade.datatype.code.Code;
 import org.nabucco.framework.base.facade.datatype.code.CodePath;
 import org.nabucco.framework.base.facade.datatype.collection.NabuccoCollectionState;
 import org.nabucco.framework.base.facade.datatype.collection.NabuccoList;
+import org.nabucco.framework.base.facade.datatype.collection.NabuccoListImpl;
 import org.nabucco.framework.base.facade.datatype.documentation.Documentation;
-import org.nabucco.framework.base.facade.datatype.property.BasetypeProperty;
-import org.nabucco.framework.base.facade.datatype.property.DatatypeProperty;
-import org.nabucco.framework.base.facade.datatype.property.EnumProperty;
-import org.nabucco.framework.base.facade.datatype.property.ListProperty;
 import org.nabucco.framework.base.facade.datatype.property.NabuccoProperty;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyContainer;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyDescriptor;
+import org.nabucco.framework.base.facade.datatype.property.PropertyAssociationType;
+import org.nabucco.framework.base.facade.datatype.property.PropertyCache;
+import org.nabucco.framework.base.facade.datatype.property.PropertyDescriptorSupport;
 import org.nabucco.testautomation.config.facade.datatype.Dependency;
 import org.nabucco.testautomation.config.facade.datatype.TestConfigElementContainer;
 import org.nabucco.testautomation.config.facade.datatype.TestScriptContainer;
 import org.nabucco.testautomation.config.facade.datatype.attribute.AttributeValue;
+import org.nabucco.testautomation.facade.datatype.base.ExportDatatype;
 import org.nabucco.testautomation.facade.datatype.property.PropertyList;
 import org.nabucco.testautomation.result.facade.datatype.ExecutionType;
 import org.nabucco.testautomation.schema.facade.datatype.SchemaElement;
@@ -33,25 +36,47 @@ import org.nabucco.testautomation.schema.facade.datatype.SchemaElement;
  *
  * @author Steffen Schmidt, PRODYNA AG, 2010-04-14
  */
-public class TestConfigElement extends NabuccoDatatype implements Datatype {
+public class TestConfigElement extends ExportDatatype implements Datatype {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String[] PROPERTY_NAMES = { "executionType", "skip", "name", "elementKey",
-            "brandType", "description", "attributeValueList", "documentation", "propertyList",
-            "schemaElement", "testConfigElementList", "dependencyList", "reused", "testScriptList" };
+    private static final String[] PROPERTY_CONSTRAINTS = { "m1,1;", "l0,255;m1,1;", "l0,255;m0,1;",
+            "l0,n;m0,1;", "m0,1;", "m0,n;", "l0,100000;m0,1;", "m0,1;", "m1,1;", "m0,n;", "m0,n;",
+            "l0,n;m0,1;", "m0,n;" };
 
-    private static final String[] PROPERTY_CONSTRAINTS = { "m1,1;", "l0,n;m0,1;", "l0,n;m1,1;",
-            "l0,16;m0,1;", "m0,1;", "l0,n;m0,1;", "m0,n;", "l0,100000;m0,1;", "m0,1;", "m1,1;",
-            "m0,n;", "m0,n;", "l0,n;m0,1;", "m0,n;" };
+    public static final String EXECUTIONTYPE = "executionType";
+
+    public static final String NAME = "name";
+
+    public static final String DESCRIPTION = "description";
+
+    public static final String SKIP = "skip";
+
+    public static final String BRANDTYPE = "brandType";
+
+    public static final String ATTRIBUTEVALUELIST = "attributeValueList";
+
+    public static final String DOCUMENTATION = "documentation";
+
+    public static final String PROPERTYLIST = "propertyList";
+
+    public static final String SCHEMAELEMENT = "schemaElement";
+
+    public static final String TESTCONFIGELEMENTLIST = "testConfigElementList";
+
+    public static final String DEPENDENCYLIST = "dependencyList";
+
+    public static final String REUSED = "reused";
+
+    public static final String TESTSCRIPTLIST = "testScriptList";
 
     private ExecutionType executionType;
 
-    private Flag skip;
-
     private Name name;
 
-    private Key elementKey;
+    private Description description;
+
+    private Flag skip;
 
     /** Brand of the TestConfiguration */
     private Code brandType;
@@ -60,9 +85,7 @@ public class TestConfigElement extends NabuccoDatatype implements Datatype {
 
     private static final String BRANDTYPE_CODEPATH = "nabucco.testautomation.brand";
 
-    private Description description;
-
-    private List<AttributeValue> attributeValueList;
+    private NabuccoList<AttributeValue> attributeValueList;
 
     private Documentation documentation;
 
@@ -74,13 +97,13 @@ public class TestConfigElement extends NabuccoDatatype implements Datatype {
 
     private Long schemaElementRefId;
 
-    private List<TestConfigElementContainer> testConfigElementList;
+    private NabuccoList<TestConfigElementContainer> testConfigElementList;
 
-    private List<Dependency> dependencyList;
+    private NabuccoList<Dependency> dependencyList;
 
     private Flag reused;
 
-    private List<TestScriptContainer> testScriptList;
+    private NabuccoList<TestScriptContainer> testScriptList;
 
     /** Constructs a new TestConfigElement instance. */
     public TestConfigElement() {
@@ -101,14 +124,14 @@ public class TestConfigElement extends NabuccoDatatype implements Datatype {
     protected void cloneObject(TestConfigElement clone) {
         super.cloneObject(clone);
         clone.setExecutionType(this.getExecutionType());
-        if ((this.getSkip() != null)) {
-            clone.setSkip(this.getSkip().cloneObject());
-        }
         if ((this.getName() != null)) {
             clone.setName(this.getName().cloneObject());
         }
-        if ((this.getElementKey() != null)) {
-            clone.setElementKey(this.getElementKey().cloneObject());
+        if ((this.getDescription() != null)) {
+            clone.setDescription(this.getDescription().cloneObject());
+        }
+        if ((this.getSkip() != null)) {
+            clone.setSkip(this.getSkip().cloneObject());
         }
         if ((this.getBrandType() != null)) {
             clone.setBrandType(this.getBrandType().cloneObject());
@@ -116,12 +139,8 @@ public class TestConfigElement extends NabuccoDatatype implements Datatype {
         if ((this.getBrandTypeRefId() != null)) {
             clone.setBrandTypeRefId(this.getBrandTypeRefId());
         }
-        if ((this.getDescription() != null)) {
-            clone.setDescription(this.getDescription().cloneObject());
-        }
-        if ((this.attributeValueList instanceof NabuccoList<?>)) {
-            clone.attributeValueList = ((NabuccoList<AttributeValue>) this.attributeValueList)
-                    .cloneCollection();
+        if ((this.attributeValueList != null)) {
+            clone.attributeValueList = this.attributeValueList.cloneCollection();
         }
         if ((this.getDocumentation() != null)) {
             clone.setDocumentation(this.getDocumentation().cloneObject());
@@ -138,20 +157,17 @@ public class TestConfigElement extends NabuccoDatatype implements Datatype {
         if ((this.getSchemaElementRefId() != null)) {
             clone.setSchemaElementRefId(this.getSchemaElementRefId());
         }
-        if ((this.testConfigElementList instanceof NabuccoList<?>)) {
-            clone.testConfigElementList = ((NabuccoList<TestConfigElementContainer>) this.testConfigElementList)
-                    .cloneCollection();
+        if ((this.testConfigElementList != null)) {
+            clone.testConfigElementList = this.testConfigElementList.cloneCollection();
         }
-        if ((this.dependencyList instanceof NabuccoList<?>)) {
-            clone.dependencyList = ((NabuccoList<Dependency>) this.dependencyList)
-                    .cloneCollection();
+        if ((this.dependencyList != null)) {
+            clone.dependencyList = this.dependencyList.cloneCollection();
         }
         if ((this.getReused() != null)) {
             clone.setReused(this.getReused().cloneObject());
         }
-        if ((this.testScriptList instanceof NabuccoList<?>)) {
-            clone.testScriptList = ((NabuccoList<TestScriptContainer>) this.testScriptList)
-                    .cloneCollection();
+        if ((this.testScriptList != null)) {
+            clone.testScriptList = this.testScriptList.cloneCollection();
         }
     }
 
@@ -162,9 +178,10 @@ public class TestConfigElement extends NabuccoDatatype implements Datatype {
      */
     List<AttributeValue> getAttributeValueListJPA() {
         if ((this.attributeValueList == null)) {
-            this.attributeValueList = new NabuccoList<AttributeValue>(NabuccoCollectionState.LAZY);
+            this.attributeValueList = new NabuccoListImpl<AttributeValue>(
+                    NabuccoCollectionState.LAZY);
         }
-        return ((NabuccoList<AttributeValue>) this.attributeValueList).getDelegate();
+        return ((NabuccoListImpl<AttributeValue>) this.attributeValueList).getDelegate();
     }
 
     /**
@@ -174,9 +191,10 @@ public class TestConfigElement extends NabuccoDatatype implements Datatype {
      */
     void setAttributeValueListJPA(List<AttributeValue> attributeValueList) {
         if ((this.attributeValueList == null)) {
-            this.attributeValueList = new NabuccoList<AttributeValue>(NabuccoCollectionState.LAZY);
+            this.attributeValueList = new NabuccoListImpl<AttributeValue>(
+                    NabuccoCollectionState.LAZY);
         }
-        ((NabuccoList<AttributeValue>) this.attributeValueList).setDelegate(attributeValueList);
+        ((NabuccoListImpl<AttributeValue>) this.attributeValueList).setDelegate(attributeValueList);
     }
 
     /**
@@ -186,10 +204,11 @@ public class TestConfigElement extends NabuccoDatatype implements Datatype {
      */
     List<TestConfigElementContainer> getTestConfigElementListJPA() {
         if ((this.testConfigElementList == null)) {
-            this.testConfigElementList = new NabuccoList<TestConfigElementContainer>(
+            this.testConfigElementList = new NabuccoListImpl<TestConfigElementContainer>(
                     NabuccoCollectionState.LAZY);
         }
-        return ((NabuccoList<TestConfigElementContainer>) this.testConfigElementList).getDelegate();
+        return ((NabuccoListImpl<TestConfigElementContainer>) this.testConfigElementList)
+                .getDelegate();
     }
 
     /**
@@ -199,10 +218,10 @@ public class TestConfigElement extends NabuccoDatatype implements Datatype {
      */
     void setTestConfigElementListJPA(List<TestConfigElementContainer> testConfigElementList) {
         if ((this.testConfigElementList == null)) {
-            this.testConfigElementList = new NabuccoList<TestConfigElementContainer>(
+            this.testConfigElementList = new NabuccoListImpl<TestConfigElementContainer>(
                     NabuccoCollectionState.LAZY);
         }
-        ((NabuccoList<TestConfigElementContainer>) this.testConfigElementList)
+        ((NabuccoListImpl<TestConfigElementContainer>) this.testConfigElementList)
                 .setDelegate(testConfigElementList);
     }
 
@@ -213,9 +232,9 @@ public class TestConfigElement extends NabuccoDatatype implements Datatype {
      */
     List<Dependency> getDependencyListJPA() {
         if ((this.dependencyList == null)) {
-            this.dependencyList = new NabuccoList<Dependency>(NabuccoCollectionState.LAZY);
+            this.dependencyList = new NabuccoListImpl<Dependency>(NabuccoCollectionState.LAZY);
         }
-        return ((NabuccoList<Dependency>) this.dependencyList).getDelegate();
+        return ((NabuccoListImpl<Dependency>) this.dependencyList).getDelegate();
     }
 
     /**
@@ -225,9 +244,9 @@ public class TestConfigElement extends NabuccoDatatype implements Datatype {
      */
     void setDependencyListJPA(List<Dependency> dependencyList) {
         if ((this.dependencyList == null)) {
-            this.dependencyList = new NabuccoList<Dependency>(NabuccoCollectionState.LAZY);
+            this.dependencyList = new NabuccoListImpl<Dependency>(NabuccoCollectionState.LAZY);
         }
-        ((NabuccoList<Dependency>) this.dependencyList).setDelegate(dependencyList);
+        ((NabuccoListImpl<Dependency>) this.dependencyList).setDelegate(dependencyList);
     }
 
     /**
@@ -237,9 +256,10 @@ public class TestConfigElement extends NabuccoDatatype implements Datatype {
      */
     List<TestScriptContainer> getTestScriptListJPA() {
         if ((this.testScriptList == null)) {
-            this.testScriptList = new NabuccoList<TestScriptContainer>(NabuccoCollectionState.LAZY);
+            this.testScriptList = new NabuccoListImpl<TestScriptContainer>(
+                    NabuccoCollectionState.LAZY);
         }
-        return ((NabuccoList<TestScriptContainer>) this.testScriptList).getDelegate();
+        return ((NabuccoListImpl<TestScriptContainer>) this.testScriptList).getDelegate();
     }
 
     /**
@@ -249,9 +269,54 @@ public class TestConfigElement extends NabuccoDatatype implements Datatype {
      */
     void setTestScriptListJPA(List<TestScriptContainer> testScriptList) {
         if ((this.testScriptList == null)) {
-            this.testScriptList = new NabuccoList<TestScriptContainer>(NabuccoCollectionState.LAZY);
+            this.testScriptList = new NabuccoListImpl<TestScriptContainer>(
+                    NabuccoCollectionState.LAZY);
         }
-        ((NabuccoList<TestScriptContainer>) this.testScriptList).setDelegate(testScriptList);
+        ((NabuccoListImpl<TestScriptContainer>) this.testScriptList).setDelegate(testScriptList);
+    }
+
+    /**
+     * CreatePropertyContainer.
+     *
+     * @return the NabuccoPropertyContainer.
+     */
+    protected static NabuccoPropertyContainer createPropertyContainer() {
+        Map<String, NabuccoPropertyDescriptor> propertyMap = new HashMap<String, NabuccoPropertyDescriptor>();
+        propertyMap.putAll(PropertyCache.getInstance().retrieve(ExportDatatype.class)
+                .getPropertyMap());
+        propertyMap.put(EXECUTIONTYPE, PropertyDescriptorSupport.createEnumeration(EXECUTIONTYPE,
+                ExecutionType.class, 4, PROPERTY_CONSTRAINTS[0], false));
+        propertyMap.put(NAME, PropertyDescriptorSupport.createBasetype(NAME, Name.class, 5,
+                PROPERTY_CONSTRAINTS[1], false));
+        propertyMap.put(DESCRIPTION, PropertyDescriptorSupport.createBasetype(DESCRIPTION,
+                Description.class, 6, PROPERTY_CONSTRAINTS[2], false));
+        propertyMap.put(SKIP, PropertyDescriptorSupport.createBasetype(SKIP, Flag.class, 7,
+                PROPERTY_CONSTRAINTS[3], false));
+        propertyMap.put(BRANDTYPE, PropertyDescriptorSupport.createDatatype(BRANDTYPE, Code.class,
+                8, PROPERTY_CONSTRAINTS[4], false, PropertyAssociationType.COMPONENT));
+        propertyMap.put(ATTRIBUTEVALUELIST, PropertyDescriptorSupport.createCollection(
+                ATTRIBUTEVALUELIST, AttributeValue.class, 9, PROPERTY_CONSTRAINTS[5], false,
+                PropertyAssociationType.COMPOSITION));
+        propertyMap.put(DOCUMENTATION, PropertyDescriptorSupport.createBasetype(DOCUMENTATION,
+                Documentation.class, 10, PROPERTY_CONSTRAINTS[6], false));
+        propertyMap.put(PROPERTYLIST, PropertyDescriptorSupport.createDatatype(PROPERTYLIST,
+                PropertyList.class, 11, PROPERTY_CONSTRAINTS[7], false,
+                PropertyAssociationType.COMPONENT));
+        propertyMap.put(SCHEMAELEMENT, PropertyDescriptorSupport.createDatatype(SCHEMAELEMENT,
+                SchemaElement.class, 12, PROPERTY_CONSTRAINTS[8], false,
+                PropertyAssociationType.COMPONENT));
+        propertyMap.put(TESTCONFIGELEMENTLIST, PropertyDescriptorSupport.createCollection(
+                TESTCONFIGELEMENTLIST, TestConfigElementContainer.class, 13,
+                PROPERTY_CONSTRAINTS[9], false, PropertyAssociationType.COMPOSITION));
+        propertyMap.put(DEPENDENCYLIST, PropertyDescriptorSupport.createCollection(DEPENDENCYLIST,
+                Dependency.class, 14, PROPERTY_CONSTRAINTS[10], false,
+                PropertyAssociationType.COMPOSITION));
+        propertyMap.put(REUSED, PropertyDescriptorSupport.createBasetype(REUSED, Flag.class, 15,
+                PROPERTY_CONSTRAINTS[11], false));
+        propertyMap.put(TESTSCRIPTLIST, PropertyDescriptorSupport.createCollection(TESTSCRIPTLIST,
+                TestScriptContainer.class, 16, PROPERTY_CONSTRAINTS[12], false,
+                PropertyAssociationType.COMPOSITION));
+        return new NabuccoPropertyContainer(propertyMap);
     }
 
     @Override
@@ -260,38 +325,89 @@ public class TestConfigElement extends NabuccoDatatype implements Datatype {
     }
 
     @Override
-    public List<NabuccoProperty<?>> getProperties() {
-        List<NabuccoProperty<?>> properties = super.getProperties();
-        properties.add(new EnumProperty<ExecutionType>(PROPERTY_NAMES[0], ExecutionType.class,
-                PROPERTY_CONSTRAINTS[0], this.executionType));
-        properties.add(new BasetypeProperty<Flag>(PROPERTY_NAMES[1], Flag.class,
-                PROPERTY_CONSTRAINTS[1], this.skip));
-        properties.add(new BasetypeProperty<Name>(PROPERTY_NAMES[2], Name.class,
-                PROPERTY_CONSTRAINTS[2], this.name));
-        properties.add(new BasetypeProperty<Key>(PROPERTY_NAMES[3], Key.class,
-                PROPERTY_CONSTRAINTS[3], this.elementKey));
-        properties.add(new DatatypeProperty<Code>(PROPERTY_NAMES[4], Code.class,
-                PROPERTY_CONSTRAINTS[4], this.brandType));
-        properties.add(new BasetypeProperty<Description>(PROPERTY_NAMES[5], Description.class,
-                PROPERTY_CONSTRAINTS[5], this.description));
-        properties.add(new ListProperty<AttributeValue>(PROPERTY_NAMES[6], AttributeValue.class,
-                PROPERTY_CONSTRAINTS[6], this.attributeValueList));
-        properties.add(new BasetypeProperty<Documentation>(PROPERTY_NAMES[7], Documentation.class,
-                PROPERTY_CONSTRAINTS[7], this.documentation));
-        properties.add(new DatatypeProperty<PropertyList>(PROPERTY_NAMES[8], PropertyList.class,
-                PROPERTY_CONSTRAINTS[8], this.propertyList));
-        properties.add(new DatatypeProperty<SchemaElement>(PROPERTY_NAMES[9], SchemaElement.class,
-                PROPERTY_CONSTRAINTS[9], this.schemaElement));
-        properties.add(new ListProperty<TestConfigElementContainer>(PROPERTY_NAMES[10],
-                TestConfigElementContainer.class, PROPERTY_CONSTRAINTS[10],
-                this.testConfigElementList));
-        properties.add(new ListProperty<Dependency>(PROPERTY_NAMES[11], Dependency.class,
-                PROPERTY_CONSTRAINTS[11], this.dependencyList));
-        properties.add(new BasetypeProperty<Flag>(PROPERTY_NAMES[12], Flag.class,
-                PROPERTY_CONSTRAINTS[12], this.reused));
-        properties.add(new ListProperty<TestScriptContainer>(PROPERTY_NAMES[13],
-                TestScriptContainer.class, PROPERTY_CONSTRAINTS[13], this.testScriptList));
+    public List<NabuccoProperty> getProperties() {
+        List<NabuccoProperty> properties = super.getProperties();
+        properties.add(super.createProperty(TestConfigElement.getPropertyDescriptor(EXECUTIONTYPE),
+                this.executionType, null));
+        properties.add(super.createProperty(TestConfigElement.getPropertyDescriptor(NAME),
+                this.name, null));
+        properties.add(super.createProperty(TestConfigElement.getPropertyDescriptor(DESCRIPTION),
+                this.description, null));
+        properties.add(super.createProperty(TestConfigElement.getPropertyDescriptor(SKIP),
+                this.skip, null));
+        properties.add(super.createProperty(TestConfigElement.getPropertyDescriptor(BRANDTYPE),
+                this.brandType, this.brandTypeRefId));
+        properties.add(super.createProperty(
+                TestConfigElement.getPropertyDescriptor(ATTRIBUTEVALUELIST),
+                this.attributeValueList, null));
+        properties.add(super.createProperty(TestConfigElement.getPropertyDescriptor(DOCUMENTATION),
+                this.documentation, null));
+        properties.add(super.createProperty(TestConfigElement.getPropertyDescriptor(PROPERTYLIST),
+                this.propertyList, this.propertyListRefId));
+        properties.add(super.createProperty(TestConfigElement.getPropertyDescriptor(SCHEMAELEMENT),
+                this.schemaElement, this.schemaElementRefId));
+        properties.add(super.createProperty(
+                TestConfigElement.getPropertyDescriptor(TESTCONFIGELEMENTLIST),
+                this.testConfigElementList, null));
+        properties
+                .add(super.createProperty(TestConfigElement.getPropertyDescriptor(DEPENDENCYLIST),
+                        this.dependencyList, null));
+        properties.add(super.createProperty(TestConfigElement.getPropertyDescriptor(REUSED),
+                this.reused, null));
+        properties
+                .add(super.createProperty(TestConfigElement.getPropertyDescriptor(TESTSCRIPTLIST),
+                        this.testScriptList, null));
         return properties;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean setProperty(NabuccoProperty property) {
+        if (super.setProperty(property)) {
+            return true;
+        }
+        if ((property.getName().equals(EXECUTIONTYPE) && (property.getType() == ExecutionType.class))) {
+            this.setExecutionType(((ExecutionType) property.getInstance()));
+            return true;
+        } else if ((property.getName().equals(NAME) && (property.getType() == Name.class))) {
+            this.setName(((Name) property.getInstance()));
+            return true;
+        } else if ((property.getName().equals(DESCRIPTION) && (property.getType() == Description.class))) {
+            this.setDescription(((Description) property.getInstance()));
+            return true;
+        } else if ((property.getName().equals(SKIP) && (property.getType() == Flag.class))) {
+            this.setSkip(((Flag) property.getInstance()));
+            return true;
+        } else if ((property.getName().equals(BRANDTYPE) && (property.getType() == Code.class))) {
+            this.setBrandType(((Code) property.getInstance()));
+            return true;
+        } else if ((property.getName().equals(ATTRIBUTEVALUELIST) && (property.getType() == AttributeValue.class))) {
+            this.attributeValueList = ((NabuccoList<AttributeValue>) property.getInstance());
+            return true;
+        } else if ((property.getName().equals(DOCUMENTATION) && (property.getType() == Documentation.class))) {
+            this.setDocumentation(((Documentation) property.getInstance()));
+            return true;
+        } else if ((property.getName().equals(PROPERTYLIST) && (property.getType() == PropertyList.class))) {
+            this.setPropertyList(((PropertyList) property.getInstance()));
+            return true;
+        } else if ((property.getName().equals(SCHEMAELEMENT) && (property.getType() == SchemaElement.class))) {
+            this.setSchemaElement(((SchemaElement) property.getInstance()));
+            return true;
+        } else if ((property.getName().equals(TESTCONFIGELEMENTLIST) && (property.getType() == TestConfigElementContainer.class))) {
+            this.testConfigElementList = ((NabuccoList<TestConfigElementContainer>) property
+                    .getInstance());
+            return true;
+        } else if ((property.getName().equals(DEPENDENCYLIST) && (property.getType() == Dependency.class))) {
+            this.dependencyList = ((NabuccoList<Dependency>) property.getInstance());
+            return true;
+        } else if ((property.getName().equals(REUSED) && (property.getType() == Flag.class))) {
+            this.setReused(((Flag) property.getInstance()));
+            return true;
+        } else if ((property.getName().equals(TESTSCRIPTLIST) && (property.getType() == TestScriptContainer.class))) {
+            this.testScriptList = ((NabuccoList<TestScriptContainer>) property.getInstance());
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -314,20 +430,20 @@ public class TestConfigElement extends NabuccoDatatype implements Datatype {
                 return false;
         } else if ((!this.executionType.equals(other.executionType)))
             return false;
-        if ((this.skip == null)) {
-            if ((other.skip != null))
-                return false;
-        } else if ((!this.skip.equals(other.skip)))
-            return false;
         if ((this.name == null)) {
             if ((other.name != null))
                 return false;
         } else if ((!this.name.equals(other.name)))
             return false;
-        if ((this.elementKey == null)) {
-            if ((other.elementKey != null))
+        if ((this.description == null)) {
+            if ((other.description != null))
                 return false;
-        } else if ((!this.elementKey.equals(other.elementKey)))
+        } else if ((!this.description.equals(other.description)))
+            return false;
+        if ((this.skip == null)) {
+            if ((other.skip != null))
+                return false;
+        } else if ((!this.skip.equals(other.skip)))
             return false;
         if ((this.brandType == null)) {
             if ((other.brandType != null))
@@ -338,11 +454,6 @@ public class TestConfigElement extends NabuccoDatatype implements Datatype {
             if ((other.brandTypeRefId != null))
                 return false;
         } else if ((!this.brandTypeRefId.equals(other.brandTypeRefId)))
-            return false;
-        if ((this.description == null)) {
-            if ((other.description != null))
-                return false;
-        } else if ((!this.description.equals(other.description)))
             return false;
         if ((this.documentation == null)) {
             if ((other.documentation != null))
@@ -383,13 +494,12 @@ public class TestConfigElement extends NabuccoDatatype implements Datatype {
         int result = super.hashCode();
         result = ((PRIME * result) + ((this.executionType == null) ? 0 : this.executionType
                 .hashCode()));
-        result = ((PRIME * result) + ((this.skip == null) ? 0 : this.skip.hashCode()));
         result = ((PRIME * result) + ((this.name == null) ? 0 : this.name.hashCode()));
-        result = ((PRIME * result) + ((this.elementKey == null) ? 0 : this.elementKey.hashCode()));
+        result = ((PRIME * result) + ((this.description == null) ? 0 : this.description.hashCode()));
+        result = ((PRIME * result) + ((this.skip == null) ? 0 : this.skip.hashCode()));
         result = ((PRIME * result) + ((this.brandType == null) ? 0 : this.brandType.hashCode()));
         result = ((PRIME * result) + ((this.brandTypeRefId == null) ? 0 : this.brandTypeRefId
                 .hashCode()));
-        result = ((PRIME * result) + ((this.description == null) ? 0 : this.description.hashCode()));
         result = ((PRIME * result) + ((this.documentation == null) ? 0 : this.documentation
                 .hashCode()));
         result = ((PRIME * result) + ((this.propertyList == null) ? 0 : this.propertyList
@@ -402,30 +512,6 @@ public class TestConfigElement extends NabuccoDatatype implements Datatype {
                 : this.schemaElementRefId.hashCode()));
         result = ((PRIME * result) + ((this.reused == null) ? 0 : this.reused.hashCode()));
         return result;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder appendable = new StringBuilder();
-        appendable.append("<TestConfigElement>\n");
-        appendable.append(super.toString());
-        appendable.append((("<executionType>" + this.executionType) + "</executionType>\n"));
-        appendable.append((("<skip>" + this.skip) + "</skip>\n"));
-        appendable.append((("<name>" + this.name) + "</name>\n"));
-        appendable.append((("<elementKey>" + this.elementKey) + "</elementKey>\n"));
-        appendable.append((("<brandType>" + this.brandType) + "</brandType>\n"));
-        appendable.append((("<brandTypeRefId>" + this.brandTypeRefId) + "</brandTypeRefId>\n"));
-        appendable.append((("<description>" + this.description) + "</description>\n"));
-        appendable.append((("<documentation>" + this.documentation) + "</documentation>\n"));
-        appendable.append((("<propertyList>" + this.propertyList) + "</propertyList>\n"));
-        appendable
-                .append((("<propertyListRefId>" + this.propertyListRefId) + "</propertyListRefId>\n"));
-        appendable.append((("<schemaElement>" + this.schemaElement) + "</schemaElement>\n"));
-        appendable
-                .append((("<schemaElementRefId>" + this.schemaElementRefId) + "</schemaElementRefId>\n"));
-        appendable.append((("<reused>" + this.reused) + "</reused>\n"));
-        appendable.append("</TestConfigElement>\n");
-        return appendable.toString();
     }
 
     @Override
@@ -467,36 +553,6 @@ public class TestConfigElement extends NabuccoDatatype implements Datatype {
     }
 
     /**
-     * Missing description at method getSkip.
-     *
-     * @return the Flag.
-     */
-    public Flag getSkip() {
-        return this.skip;
-    }
-
-    /**
-     * Missing description at method setSkip.
-     *
-     * @param skip the Flag.
-     */
-    public void setSkip(Flag skip) {
-        this.skip = skip;
-    }
-
-    /**
-     * Missing description at method setSkip.
-     *
-     * @param skip the Boolean.
-     */
-    public void setSkip(Boolean skip) {
-        if ((this.skip == null)) {
-            this.skip = new Flag();
-        }
-        this.skip.setValue(skip);
-    }
-
-    /**
      * Missing description at method getName.
      *
      * @return the Name.
@@ -521,39 +577,78 @@ public class TestConfigElement extends NabuccoDatatype implements Datatype {
      */
     public void setName(String name) {
         if ((this.name == null)) {
+            if ((name == null)) {
+                return;
+            }
             this.name = new Name();
         }
         this.name.setValue(name);
     }
 
     /**
-     * Missing description at method getElementKey.
+     * Missing description at method getDescription.
      *
-     * @return the Key.
+     * @return the Description.
      */
-    public Key getElementKey() {
-        return this.elementKey;
+    public Description getDescription() {
+        return this.description;
     }
 
     /**
-     * Missing description at method setElementKey.
+     * Missing description at method setDescription.
      *
-     * @param elementKey the Key.
+     * @param description the Description.
      */
-    public void setElementKey(Key elementKey) {
-        this.elementKey = elementKey;
+    public void setDescription(Description description) {
+        this.description = description;
     }
 
     /**
-     * Missing description at method setElementKey.
+     * Missing description at method setDescription.
      *
-     * @param elementKey the String.
+     * @param description the String.
      */
-    public void setElementKey(String elementKey) {
-        if ((this.elementKey == null)) {
-            this.elementKey = new Key();
+    public void setDescription(String description) {
+        if ((this.description == null)) {
+            if ((description == null)) {
+                return;
+            }
+            this.description = new Description();
         }
-        this.elementKey.setValue(elementKey);
+        this.description.setValue(description);
+    }
+
+    /**
+     * Missing description at method getSkip.
+     *
+     * @return the Flag.
+     */
+    public Flag getSkip() {
+        return this.skip;
+    }
+
+    /**
+     * Missing description at method setSkip.
+     *
+     * @param skip the Flag.
+     */
+    public void setSkip(Flag skip) {
+        this.skip = skip;
+    }
+
+    /**
+     * Missing description at method setSkip.
+     *
+     * @param skip the Boolean.
+     */
+    public void setSkip(Boolean skip) {
+        if ((this.skip == null)) {
+            if ((skip == null)) {
+                return;
+            }
+            this.skip = new Flag();
+        }
+        this.skip.setValue(skip);
     }
 
     /**
@@ -598,43 +693,13 @@ public class TestConfigElement extends NabuccoDatatype implements Datatype {
     }
 
     /**
-     * Missing description at method getDescription.
-     *
-     * @return the Description.
-     */
-    public Description getDescription() {
-        return this.description;
-    }
-
-    /**
-     * Missing description at method setDescription.
-     *
-     * @param description the Description.
-     */
-    public void setDescription(Description description) {
-        this.description = description;
-    }
-
-    /**
-     * Missing description at method setDescription.
-     *
-     * @param description the String.
-     */
-    public void setDescription(String description) {
-        if ((this.description == null)) {
-            this.description = new Description();
-        }
-        this.description.setValue(description);
-    }
-
-    /**
      * Missing description at method getAttributeValueList.
      *
-     * @return the List<AttributeValue>.
+     * @return the NabuccoList<AttributeValue>.
      */
-    public List<AttributeValue> getAttributeValueList() {
+    public NabuccoList<AttributeValue> getAttributeValueList() {
         if ((this.attributeValueList == null)) {
-            this.attributeValueList = new NabuccoList<AttributeValue>(
+            this.attributeValueList = new NabuccoListImpl<AttributeValue>(
                     NabuccoCollectionState.INITIALIZED);
         }
         return this.attributeValueList;
@@ -665,6 +730,9 @@ public class TestConfigElement extends NabuccoDatatype implements Datatype {
      */
     public void setDocumentation(String documentation) {
         if ((this.documentation == null)) {
+            if ((documentation == null)) {
+                return;
+            }
             this.documentation = new Documentation();
         }
         this.documentation.setValue(documentation);
@@ -755,11 +823,11 @@ public class TestConfigElement extends NabuccoDatatype implements Datatype {
     /**
      * Missing description at method getTestConfigElementList.
      *
-     * @return the List<TestConfigElementContainer>.
+     * @return the NabuccoList<TestConfigElementContainer>.
      */
-    public List<TestConfigElementContainer> getTestConfigElementList() {
+    public NabuccoList<TestConfigElementContainer> getTestConfigElementList() {
         if ((this.testConfigElementList == null)) {
-            this.testConfigElementList = new NabuccoList<TestConfigElementContainer>(
+            this.testConfigElementList = new NabuccoListImpl<TestConfigElementContainer>(
                     NabuccoCollectionState.INITIALIZED);
         }
         return this.testConfigElementList;
@@ -768,11 +836,12 @@ public class TestConfigElement extends NabuccoDatatype implements Datatype {
     /**
      * Missing description at method getDependencyList.
      *
-     * @return the List<Dependency>.
+     * @return the NabuccoList<Dependency>.
      */
-    public List<Dependency> getDependencyList() {
+    public NabuccoList<Dependency> getDependencyList() {
         if ((this.dependencyList == null)) {
-            this.dependencyList = new NabuccoList<Dependency>(NabuccoCollectionState.INITIALIZED);
+            this.dependencyList = new NabuccoListImpl<Dependency>(
+                    NabuccoCollectionState.INITIALIZED);
         }
         return this.dependencyList;
     }
@@ -802,6 +871,9 @@ public class TestConfigElement extends NabuccoDatatype implements Datatype {
      */
     public void setReused(Boolean reused) {
         if ((this.reused == null)) {
+            if ((reused == null)) {
+                return;
+            }
             this.reused = new Flag();
         }
         this.reused.setValue(reused);
@@ -810,14 +882,34 @@ public class TestConfigElement extends NabuccoDatatype implements Datatype {
     /**
      * Missing description at method getTestScriptList.
      *
-     * @return the List<TestScriptContainer>.
+     * @return the NabuccoList<TestScriptContainer>.
      */
-    public List<TestScriptContainer> getTestScriptList() {
+    public NabuccoList<TestScriptContainer> getTestScriptList() {
         if ((this.testScriptList == null)) {
-            this.testScriptList = new NabuccoList<TestScriptContainer>(
+            this.testScriptList = new NabuccoListImpl<TestScriptContainer>(
                     NabuccoCollectionState.INITIALIZED);
         }
         return this.testScriptList;
+    }
+
+    /**
+     * Getter for the PropertyDescriptor.
+     *
+     * @param propertyName the String.
+     * @return the NabuccoPropertyDescriptor.
+     */
+    public static NabuccoPropertyDescriptor getPropertyDescriptor(String propertyName) {
+        return PropertyCache.getInstance().retrieve(TestConfigElement.class)
+                .getProperty(propertyName);
+    }
+
+    /**
+     * Getter for the PropertyDescriptorList.
+     *
+     * @return the List<NabuccoPropertyDescriptor>.
+     */
+    public static List<NabuccoPropertyDescriptor> getPropertyDescriptorList() {
+        return PropertyCache.getInstance().retrieve(TestConfigElement.class).getAllProperties();
     }
 
     /**

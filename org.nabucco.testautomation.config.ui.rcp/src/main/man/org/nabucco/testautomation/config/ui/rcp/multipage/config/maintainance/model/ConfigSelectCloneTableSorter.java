@@ -18,7 +18,13 @@ package org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.m
 
 import org.nabucco.framework.plugin.base.component.list.view.NabuccoTableSorter;
 import org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.model.contextmenu.TestConfigurationMaintainanceMultiplePageSelectCloneKeyColumnDialogLabelProvider;
+import org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.model.contextmenu.TestConfigurationMaintainanceMultiplePageSelectCloneOwnerColumnDialogLabelProvider;
 
+/**
+ * ConfigSelectCloneTableSorter
+ * 
+ * @author Markus Jorroch, PRODYNA AG
+ */
 public class ConfigSelectCloneTableSorter extends NabuccoTableSorter {
 
 	@Override
@@ -26,8 +32,11 @@ public class ConfigSelectCloneTableSorter extends NabuccoTableSorter {
 		if(currentColumn == 0){
 			TestConfigurationMaintainanceMultiplePageSelectCloneKeyColumnDialogLabelProvider provider = new TestConfigurationMaintainanceMultiplePageSelectCloneKeyColumnDialogLabelProvider();
 			return (provider.getText(e1).compareTo(provider.getText(e2)));
-		} else {
+		} else if(currentColumn == 1){
 			TestConfigurationMaintainanceMultiplePageAddDialogLabelProvider provider = new TestConfigurationMaintainanceMultiplePageAddDialogLabelProvider();
+			return (provider.getText(e1).compareTo(provider.getText(e2)));
+		}  else {
+			TestConfigurationMaintainanceMultiplePageSelectCloneOwnerColumnDialogLabelProvider provider = new TestConfigurationMaintainanceMultiplePageSelectCloneOwnerColumnDialogLabelProvider();
 			return (provider.getText(e1).compareTo(provider.getText(e2)));
 		}
 	}

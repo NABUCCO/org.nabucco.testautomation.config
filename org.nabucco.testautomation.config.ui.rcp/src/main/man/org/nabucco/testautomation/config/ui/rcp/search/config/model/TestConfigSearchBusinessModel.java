@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.nabucco.framework.base.facade.datatype.Description;
 import org.nabucco.framework.base.facade.datatype.Name;
+import org.nabucco.framework.base.facade.datatype.Owner;
 import org.nabucco.framework.base.facade.exception.client.ClientException;
 import org.nabucco.framework.plugin.base.Activator;
 import org.nabucco.framework.plugin.base.component.search.model.NabuccoComponentSearchModel;
@@ -48,10 +49,12 @@ public class TestConfigSearchBusinessModel implements NabuccoComponentSearchMode
      */
     @Override
     public TestConfigurationListViewBrowserElement search(
-            NabuccoComponentSearchParameter searchViewModel) {
-        TestConfigurationListViewBrowserElement result = null;
-        if (searchViewModel instanceof TestConfigSearchViewModel) {
-            TestConfigSearchViewModel testConfigSearchViewModel = (TestConfigSearchViewModel) searchViewModel;
+            NabuccoComponentSearchParameter parameter) {
+        
+    	TestConfigurationListViewBrowserElement result = null;
+        
+        if (parameter instanceof TestConfigSearchViewModel) {
+            TestConfigSearchViewModel testConfigSearchViewModel = (TestConfigSearchViewModel) parameter;
             TestConfigurationSearchMsg rq = createTestConfigSearchMsg(testConfigSearchViewModel);
             result = new TestConfigurationListViewBrowserElement(search(rq).toArray(
                     new TestConfiguration[0]));
@@ -60,7 +63,8 @@ public class TestConfigSearchBusinessModel implements NabuccoComponentSearchMode
     }
 
     private List<TestConfiguration> search(final TestConfigurationSearchMsg rq) {
-        List<TestConfiguration> result = null;
+        
+    	List<TestConfiguration> result = null;
         try {
             SearchTestConfigurationDelegate searchDelegate = ConfigComponentServiceDelegateFactory
                     .getInstance().getSearchTestConfiguration();
@@ -75,24 +79,31 @@ public class TestConfigSearchBusinessModel implements NabuccoComponentSearchMode
 
     private TestConfigurationSearchMsg createTestConfigSearchMsg(
             TestConfigSearchViewModel searchViewModel) {
-        TestConfigurationSearchMsg result = new TestConfigurationSearchMsg();
 
-        result.setName(getNameFromModel(searchViewModel));
-        result.setDescription(getDescriptionFromModel(searchViewModel));
+    	TestConfigurationSearchMsg result = new TestConfigurationSearchMsg();
+        String owner = searchViewModel.getOwner();
+
+        if (owner != null && owner.length() > 0) {
+        	result.setOwner(new Owner(owner));
+        }
+        result.setName(getName(searchViewModel));
+        result.setDescription(getDescription(searchViewModel));
 
         return result;
     }
 
-    private Description getDescriptionFromModel(final TestConfigSearchViewModel searchViewModel) {
-        Description result = new Description();
+    private Description getDescription(final TestConfigSearchViewModel searchViewModel) {
+        
+    	Description result = new Description();
         String description = searchViewModel.getTestConfigurationDescription();
 
         result.setValue((description == null || description.length() == 0) ? null : description);
         return result;
     }
 
-    private Name getNameFromModel(TestConfigSearchViewModel searchViewModel) {
-        Name result = new Name();
+    private Name getName(TestConfigSearchViewModel searchViewModel) {
+        
+    	Name result = new Name();
         String name = searchViewModel.getTestConfigurationName();
 
         result.setValue((name == null || name.length() == 0) ? null : name);

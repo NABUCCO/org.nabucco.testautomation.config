@@ -16,10 +16,15 @@
 */
 package org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.model.contextmenu;
 
+import org.nabucco.framework.plugin.base.Activator;
 import org.nabucco.framework.plugin.base.component.picker.dialog.AbstractElementPickerContentProvider;
 import org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.model.TestConfigurationElementFactory;
 
-
+/**
+ * PropertyListCloneElementPickerContentProvider
+ * 
+ * @author Markus Jorroch, PRODYNA AG
+ */
 public class PropertyListCloneElementPickerContentProvider extends AbstractElementPickerContentProvider {
 
     public PropertyListCloneElementPickerContentProvider() {
@@ -27,7 +32,7 @@ public class PropertyListCloneElementPickerContentProvider extends AbstractEleme
 
     @Override
     public Object[] getElements(Object arg0) {
-        return TestConfigurationElementFactory.getAllExistingPropertyLists();
+        return TestConfigurationElementFactory.getAllExistingPropertyLists(Activator.getDefault().getModel().getSecurityModel().getSubject().getOwner());
     }
 
 }

@@ -16,12 +16,17 @@
 */
 package org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.model.contextmenu;
 
+import org.nabucco.framework.plugin.base.Activator;
 import org.nabucco.framework.plugin.base.component.picker.dialog.AbstractElementPickerContentProvider;
+import org.nabucco.framework.plugin.base.model.NabuccoModel;
 import org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.model.TestConfigurationElementFactory;
-
-import org.nabucco.testautomation.facade.datatype.property.PropertyList;
 import org.nabucco.testautomation.facade.datatype.property.base.Property;
 
+/**
+ * PropertyListSelectElementPickerContentProvider
+ * 
+ * @author Markus Jorroch, PRODYNA AG
+ */
 public class PropertyListSelectElementPickerContentProvider extends AbstractElementPickerContentProvider {
 
     public PropertyListSelectElementPickerContentProvider() {
@@ -29,12 +34,7 @@ public class PropertyListSelectElementPickerContentProvider extends AbstractElem
 
     @Override
     public Object[] getElements(Object arg0) {
-        Property[] allExistingPropertyLists = TestConfigurationElementFactory.getAllExistingPropertyLists();
-        for (Property property : allExistingPropertyLists) {
-			if(property instanceof PropertyList){
-				((PropertyList) property).setReused(true);
-			}
-		}
+        Property[] allExistingPropertyLists = TestConfigurationElementFactory.getAllExistingPropertyLists(Activator.getDefault().getModel().getSecurityModel().getSubject().getOwner());
 		return allExistingPropertyLists;
     }
 

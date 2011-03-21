@@ -19,6 +19,7 @@ package org.nabucco.testautomation.config.ui.rcp.edit.config.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.nabucco.framework.base.facade.datatype.Flag;
 import org.nabucco.framework.base.facade.datatype.Identifier;
 import org.nabucco.framework.base.facade.exception.client.ClientException;
 import org.nabucco.framework.plugin.base.Activator;
@@ -33,6 +34,7 @@ import org.nabucco.testautomation.config.facade.message.TestConfigurationMsg;
 import org.nabucco.testautomation.config.facade.message.TestConfigurationSearchMsg;
 import org.nabucco.testautomation.config.ui.rcp.communication.ConfigComponentServiceDelegateFactory;
 import org.nabucco.testautomation.config.ui.rcp.communication.maintain.MaintainTestConfigurationDelegate;
+import org.nabucco.testautomation.config.ui.rcp.communication.produce.ProduceTestConfigurationDelegate;
 import org.nabucco.testautomation.config.ui.rcp.communication.search.SearchTestConfigElementDelegate;
 import org.nabucco.testautomation.config.ui.rcp.communication.search.SearchTestConfigurationDelegate;
 
@@ -160,13 +162,36 @@ public class TestConfigurationEditViewBusinessModel implements BusinessModel, Lo
 		SearchSchemaConfigDelegate searchSchemaConfigDelegate;
 		try {
 			searchSchemaConfigDelegate = schemaComponentServiceDelegateFactory.getSearchSchemaConfig();
-			SchemaConfigListMsg response = searchSchemaConfigDelegate.searchSchemaConfig(new SchemaConfigSearchMsg());
+			SchemaConfigSearchMsg rq = new SchemaConfigSearchMsg();
+			rq.setOwner(Activator.getDefault().getModel().getSecurityModel().getSubject().getOwner());
+			SchemaConfigListMsg response = searchSchemaConfigDelegate.searchSchemaConfig(rq);
 			List<SchemaConfig> resultList = response.getSchemaConfigList();
 			return resultList;
 		} catch (ClientException e) {
 			Activator.getDefault().logError(e);
 		}
 		return new ArrayList<SchemaConfig>();
+	}
+
+	public TestConfiguration importDatatype(TestConfiguration testConfiguration) {
+		try {
+			ConfigComponentServiceDelegateFactory configComponentServiceDelegateFactory = ConfigComponentServiceDelegateFactory
+			.getInstance();
+			ProduceTestConfigurationDelegate produceTestConfigurationDelegate = configComponentServiceDelegateFactory
+			.getProduceTestConfiguration();
+
+			TestConfigurationMsg rq = new TestConfigurationMsg();
+			rq.setTestConfiguration(testConfiguration);
+			rq.setImportConfig(new Flag(Boolean.TRUE));
+			TestConfigurationMsg response = produceTestConfigurationDelegate
+			.produceTestConfigurationClone(rq);
+			if (response != null && response.getTestConfiguration() != null) {
+				return response.getTestConfiguration();
+			}
+		} catch (ClientException e) {
+			Activator.getDefault().logError(e);
+		}
+		return testConfiguration;
 	}
 
 }

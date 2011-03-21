@@ -23,7 +23,11 @@ import org.nabucco.testautomation.config.facade.message.engine.TestExecutionMsg;
 import org.nabucco.testautomation.config.ui.rcp.communication.ConfigComponentServiceDelegateFactory;
 import org.nabucco.testautomation.config.ui.rcp.communication.engine.TestEngineServiceDelegate;
 
-
+/**
+ * ExecuteTestConfigurationAction
+ * 
+ * @author Markus Jorroch, PRODYNA AG
+ */
 public class ExecuteTestConfigurationAction {
 
     private TestConfiguration testConfiguration;

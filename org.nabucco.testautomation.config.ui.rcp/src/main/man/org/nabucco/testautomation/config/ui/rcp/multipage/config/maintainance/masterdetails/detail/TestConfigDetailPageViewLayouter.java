@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.nabucco.framework.base.facade.datatype.Datatype;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoProperty;
 import org.nabucco.framework.plugin.base.Activator;
 import org.nabucco.framework.plugin.base.component.multipage.masterdetail.detail.widget.BaseTypeWidgetFactory;
 import org.nabucco.framework.plugin.base.component.multipage.masterdetail.detail.widget.enumeration.EnumerationWidgetCreator;
@@ -49,7 +50,7 @@ import org.nabucco.testautomation.ui.rcp.multipage.detail.TestautomationDetailPa
  * @authors Nicolas Moser, Markus Jorroch, PRODYNA AG
  */
 public class TestConfigDetailPageViewLayouter extends
-TestautomationDetailPageViewLayouter {
+		TestautomationDetailPageViewLayouter {
 
 	/** Name of the TestScript property in TestConfigElement. */
 	private static final String PROPERTY_SCRIPT_LIST = "testScriptList";
@@ -77,13 +78,13 @@ TestautomationDetailPageViewLayouter {
 	@Override
 	protected Control layoutElement(Composite parent,
 			BaseTypeWidgetFactory widgetFactory, Datatype datatype,
-			String masterBlockId, Object property, String propertyName,
+			String masterBlockId, NabuccoProperty property,
 			GridData data, boolean readOnly, ViewModel externalViewModel,
 			NabuccoMessageManager messageManager) {
 
-
-
 		// Validate property name
+		String propertyName = property.getName();
+		
 		if (!propertyName.equalsIgnoreCase(PROPERTY_SCRIPT_LIST)
 				&& !propertyName
 				.equalsIgnoreCase(PROPERTY_ATTRIBUTE_VALUE_LIST)
@@ -91,7 +92,7 @@ TestautomationDetailPageViewLayouter {
 				&& !propertyName.equalsIgnoreCase(PROPERTY_SKIP)
 				&& !propertyName.equalsIgnoreCase(PROPERTY_EXECUTION_TYPE)) {
 			super.layoutElement(parent, widgetFactory, datatype, masterBlockId,
-					property, propertyName, data, readOnly, externalViewModel,
+					property, data, readOnly, externalViewModel,
 					messageManager);
 			return null;
 		}
@@ -103,40 +104,43 @@ TestautomationDetailPageViewLayouter {
 
 		TestConfigElement configElement = (TestConfigElement) datatype;
 		SchemaElement schemaElement = configElement.getSchemaElement();
+		
 		if (schemaElement == null) {
 			return null;
 		}
+		
 		if (propertyName.equalsIgnoreCase(PROPERTY_SKIP)) {
+			
 			if (schemaElement.getSkipable() != null && schemaElement.getSkipable().getValue() != null && schemaElement.getSkipable().getValue()) {
 				return super.layoutElement(parent, widgetFactory, datatype, masterBlockId,
-						property, propertyName, data, false, externalViewModel,
+						property, data, false, externalViewModel,
 						messageManager);
 			} else {
 				return super.layoutElement(parent, widgetFactory, datatype, masterBlockId,
-						property, propertyName, data, true, externalViewModel,
+						property, data, true, externalViewModel,
 						messageManager);
 			}
 		}
+		
 		if (propertyName.equalsIgnoreCase(PROPERTY_SCRIPT_LIST)) {
+			
 			if (schemaElement.getScriptsAllowed() == null) {
 				return null;
 			}
+			
 			switch (schemaElement.getScriptsAllowed()) {
 			case ONE:
-				return this.layoutSciptTable(parent, widgetFactory, datatype,
-						masterBlockId, property, propertyName, data, readOnly,
-						externalViewModel, messageManager);
-
 			case MANY:
 				return this.layoutSciptTable(parent, widgetFactory, datatype,
-						masterBlockId, property, propertyName, data, readOnly,
+						masterBlockId, property, data, readOnly,
 						externalViewModel, messageManager);
 			}
 		} else if (propertyName.equalsIgnoreCase(PROPERTY_DEPENDENCY_LIST)) {
+			
 			if (schemaElement.getHasDependencies().getValue()
 					&& !schemaElement.getDefaultDependency().getValue()) {
 				return this.layoutDependencyTable(parent, widgetFactory,
-						datatype, masterBlockId, property, propertyName, data,
+						datatype, masterBlockId, property, data,
 						readOnly, externalViewModel, messageManager);
 			} else {
 				return null;
@@ -147,7 +151,7 @@ TestautomationDetailPageViewLayouter {
 					externalViewModel, messageManager);
 		} else if(propertyName.equalsIgnoreCase(PROPERTY_EXECUTION_TYPE)) {
 			return this.layoutExecutionType(parent, widgetFactory, datatype,
-					masterBlockId, property, propertyName, data, readOnly,
+					masterBlockId, property, data, readOnly,
 					externalViewModel, messageManager);
 		}
 		return null;
@@ -248,10 +252,11 @@ TestautomationDetailPageViewLayouter {
 	 */
 	private Control layoutExecutionType(Composite parent,
 			BaseTypeWidgetFactory widgetFactory, Datatype datatype,
-			String masterBlockId, Object property, String propertyName,
+			String masterBlockId, NabuccoProperty property,
 			GridData data, boolean readOnly, ViewModel externalViewModel,
 			NabuccoMessageManager messageManager) {
 
+		String propertyName = property.getName();
 		Control result = null;
 		TestConfigElement configElement = (TestConfigElement) datatype;
 
@@ -262,19 +267,18 @@ TestautomationDetailPageViewLayouter {
 
 		NabuccoFormToolkit nft = widgetFactory.getNabuccoFormToolKit();
 
-		
         String firstChar = propertyName.substring(0, 1).toUpperCase();
         String lastPart = propertyName.substring(1);
-
-        if (property == null) {
-            property = this.initializeBasetype(datatype, firstChar, lastPart);
+        
+        if (property.getInstance() == null) {
+            property = property.createProperty(this.initializeBasetype(datatype, firstChar, lastPart));
         }
 		
 		String setterName = PREFIX_SETTER + firstChar + lastPart;
         Method setter;
 		try {
 			setter = datatype.getClass().getMethod(setterName,
-			        new Class[] { property.getClass() });
+			        new Class[] { property.getType() });
 		
 		if(configElement.getSchemaElement() != null && configElement.getSchemaElement().getManualExecutionAllowed() != null
 				&& configElement.getSchemaElement().getManualExecutionAllowed().getValue() != null
@@ -331,9 +335,13 @@ TestautomationDetailPageViewLayouter {
 	 */
 	private Control layoutSciptTable(Composite parent,
 			BaseTypeWidgetFactory widgetFactory, Datatype datatype,
-			String masterBlockId, Object property, String propertyName,
+			String masterBlockId, NabuccoProperty property,
 			GridData data, boolean readOnly, ViewModel externalViewModel,
 			NabuccoMessageManager messageManager) {
+		
+		readOnly = !property.getConstraints().isEditable() || readOnly;
+		
+		String propertyName = property.getName();
 		String labelId = masterBlockId + "." + propertyName;
 
 		Label label = widgetFactory.createLabel(parent, labelId);
@@ -387,9 +395,11 @@ TestautomationDetailPageViewLayouter {
 	 */
 	private Control layoutDependencyTable(Composite parent,
 			BaseTypeWidgetFactory widgetFactory, Datatype datatype,
-			String masterBlockId, Object property, String propertyName,
+			String masterBlockId, NabuccoProperty property,
 			GridData data, boolean readOnly, ViewModel externalViewModel,
 			NabuccoMessageManager messageManager) {
+		
+		String propertyName = property.getName();
 		String labelId = masterBlockId + "." + propertyName;
 
 		Label label = widgetFactory.createLabel(parent, labelId);

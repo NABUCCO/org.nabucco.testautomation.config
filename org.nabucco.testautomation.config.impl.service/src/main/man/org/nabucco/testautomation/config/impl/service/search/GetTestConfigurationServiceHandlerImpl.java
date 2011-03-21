@@ -21,14 +21,16 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import org.nabucco.framework.base.facade.component.NabuccoInstance;
 import org.nabucco.framework.base.facade.datatype.DatatypeState;
 import org.nabucco.framework.base.facade.datatype.Flag;
+import org.nabucco.framework.base.facade.datatype.validation.constraint.element.ConstraintFactory;
+import org.nabucco.framework.base.facade.datatype.visitor.VisitorException;
 import org.nabucco.framework.base.facade.exception.service.SearchException;
-import org.nabucco.testautomation.config.facade.datatype.Dependency;
+import org.nabucco.framework.base.impl.service.maintain.PersistenceCleaner;
 import org.nabucco.testautomation.config.facade.datatype.TestConfigElement;
 import org.nabucco.testautomation.config.facade.datatype.TestConfigElementContainer;
 import org.nabucco.testautomation.config.facade.datatype.TestConfiguration;
-import org.nabucco.testautomation.config.facade.datatype.TestScriptContainer;
 import org.nabucco.testautomation.config.facade.datatype.comparator.TestConfigElementSorter;
 import org.nabucco.testautomation.config.facade.datatype.comparator.TestScriptSorter;
 import org.nabucco.testautomation.config.facade.message.TestConfigurationListMsg;
@@ -38,7 +40,6 @@ import org.nabucco.testautomation.config.impl.service.DynamicCodeSupport;
 import org.nabucco.testautomation.config.impl.service.PropertySupport;
 import org.nabucco.testautomation.config.impl.service.SchemaSupport;
 import org.nabucco.testautomation.config.impl.service.ScriptSupport;
-import org.nabucco.testautomation.schema.facade.datatype.SchemaElement;
 
 /**
  * GetTestConfigurationServiceHandlerImpl
@@ -88,6 +89,11 @@ public class GetTestConfigurationServiceHandlerImpl extends GetTestConfiguration
 		
 		// Detach Entity
     	this.getEntityManager().clear();
+    	try {
+			result.accept(new PersistenceCleaner());
+		} catch (VisitorException e) {
+			throw new SearchException(e);
+		}
     	
     	// Sort
     	elementSorter.sort(result.getTestConfigElementList());
@@ -96,7 +102,17 @@ public class GetTestConfigurationServiceHandlerImpl extends GetTestConfiguration
         	scriptSorter.sort(element.getTestScriptList());
 		}
         this.elementList.clear();
-    	
+		
+		// Check owner and set Editable-Constraint
+		if (!result.getOwner().equals(NabuccoInstance.getInstance().getOwner())) {
+			try {
+				result.addConstraint(ConstraintFactory.getInstance()
+						.createEditableConstraint(false), true);
+			} catch (VisitorException ex) {
+				throw new SearchException(ex);
+			}
+		}
+		
 		TestConfigurationListMsg rs = new TestConfigurationListMsg();
 		rs.getTestConfigList().add(result);
 		return rs;
@@ -163,11 +179,7 @@ public class GetTestConfigurationServiceHandlerImpl extends GetTestConfiguration
 		}
 		
 		// Load Dependencies
-		if (hasDependecies(element)) {
-			for (Dependency dependency : element.getDependencyList()) {
-				dependency.getElement().setDatatypeState(DatatypeState.PERSISTENT);
-			}
-		}
+		element.getDependencyList().size();
 		
 		// resolve TestScripts
 		if (hasTestScripts(element)) {
@@ -190,32 +202,7 @@ public class GetTestConfigurationServiceHandlerImpl extends GetTestConfiguration
 	}
 	
 	private boolean hasTestScripts(TestConfigElement element) {
-		
-		List<TestScriptContainer> testScriptList = element.getTestScriptList();
-		
-		for (TestScriptContainer container : testScriptList) {
-			container.setDatatypeState(DatatypeState.PERSISTENT);
-		}
-		return !testScriptList.isEmpty();
-	}
-	
-	private boolean hasDependecies(TestConfigElement element) {
-
-		SchemaElement schemaElement = element.getSchemaElement();
-
-		if (schemaElement != null && schemaElement.getHasDependencies() != null
-				&& schemaElement.getHasDependencies().getValue().booleanValue()) {
-
-			if (schemaElement.getDefaultDependency() != null
-					&& schemaElement.getDefaultDependency().getValue() != null
-					&& !schemaElement.getDefaultDependency().getValue()
-							.booleanValue()) {
-				return true;
-			} else
-				return false;
-		} else {
-			return false;
-		}
+		return element.getTestScriptList().size() > 0;
 	}
 	
 }

@@ -29,8 +29,6 @@ import org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.wi
 
 import org.nabucco.testautomation.schema.facade.datatype.SchemaConfig;
 
-
-
 /**
  * CreateTestConfigurationWizard
  * 

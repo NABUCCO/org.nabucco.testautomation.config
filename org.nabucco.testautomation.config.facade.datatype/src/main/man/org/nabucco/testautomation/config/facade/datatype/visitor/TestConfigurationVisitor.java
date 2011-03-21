@@ -19,18 +19,20 @@ package org.nabucco.testautomation.config.facade.datatype.visitor;
 import org.nabucco.framework.base.facade.datatype.Datatype;
 import org.nabucco.framework.base.facade.datatype.visitor.DatatypeVisitor;
 import org.nabucco.framework.base.facade.datatype.visitor.VisitorException;
+import org.nabucco.testautomation.config.facade.datatype.Dependency;
 import org.nabucco.testautomation.config.facade.datatype.TestConfigElement;
 import org.nabucco.testautomation.config.facade.datatype.TestConfigElementContainer;
 import org.nabucco.testautomation.config.facade.datatype.TestConfiguration;
 import org.nabucco.testautomation.config.facade.datatype.TestScriptContainer;
+import org.nabucco.testautomation.config.facade.datatype.attribute.AttributeValue;
 
 import org.nabucco.testautomation.facade.datatype.property.base.Property;
 import org.nabucco.testautomation.facade.datatype.property.base.PropertyContainer;
 
 /**
- * TestConfigElementVisitor
+ * TestConfigurationVisitor
  * 
- * @author Nicolas Moser, PRODYNA AG
+ * @author Steffen Schmidt, PRODYNA AG
  */
 public class TestConfigurationVisitor extends DatatypeVisitor {
 
@@ -49,6 +51,10 @@ public class TestConfigurationVisitor extends DatatypeVisitor {
         	this.visit((PropertyContainer) datatype);
         } else if (datatype instanceof TestScriptContainer) {
         	this.visit((TestScriptContainer) datatype);
+        } else if (datatype instanceof AttributeValue) {
+        	this.visit((AttributeValue) datatype);
+        } else if (datatype instanceof Dependency) {
+        	this.visit((Dependency) datatype);
         }
         super.visit(datatype);
     }
@@ -105,6 +111,24 @@ public class TestConfigurationVisitor extends DatatypeVisitor {
      *            the element to visit
      */
     protected void visit(TestScriptContainer element) throws VisitorException {
+    }
+    
+    /**
+     * Visit {@link AttributeValue} instances.
+     * 
+     * @param element
+     *            the element to visit
+     */
+    protected void visit(AttributeValue element) throws VisitorException {
+    }
+    
+    /**
+     * Visit {@link Dependency} instances.
+     * 
+     * @param element
+     *            the element to visit
+     */
+    protected void visit(Dependency element) throws VisitorException {
     }
     
 }

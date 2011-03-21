@@ -36,6 +36,7 @@ import org.nabucco.framework.base.facade.datatype.DatatypeState;
 import org.nabucco.framework.base.facade.datatype.utils.I18N;
 import org.nabucco.framework.plugin.base.component.list.view.NabuccoTableColumnInfo;
 import org.nabucco.framework.plugin.base.component.list.view.NabuccoTableSorter;
+import org.nabucco.framework.plugin.base.component.multipage.masterdetail.MasterDetailHelper;
 import org.nabucco.framework.plugin.base.component.multipage.masterdetail.MasterDetailTreeNode;
 import org.nabucco.framework.plugin.base.component.multipage.masterdetail.master.contextmenu.CloneDatatypeMenuItem;
 import org.nabucco.framework.plugin.base.component.multipage.masterdetail.master.contextmenu.NewDatatypeMenuItem;
@@ -55,6 +56,7 @@ import org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.mo
 import org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.model.contextmenu.PropertyListSelectElementPickerContentProvider;
 import org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.model.contextmenu.TestConfigurationMaintainanceMultiplePageSelectCloneKeyColumnDialogLabelProvider;
 import org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.model.contextmenu.TestConfigurationMaintainanceMultiplePageSelectCloneNameColumnDialogLabelProvider;
+import org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.model.contextmenu.TestConfigurationMaintainanceMultiplePageSelectCloneOwnerColumnDialogLabelProvider;
 import org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.model.contextmenu.TestConfigurationMaintenanceMultiplePageEditViewCloner;
 import org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.model.listener.ExecuteSelectionListener;
 import org.nabucco.testautomation.facade.datatype.base.HierarchyLevelType;
@@ -72,6 +74,11 @@ import org.nabucco.testautomation.facade.datatype.property.base.PropertyContaine
 import org.nabucco.testautomation.schema.facade.datatype.SchemaConfig;
 import org.nabucco.testautomation.schema.facade.datatype.SchemaElement;
 
+/**
+ * DataModelManager
+ * 
+ * @author Markus Jorroch, PRODYNA AG
+ */
 public class DataModelManager {
 
 	private static final String NEW_DATATYPE = "New Configuration Element";
@@ -190,6 +197,10 @@ public class DataModelManager {
 		if (firstElement instanceof MasterDetailTreeNode) {
 			MasterDetailTreeNode treeNode = (MasterDetailTreeNode) firstElement;
 			Datatype datatype = treeNode.getDatatype();
+			
+			if(!MasterDetailHelper.isDatatypeEditable(MasterDetailHelper.getRootNode(treeNode).getDatatype())){
+				return null;
+			}
 
 			// Menu 'new'
 			Menu newElementMenu = createMenu(result, TestConfigurationMaintainanceMultiplePageEditViewModelHandlerImpl.ID + NEW_ELEMENT, "icons/add.png");
@@ -390,7 +401,10 @@ public class DataModelManager {
 						SWT.LEFT, new TestConfigurationMaintainanceMultiplePageSelectCloneKeyColumnDialogLabelProvider()),
 				new NabuccoTableColumnInfo("org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.model.selectclone.dialog.column.name.name",
 						"org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.model.selectclone.dialog.column.name.tooltip", 150, SWT.LEFT,
-						SWT.LEFT, new TestConfigurationMaintainanceMultiplePageSelectCloneNameColumnDialogLabelProvider()) };
+						SWT.LEFT, new TestConfigurationMaintainanceMultiplePageSelectCloneNameColumnDialogLabelProvider()),
+				new NabuccoTableColumnInfo("org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.model.selectclone.dialog.column.owner.name",
+						"org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.model.selectclone.dialog.column.owner.tooltip", 50, SWT.LEFT,
+						SWT.LEFT, new TestConfigurationMaintainanceMultiplePageSelectCloneOwnerColumnDialogLabelProvider())};
 		return result;
 	}
 

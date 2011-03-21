@@ -35,9 +35,12 @@ import org.nabucco.testautomation.config.facade.datatype.TestConfiguration;
 import org.nabucco.testautomation.config.ui.rcp.list.config.model.TestConfigListViewModel;
 import org.nabucco.testautomation.config.ui.rcp.list.config.view.TestConfigListViewTableFilter;
 import org.nabucco.testautomation.config.ui.rcp.list.config.view.TestConfigListViewWidgetFactory;
+import org.nabucco.testautomation.config.ui.rcp.list.config.view.comparator.TestConfigurationListViewOwnerComparator;
 import org.nabucco.testautomation.config.ui.rcp.list.config.view.comparator.TestConfigurationListViewTestConfigurationDescriptionComparator;
 import org.nabucco.testautomation.config.ui.rcp.list.config.view.comparator.TestConfigurationListViewTestConfigurationNameComparator;
+import org.nabucco.testautomation.config.ui.rcp.list.config.view.label.TestConfigurationListViewOwnerLabelProvider;
 import org.nabucco.testautomation.config.ui.rcp.list.config.view.label.TestConfigurationListViewTestConfigurationDescriptionLabelProvider;
+import org.nabucco.testautomation.config.ui.rcp.list.config.view.label.TestConfigurationListViewTestConfigurationKeyLabelProvider;
 import org.nabucco.testautomation.config.ui.rcp.list.config.view.label.TestConfigurationListViewTestConfigurationNameLabelProvider;
 
 
@@ -47,7 +50,15 @@ import org.nabucco.testautomation.config.ui.rcp.list.config.view.label.TestConfi
  */
 public class TestConfigListViewLayouter extends NabuccoAbstractListLayouter<TestConfigListViewModel> {
 
-    /**
+	private static final String OWNER_COLUMN_KEY = "org.nabucco.testautomation.config.ui.rcp.list.config.view.owner";
+	
+	private static final String DESCRIPTION_COLUMN_KEY = "org.nabucco.testautomation.config.ui.rcp.list.config.view.description";
+	
+	private static final String NAME_COLUMN_KEY = "org.nabucco.testautomation.config.ui.rcp.list.config.view.name";
+	
+	private static final String KEY_COLUMN_KEY = "org.nabucco.testautomation.config.ui.rcp.list.config.view.key";
+
+	/**
      * Layouts the table
      **/
     @Override
@@ -71,6 +82,7 @@ public class TestConfigListViewLayouter extends NabuccoAbstractListLayouter<Test
         List<Comparator<TestConfiguration>> comparators = new ArrayList<Comparator<TestConfiguration>>();
         comparators.add(new TestConfigurationListViewTestConfigurationNameComparator());
         comparators.add(new TestConfigurationListViewTestConfigurationDescriptionComparator());
+        comparators.add(new TestConfigurationListViewOwnerComparator());
 
         return comparators;
     }
@@ -82,12 +94,22 @@ public class TestConfigListViewLayouter extends NabuccoAbstractListLayouter<Test
      */
     private NabuccoTableColumnInfo[] createTableColumnInfo() {
         NabuccoTableColumnInfo[] result = {
-                new NabuccoTableColumnInfo("name", "This is a TestConfig name.", 200, SWT.CENTER,
+        		new NabuccoTableColumnInfo(KEY_COLUMN_KEY,
+        				KEY_COLUMN_KEY, 150, SWT.LEFT,
+        				SWT.CENTER,
+        				new TestConfigurationListViewTestConfigurationKeyLabelProvider()),
+                new NabuccoTableColumnInfo(NAME_COLUMN_KEY,
+                		NAME_COLUMN_KEY, 400, SWT.LEFT,
                         SWT.CENTER,
                         new TestConfigurationListViewTestConfigurationNameLabelProvider()),
-                new NabuccoTableColumnInfo("Description", "This is a TestConfig description", 300,
+                new NabuccoTableColumnInfo(DESCRIPTION_COLUMN_KEY,
+                		DESCRIPTION_COLUMN_KEY, 400,
                         SWT.LEFT, SWT.LEFT,
-                        new TestConfigurationListViewTestConfigurationDescriptionLabelProvider()) };
+                        new TestConfigurationListViewTestConfigurationDescriptionLabelProvider()),
+                new NabuccoTableColumnInfo(OWNER_COLUMN_KEY,
+                		OWNER_COLUMN_KEY, 150,
+                        SWT.LEFT, SWT.LEFT,
+                        new TestConfigurationListViewOwnerLabelProvider())};
 
         return result;
     }

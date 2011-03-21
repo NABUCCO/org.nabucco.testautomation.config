@@ -36,9 +36,13 @@ import org.nabucco.testautomation.facade.datatype.property.base.PropertyType;
 import org.nabucco.testautomation.facade.message.ProducePropertyMsg;
 import org.nabucco.testautomation.schema.facade.datatype.SchemaConfig;
 import org.nabucco.testautomation.schema.facade.datatype.SchemaElement;
-import org.nabucco.testautomation.script.facade.datatype.dictionary.base.TestScriptElement;
 import org.nabucco.testautomation.ui.rcp.communication.TestautomationComponentServiceDelegateFactory;
 
+/**
+ * TestConfigurationDragAndDropHandler
+ * 
+ * @author Markus Jorroch, PRODYNA AG
+ */
 public class TestConfigurationDragAndDropHandler extends AbstractDragAndDropHandler implements
 org.nabucco.framework.plugin.base.component.multipage.masterdetail.master.draganddrop.DragAndDropHandler {
 
@@ -46,6 +50,10 @@ org.nabucco.framework.plugin.base.component.multipage.masterdetail.master.dragan
 	public boolean validateDrop(MasterDetailTreeNode data,
 			MasterDetailTreeNode target, int location) {
 
+		if(!super.validateDrop(data, target, location)){
+			return false;
+		}
+		
 		// Movement to same node instance makes no sense
 		Datatype targetDatatype = target.getDatatype();
 		Datatype movedDatatype = data.getDatatype();
@@ -94,7 +102,7 @@ org.nabucco.framework.plugin.base.component.multipage.masterdetail.master.dragan
 						}
 					}
 				} else if(movedDatatype instanceof PropertyList){
-					// No before/after inserts for PropertyLists allowed if target parent is a TesScriptElement
+					// No before/after inserts for PropertyLists allowed if target parent is a TesConfigElement
 					return false;
 				}
 				return false;
@@ -138,49 +146,6 @@ org.nabucco.framework.plugin.base.component.multipage.masterdetail.master.dragan
 		return false;
 	}
 
-	
-	
-	private boolean checkSchema(MasterDetailTreeNode parent, MasterDetailTreeNode data) {
-		if(parent.getDatatype() instanceof TestConfiguration){
-			if(data.getDatatype() instanceof TestConfigElement){
-				TestConfigElement element = (TestConfigElement) data.getDatatype();
-				TestConfiguration testConfiguration = (TestConfiguration) parent.getDatatype();
-				SchemaConfig schemaConfig = testConfiguration.getSchemaConfig();
-				SchemaElement schemaElement = element.getSchemaElement();
-				if(schemaConfig.getSchemaElementList().contains(schemaElement)){
-					return true;
-				}
-			}
-		} else if(parent.getDatatype() instanceof TestConfigElement){
-			TestConfigElement parentElement = (TestConfigElement) parent.getDatatype();
-			if(data.getDatatype() instanceof TestConfigElement){
-				TestConfigElement element = (TestConfigElement) data.getDatatype();
-				SchemaElement parentSchemaElement = parentElement.getSchemaElement();
-				SchemaElement schemaElement = element.getSchemaElement();
-				if(parentSchemaElement.getSchemaElementList().contains(schemaElement)){
-					return true;
-				}
-			} else if(data.getDatatype() instanceof PropertyList){
-				return (parentElement.getSchemaElement().getPropertyContainer() != null && parentElement.getSchemaElement().getPropertyContainer().getValue() != null
-						&& parentElement.getSchemaElement().getPropertyContainer().getValue());
-			}
-		}
-		return false;
-	}
-
-	
-	private boolean verifyHierarchy(MasterDetailTreeNode nodeToMove,
-			MasterDetailTreeNode targetNode) {
-
-		while(targetNode.getParent() != null){
-			targetNode = targetNode.getParent();
-			if(targetNode == nodeToMove){
-				return false;
-			}
-		}
-		return true;
-	}
-
 	@Override
 	public boolean postDrop(MasterDetailTreeNode movedNode, MasterDetailTreeNode targetNode, int location) {
 		// Perform changes in data model
@@ -222,7 +187,7 @@ org.nabucco.framework.plugin.base.component.multipage.masterdetail.master.dragan
 						targetTestConfiguration.setDatatypeState(DatatypeState.MODIFIED);
 					}
 				} else if(movedDatatype instanceof PropertyList){
-					// No before/after inserts for PropertyLists allowed if target parent is a TesScriptElement
+					// No before/after inserts for PropertyLists allowed if target parent is a TesConfigElement
 					return false;
 				}
 			} else if(targetParentDatatype instanceof TestConfigElement){
@@ -260,7 +225,7 @@ org.nabucco.framework.plugin.base.component.multipage.masterdetail.master.dragan
 						targetParentTestConfigElement.setDatatypeState(DatatypeState.MODIFIED);
 					}
 				} else if(movedDatatype instanceof PropertyList){
-					// No before/after inserts for PropertyLists allowed if target parent is a TesScriptElement
+					// No before/after inserts for PropertyLists allowed if target parent is a TesConfigElement
 					return false;
 				}
 			} else if(targetParentDatatype instanceof PropertyList){
@@ -354,7 +319,7 @@ org.nabucco.framework.plugin.base.component.multipage.masterdetail.master.dragan
 				int indexOfMovedNodeInOldParent = movedNode.getParent().getChildren().indexOf(movedNode);
 				PropertyContainer propertyContainer; 
 
-				if(movedNode.getParent().getDatatype() instanceof TestScriptElement){
+				if(movedNode.getParent().getDatatype() instanceof TestConfigElement){
 					ProducePropertyMsg rq = new ProducePropertyMsg();
 					rq.setPropertyType(PropertyType.LIST);
 					try {
@@ -368,6 +333,7 @@ org.nabucco.framework.plugin.base.component.multipage.masterdetail.master.dragan
 					propertyContainer = ((PropertyList) movedNode.getParent().getDatatype()).getPropertyList().get(indexOfMovedNodeInOldParent);
 				}
 				targetPropertyList.getPropertyList().add(propertyContainer);
+				org.nabucco.testautomation.ui.rcp.model.property.DataModelManager.normalizeOrderIndicies(targetPropertyList, false);
 				if(targetPropertyList.getDatatypeState() == DatatypeState.PERSISTENT){
 					targetPropertyList.setDatatypeState(DatatypeState.MODIFIED);
 				}
@@ -450,7 +416,7 @@ org.nabucco.framework.plugin.base.component.multipage.masterdetail.master.dragan
 			}
 			return;
 		}
-		Activator.getDefault().logDebug("Fatal Error. Parent node of dragged Element is no TestScriptElement or PropertyList!");
+		Activator.getDefault().logDebug("Fatal Error. Parent node of dragged Element is no TestConfigElement or PropertyList!");
 	}
 
 	@Override
@@ -469,7 +435,7 @@ org.nabucco.framework.plugin.base.component.multipage.masterdetail.master.dragan
 		} else if(location == 3){ 
 			newNode = new MasterDetailTreeNode(movedNode.getDatatype(), targetNode);
 			newNode.setViewModel(targetNode.getViewModel());
-			if(movedNode.getDatatype() instanceof PropertyList){
+			if(movedNode.getDatatype() instanceof PropertyList && (!(targetNode.getParent().getDatatype() instanceof PropertyContainer))){
 				targetNode.getChildren().add(0, newNode);
 			} else {
 				targetNode.getChildren().add(newNode);
@@ -495,5 +461,44 @@ org.nabucco.framework.plugin.base.component.multipage.masterdetail.master.dragan
 		return false;
 	}
 
+	private boolean checkSchema(MasterDetailTreeNode parent, MasterDetailTreeNode data) {
+		if(parent.getDatatype() instanceof TestConfiguration){
+			if(data.getDatatype() instanceof TestConfigElement){
+				TestConfigElement element = (TestConfigElement) data.getDatatype();
+				TestConfiguration testConfiguration = (TestConfiguration) parent.getDatatype();
+				SchemaConfig schemaConfig = testConfiguration.getSchemaConfig();
+				SchemaElement schemaElement = element.getSchemaElement();
+				if(schemaConfig.getSchemaElementList().contains(schemaElement)){
+					return true;
+				}
+			}
+		} else if(parent.getDatatype() instanceof TestConfigElement){
+			TestConfigElement parentElement = (TestConfigElement) parent.getDatatype();
+			if(data.getDatatype() instanceof TestConfigElement){
+				TestConfigElement element = (TestConfigElement) data.getDatatype();
+				SchemaElement parentSchemaElement = parentElement.getSchemaElement();
+				SchemaElement schemaElement = element.getSchemaElement();
+				if(parentSchemaElement.getSchemaElementList().contains(schemaElement)){
+					return true;
+				}
+			} else if(data.getDatatype() instanceof PropertyList){
+				return (parentElement.getSchemaElement().getPropertyContainer() != null && parentElement.getSchemaElement().getPropertyContainer().getValue() != null
+						&& parentElement.getSchemaElement().getPropertyContainer().getValue());
+			}
+		}
+		return false;
+	}
+
+	private boolean verifyHierarchy(MasterDetailTreeNode nodeToMove,
+			MasterDetailTreeNode targetNode) {
+
+		while(targetNode.getParent() != null){
+			targetNode = targetNode.getParent();
+			if(targetNode == nodeToMove){
+				return false;
+			}
+		}
+		return true;
+	}
 
 }

@@ -21,6 +21,11 @@ import java.util.List;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+/**
+ * SchemaSelectionTablContentProvider
+ * 
+ * @author Markus Jorroch, PRODYNA AG
+ */
 public class SchemaSelectionTablContentProvider implements IStructuredContentProvider{
 
 	@Override

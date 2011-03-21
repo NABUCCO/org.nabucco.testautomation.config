@@ -71,8 +71,8 @@ public class DependencyTableKeyColumnLabelProvider implements ILabelProvider {
      */
 	private String labelTestConfigElement(TestConfigElement configElement) {
 		if (configElement.getName() != null
-				&& configElement.getElementKey().getValue() != null) {
-			return configElement.getElementKey().getValue();
+				&& configElement.getIdentificationKey().getValue() != null) {
+			return configElement.getIdentificationKey().getValue();
 		}
 		return "";
 	}

@@ -3,7 +3,7 @@
  */
 package org.nabucco.testautomation.config.ui.web.communication.produce;
 
-import org.nabucco.framework.base.facade.datatype.security.Subject;
+import org.nabucco.framework.base.facade.datatype.session.NabuccoSession;
 import org.nabucco.framework.base.facade.exception.service.ProduceException;
 import org.nabucco.framework.base.facade.message.ServiceRequest;
 import org.nabucco.framework.base.facade.message.ServiceResponse;
@@ -35,36 +35,15 @@ public class ProduceDependencyDelegate extends ServiceDelegateSupport {
     /**
      * ProduceDependency.
      *
+     * @param session the NabuccoSession.
      * @param rq the TestConfigElementMsg.
      * @return the DependencyMsg.
      * @throws ProduceException
      */
-    public DependencyMsg produceDependency(TestConfigElementMsg rq) throws ProduceException {
-        ServiceRequest<TestConfigElementMsg> request = new ServiceRequest<TestConfigElementMsg>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<DependencyMsg> rs;
-        if ((service != null)) {
-            rs = service.produceDependency(request);
-        } else {
-            throw new ProduceException(
-                    "Cannot execute service operation: ProduceDependency.produceDependency");
-        }
-        return rs.getResponseMessage();
-    }
-
-    /**
-     * ProduceDependency.
-     *
-     * @param subject the Subject.
-     * @param rq the TestConfigElementMsg.
-     * @return the DependencyMsg.
-     * @throws ProduceException
-     */
-    public DependencyMsg produceDependency(TestConfigElementMsg rq, Subject subject)
+    public DependencyMsg produceDependency(TestConfigElementMsg rq, NabuccoSession session)
             throws ProduceException {
         ServiceRequest<TestConfigElementMsg> request = new ServiceRequest<TestConfigElementMsg>(
-                super.createServiceContext(subject));
+                super.createServiceContext(session));
         request.setRequestMessage(rq);
         ServiceResponse<DependencyMsg> rs;
         if ((service != null)) {

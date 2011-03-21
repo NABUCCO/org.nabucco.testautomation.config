@@ -59,8 +59,6 @@ public class ManualTestWizardPage2 extends WizardPage {
 		this.manualTestResult = manualTestResult;
 	}
 
-
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -73,7 +71,7 @@ public class ManualTestWizardPage2 extends WizardPage {
 
 		// Name 
 		Label label = new Label(plate, SWT.NULL);
-		label.setText(I18N.i18n(ID + ".name"));
+		label.setText("  " + I18N.i18n(ID + ".name") + "  ");
 		
 		final Text nameText = new Text(plate, SWT.BORDER);
 		nameText.setText(this.manualTestResult.getName().getValue());
@@ -85,6 +83,10 @@ public class ManualTestWizardPage2 extends WizardPage {
 				
 			}
 		});
+		GridData nameData = new GridData();
+		nameData.grabExcessHorizontalSpace = true;
+		nameData.horizontalAlignment = SWT.FILL;
+		nameText.setLayoutData(nameData);
 		
 		// Place holder for free space
 		Composite placeholderComposite = new Composite(plate, SWT.NULL);
@@ -95,7 +97,13 @@ public class ManualTestWizardPage2 extends WizardPage {
 		// Result Selection
 		Group radioGroup = new Group(plate, SWT.SHADOW_IN);
 		radioGroup.setText(I18N.i18n(ID + ".result"));
-	    radioGroup.setLayout(new RowLayout(SWT.HORIZONTAL));
+	    RowLayout rowLayout = new RowLayout(SWT.HORIZONTAL);
+	    rowLayout.marginTop = 10;
+	    rowLayout.marginBottom = 10;
+	    rowLayout.marginLeft = 10;
+	    rowLayout.marginRight = 10;
+	    rowLayout.spacing = 10;
+		radioGroup.setLayout(rowLayout);
 	    GridData radioGroupLayoutData = new GridData();
 	    radioGroupLayoutData.horizontalSpan = 2;
 	    radioGroup.setLayoutData(radioGroupLayoutData);

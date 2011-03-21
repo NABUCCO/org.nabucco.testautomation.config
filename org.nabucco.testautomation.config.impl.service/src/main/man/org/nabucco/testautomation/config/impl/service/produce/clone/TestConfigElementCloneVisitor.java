@@ -16,15 +16,25 @@
 */
 package org.nabucco.testautomation.config.impl.service.produce.clone;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.nabucco.framework.base.facade.component.NabuccoInstance;
 import org.nabucco.framework.base.facade.datatype.Datatype;
 import org.nabucco.framework.base.facade.datatype.DatatypeState;
+import org.nabucco.framework.base.facade.datatype.Identifier;
 import org.nabucco.framework.base.facade.datatype.Key;
 import org.nabucco.framework.base.facade.datatype.NabuccoDatatype;
+import org.nabucco.framework.base.facade.datatype.Version;
 import org.nabucco.framework.base.facade.datatype.visitor.VisitorException;
+import org.nabucco.testautomation.config.facade.datatype.Dependency;
 import org.nabucco.testautomation.config.facade.datatype.TestConfigElement;
 import org.nabucco.testautomation.config.facade.datatype.TestConfigElementContainer;
+import org.nabucco.testautomation.config.facade.datatype.TestConfiguration;
 import org.nabucco.testautomation.config.facade.datatype.TestScriptContainer;
+import org.nabucco.testautomation.config.facade.datatype.attribute.AttributeValue;
 import org.nabucco.testautomation.config.facade.datatype.visitor.TestConfigurationVisitor;
+import org.nabucco.testautomation.facade.datatype.base.ExportDatatype;
 import org.nabucco.testautomation.facade.datatype.property.base.Property;
 import org.nabucco.testautomation.facade.datatype.property.base.PropertyContainer;
 
@@ -35,21 +45,23 @@ import org.nabucco.testautomation.facade.datatype.property.base.PropertyContaine
  */
 public class TestConfigElementCloneVisitor extends TestConfigurationVisitor {
 
-    @Override
-    public void visit(Datatype datatype) throws VisitorException {
-        super.visit(datatype);
-    }
-
+	private Map<Long, TestConfigElement> elementMap = new HashMap<Long, TestConfigElement>();
+	
     @Override
     protected void visit(TestConfigElement element) throws VisitorException {
         
     	if (element.getReused() != null && element.getReused().getValue()) {
     		return;
     	}
+    	elementMap.put(element.getId(), element);
     	resetDatatype(element);
         element.setSchemaElementRefId(element.getSchemaElement().getId());
         element.setReused(Boolean.FALSE);
-        element.setElementKey((Key) null);
+        super.visit(element);
+    }
+    
+    protected void visit(TestConfiguration element) throws VisitorException {
+        resetDatatype(element);
         super.visit(element);
     }
     
@@ -73,11 +85,47 @@ public class TestConfigElementCloneVisitor extends TestConfigurationVisitor {
         resetDatatype(testScript);
         super.visit(testScript);
     }
+    
+    protected void visit(AttributeValue attribute) throws VisitorException {
+    	resetDatatype(attribute);
+    	super.visit(attribute);
+    }
+
+    protected void visit(Dependency dependency) throws VisitorException {
+    	resetDatatype(dependency);
+    	TestConfigElement element = this.elementMap.get(dependency.getElement().getId());
+    	
+    	if (element != null) {
+    		dependency.setElement(element);
+    	}
+    	
+    	super.visit(dependency);
+    }
+    
+    @Override
+	public void visit(Datatype datatype) throws VisitorException {
+		
+		if (datatype instanceof Dependency) {
+			// Only visit Dependency and not the contained TestConfigElement
+            this.visit((Dependency) datatype);
+        } else if (datatype instanceof TestScriptContainer) {
+			// Only visit Dependency and not the contained TestConfigElement
+            this.visit((TestScriptContainer) datatype);
+        } else {
+        	super.visit(datatype);
+        }
+    }
 
     private void resetDatatype(NabuccoDatatype datatype) {
         datatype.setDatatypeState(DatatypeState.INITIALIZED);
-        datatype.setVersion(null);
-        datatype.setId(null);
+        datatype.setVersion((Version) null);
+        datatype.setId((Identifier) null);
+        
+        if (datatype instanceof ExportDatatype) {
+        	ExportDatatype exportDatatype = (ExportDatatype) datatype;
+			exportDatatype.setIdentificationKey(new Key());
+			exportDatatype.setOwner(NabuccoInstance.getInstance().getOwner());
+        }
     }
 
 }

@@ -3,7 +3,7 @@
  */
 package org.nabucco.testautomation.config.ui.web.communication.produce;
 
-import org.nabucco.framework.base.facade.datatype.security.Subject;
+import org.nabucco.framework.base.facade.datatype.session.NabuccoSession;
 import org.nabucco.framework.base.facade.exception.service.ProduceException;
 import org.nabucco.framework.base.facade.message.ServiceRequest;
 import org.nabucco.framework.base.facade.message.ServiceResponse;
@@ -34,37 +34,15 @@ public class ProduceTestScriptContainerDelegate extends ServiceDelegateSupport {
     /**
      * ProduceTestScriptContainer.
      *
-     * @param rq the ProduceTestScriptContainerMsg.
-     * @return the ProduceTestScriptContainerMsg.
-     * @throws ProduceException
-     */
-    public ProduceTestScriptContainerMsg produceTestScriptContainer(ProduceTestScriptContainerMsg rq)
-            throws ProduceException {
-        ServiceRequest<ProduceTestScriptContainerMsg> request = new ServiceRequest<ProduceTestScriptContainerMsg>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<ProduceTestScriptContainerMsg> rs;
-        if ((service != null)) {
-            rs = service.produceTestScriptContainer(request);
-        } else {
-            throw new ProduceException(
-                    "Cannot execute service operation: ProduceTestScriptContainer.produceTestScriptContainer");
-        }
-        return rs.getResponseMessage();
-    }
-
-    /**
-     * ProduceTestScriptContainer.
-     *
-     * @param subject the Subject.
+     * @param session the NabuccoSession.
      * @param rq the ProduceTestScriptContainerMsg.
      * @return the ProduceTestScriptContainerMsg.
      * @throws ProduceException
      */
     public ProduceTestScriptContainerMsg produceTestScriptContainer(
-            ProduceTestScriptContainerMsg rq, Subject subject) throws ProduceException {
+            ProduceTestScriptContainerMsg rq, NabuccoSession session) throws ProduceException {
         ServiceRequest<ProduceTestScriptContainerMsg> request = new ServiceRequest<ProduceTestScriptContainerMsg>(
-                super.createServiceContext(subject));
+                super.createServiceContext(session));
         request.setRequestMessage(rq);
         ServiceResponse<ProduceTestScriptContainerMsg> rs;
         if ((service != null)) {

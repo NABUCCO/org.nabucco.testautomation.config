@@ -26,6 +26,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.nabucco.framework.base.facade.datatype.code.Code;
 import org.nabucco.framework.base.facade.datatype.utils.I18N;
 import org.nabucco.framework.base.facade.datatype.visitor.VisitorException;
 import org.nabucco.framework.base.facade.exception.client.ClientException;
@@ -34,13 +35,12 @@ import org.nabucco.framework.plugin.base.Activator;
 import org.nabucco.framework.plugin.base.layout.ImageProvider;
 import org.nabucco.testautomation.config.facade.datatype.TestConfigElement;
 import org.nabucco.testautomation.config.facade.datatype.visitor.FindManualTestResultVisitor;
-import org.nabucco.testautomation.config.facade.message.TestConfigElementListMsg;
+import org.nabucco.testautomation.config.facade.message.TestConfigElementMsg;
 import org.nabucco.testautomation.config.facade.message.TestConfigElementSearchMsg;
 import org.nabucco.testautomation.config.facade.message.engine.ManualTestResultMsg;
 import org.nabucco.testautomation.config.ui.rcp.communication.ConfigComponentServiceDelegateFactory;
 import org.nabucco.testautomation.config.ui.rcp.communication.search.SearchTestConfigElementDelegate;
 import org.nabucco.testautomation.config.ui.rcp.images.ConfigImageRegistry;
-
 import org.nabucco.testautomation.facade.datatype.engine.TestEngineConfiguration;
 import org.nabucco.testautomation.facade.datatype.engine.TestExecutionInfo;
 import org.nabucco.testautomation.result.facade.datatype.TestConfigurationResult;
@@ -77,10 +77,16 @@ public class ManualTestWizard extends Wizard implements INewWizard {
 	private TestExecutionInfo info;
 
 	private ManualTestWizardPage4 manualTestWizardPage4;
+	
+	private Code environment;
+
+	private Code release;
 
 	public ManualTestWizard(TestConfigurationResult testConfigurationResult, TestEngineConfiguration configuration, TestExecutionInfo info){
 		this.configuration = configuration;
 		this.info = info;
+		this.environment = testConfigurationResult.getEnvironmentType();
+		this.release = testConfigurationResult.getReleaseType();
 		
 		FindManualTestResultVisitor visitor = new FindManualTestResultVisitor();
 		try {
@@ -111,7 +117,7 @@ public class ManualTestWizard extends Wizard implements INewWizard {
 	 */
 	@Override
 	public void addPages() {
-		manualTestWizardPage1 = new ManualTestWizardPage1(manualTestResult, testConfigElement);
+		manualTestWizardPage1 = new ManualTestWizardPage1(manualTestResult, testConfigElement, this.environment, this.release);
 		manualTestWizardPage1.setTitle(I18N.i18n(ID + ".ManualTestWizardPage1.title"));
 		manualTestWizardPage1.setDescription(I18N.i18n(ID + ".ManualTestWizardPage1.description"));
 		manualTestWizardPage1.setImageDescriptor(ImageProvider.createImageDescriptor(ConfigImageRegistry.ICON_INFO_64X64.getId()));
@@ -201,9 +207,9 @@ public class ManualTestWizard extends Wizard implements INewWizard {
 			searchTestConfigElement = ConfigComponentServiceDelegateFactory.getInstance().getSearchTestConfigElement();
 			TestConfigElementSearchMsg rq = new TestConfigElementSearchMsg();
 			rq.setId(this.manualTestResult.getTestConfigElementId());
-			TestConfigElementListMsg response;
-			response = searchTestConfigElement.searchTestConfigElement(rq);
-			return response.getTestConfigElementList().get(0);
+			TestConfigElementMsg response;
+			response = searchTestConfigElement.getTestConfigElement(rq);
+			return response.getTestConfigElement();
 		} catch (ClientException e) {
 			Activator.getDefault().logError(e);
 		}

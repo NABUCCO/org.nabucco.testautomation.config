@@ -3,13 +3,19 @@
  */
 package org.nabucco.testautomation.config.facade.message;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.nabucco.framework.base.facade.datatype.Description;
 import org.nabucco.framework.base.facade.datatype.Flag;
 import org.nabucco.framework.base.facade.datatype.Identifier;
 import org.nabucco.framework.base.facade.datatype.Name;
-import org.nabucco.framework.base.facade.datatype.property.BasetypeProperty;
+import org.nabucco.framework.base.facade.datatype.Owner;
 import org.nabucco.framework.base.facade.datatype.property.NabuccoProperty;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyContainer;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyDescriptor;
+import org.nabucco.framework.base.facade.datatype.property.PropertyCache;
+import org.nabucco.framework.base.facade.datatype.property.PropertyDescriptorSupport;
 import org.nabucco.framework.base.facade.message.ServiceMessage;
 import org.nabucco.framework.base.facade.message.ServiceMessageSupport;
 
@@ -23,10 +29,20 @@ public class TestConfigurationSearchMsg extends ServiceMessageSupport implements
 
     private static final long serialVersionUID = 1L;
 
-    private static final String[] PROPERTY_NAMES = { "id", "name", "description", "loadTestScripts" };
+    private static final String[] PROPERTY_CONSTRAINTS = { "l3,12;m0,1;", "l0,n;m0,1;",
+            "l0,255;m0,1;", "l0,255;m0,1;", "l0,n;m0,1;" };
 
-    private static final String[] PROPERTY_CONSTRAINTS = { "l0,n;m1,1;", "l0,n;m1,1;",
-            "l0,n;m1,1;", "l0,n;m1,1;" };
+    public static final String OWNER = "owner";
+
+    public static final String ID = "id";
+
+    public static final String NAME = "name";
+
+    public static final String DESCRIPTION = "description";
+
+    public static final String LOADTESTSCRIPTS = "loadTestScripts";
+
+    private Owner owner;
 
     private Identifier id;
 
@@ -41,18 +57,65 @@ public class TestConfigurationSearchMsg extends ServiceMessageSupport implements
         super();
     }
 
+    /**
+     * CreatePropertyContainer.
+     *
+     * @return the NabuccoPropertyContainer.
+     */
+    protected static NabuccoPropertyContainer createPropertyContainer() {
+        Map<String, NabuccoPropertyDescriptor> propertyMap = new HashMap<String, NabuccoPropertyDescriptor>();
+        propertyMap.put(OWNER, PropertyDescriptorSupport.createBasetype(OWNER, Owner.class, 0,
+                PROPERTY_CONSTRAINTS[0], false));
+        propertyMap.put(ID, PropertyDescriptorSupport.createBasetype(ID, Identifier.class, 1,
+                PROPERTY_CONSTRAINTS[1], false));
+        propertyMap.put(NAME, PropertyDescriptorSupport.createBasetype(NAME, Name.class, 2,
+                PROPERTY_CONSTRAINTS[2], false));
+        propertyMap.put(DESCRIPTION, PropertyDescriptorSupport.createBasetype(DESCRIPTION,
+                Description.class, 3, PROPERTY_CONSTRAINTS[3], false));
+        propertyMap.put(LOADTESTSCRIPTS, PropertyDescriptorSupport.createBasetype(LOADTESTSCRIPTS,
+                Flag.class, 4, PROPERTY_CONSTRAINTS[4], false));
+        return new NabuccoPropertyContainer(propertyMap);
+    }
+
     @Override
-    public List<NabuccoProperty<?>> getProperties() {
-        List<NabuccoProperty<?>> properties = super.getProperties();
-        properties.add(new BasetypeProperty<Identifier>(PROPERTY_NAMES[0], Identifier.class,
-                PROPERTY_CONSTRAINTS[0], this.id));
-        properties.add(new BasetypeProperty<Name>(PROPERTY_NAMES[1], Name.class,
-                PROPERTY_CONSTRAINTS[1], this.name));
-        properties.add(new BasetypeProperty<Description>(PROPERTY_NAMES[2], Description.class,
-                PROPERTY_CONSTRAINTS[2], this.description));
-        properties.add(new BasetypeProperty<Flag>(PROPERTY_NAMES[3], Flag.class,
-                PROPERTY_CONSTRAINTS[3], this.loadTestScripts));
+    public List<NabuccoProperty> getProperties() {
+        List<NabuccoProperty> properties = super.getProperties();
+        properties.add(super.createProperty(
+                TestConfigurationSearchMsg.getPropertyDescriptor(OWNER), this.owner));
+        properties.add(super.createProperty(TestConfigurationSearchMsg.getPropertyDescriptor(ID),
+                this.id));
+        properties.add(super.createProperty(TestConfigurationSearchMsg.getPropertyDescriptor(NAME),
+                this.name));
+        properties.add(super.createProperty(
+                TestConfigurationSearchMsg.getPropertyDescriptor(DESCRIPTION), this.description));
+        properties.add(super.createProperty(
+                TestConfigurationSearchMsg.getPropertyDescriptor(LOADTESTSCRIPTS),
+                this.loadTestScripts));
         return properties;
+    }
+
+    @Override
+    public boolean setProperty(NabuccoProperty property) {
+        if (super.setProperty(property)) {
+            return true;
+        }
+        if ((property.getName().equals(OWNER) && (property.getType() == Owner.class))) {
+            this.setOwner(((Owner) property.getInstance()));
+            return true;
+        } else if ((property.getName().equals(ID) && (property.getType() == Identifier.class))) {
+            this.setId(((Identifier) property.getInstance()));
+            return true;
+        } else if ((property.getName().equals(NAME) && (property.getType() == Name.class))) {
+            this.setName(((Name) property.getInstance()));
+            return true;
+        } else if ((property.getName().equals(DESCRIPTION) && (property.getType() == Description.class))) {
+            this.setDescription(((Description) property.getInstance()));
+            return true;
+        } else if ((property.getName().equals(LOADTESTSCRIPTS) && (property.getType() == Flag.class))) {
+            this.setLoadTestScripts(((Flag) property.getInstance()));
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -70,6 +133,11 @@ public class TestConfigurationSearchMsg extends ServiceMessageSupport implements
             return false;
         }
         final TestConfigurationSearchMsg other = ((TestConfigurationSearchMsg) obj);
+        if ((this.owner == null)) {
+            if ((other.owner != null))
+                return false;
+        } else if ((!this.owner.equals(other.owner)))
+            return false;
         if ((this.id == null)) {
             if ((other.id != null))
                 return false;
@@ -97,6 +165,7 @@ public class TestConfigurationSearchMsg extends ServiceMessageSupport implements
     public int hashCode() {
         final int PRIME = 31;
         int result = super.hashCode();
+        result = ((PRIME * result) + ((this.owner == null) ? 0 : this.owner.hashCode()));
         result = ((PRIME * result) + ((this.id == null) ? 0 : this.id.hashCode()));
         result = ((PRIME * result) + ((this.name == null) ? 0 : this.name.hashCode()));
         result = ((PRIME * result) + ((this.description == null) ? 0 : this.description.hashCode()));
@@ -106,21 +175,26 @@ public class TestConfigurationSearchMsg extends ServiceMessageSupport implements
     }
 
     @Override
-    public String toString() {
-        StringBuilder appendable = new StringBuilder();
-        appendable.append("<TestConfigurationSearchMsg>\n");
-        appendable.append(super.toString());
-        appendable.append((("<id>" + this.id) + "</id>\n"));
-        appendable.append((("<name>" + this.name) + "</name>\n"));
-        appendable.append((("<description>" + this.description) + "</description>\n"));
-        appendable.append((("<loadTestScripts>" + this.loadTestScripts) + "</loadTestScripts>\n"));
-        appendable.append("</TestConfigurationSearchMsg>\n");
-        return appendable.toString();
-    }
-
-    @Override
     public ServiceMessage cloneObject() {
         return this;
+    }
+
+    /**
+     * Missing description at method getOwner.
+     *
+     * @return the Owner.
+     */
+    public Owner getOwner() {
+        return this.owner;
+    }
+
+    /**
+     * Missing description at method setOwner.
+     *
+     * @param owner the Owner.
+     */
+    public void setOwner(Owner owner) {
+        this.owner = owner;
     }
 
     /**
@@ -193,5 +267,26 @@ public class TestConfigurationSearchMsg extends ServiceMessageSupport implements
      */
     public void setLoadTestScripts(Flag loadTestScripts) {
         this.loadTestScripts = loadTestScripts;
+    }
+
+    /**
+     * Getter for the PropertyDescriptor.
+     *
+     * @param propertyName the String.
+     * @return the NabuccoPropertyDescriptor.
+     */
+    public static NabuccoPropertyDescriptor getPropertyDescriptor(String propertyName) {
+        return PropertyCache.getInstance().retrieve(TestConfigurationSearchMsg.class)
+                .getProperty(propertyName);
+    }
+
+    /**
+     * Getter for the PropertyDescriptorList.
+     *
+     * @return the List<NabuccoPropertyDescriptor>.
+     */
+    public static List<NabuccoPropertyDescriptor> getPropertyDescriptorList() {
+        return PropertyCache.getInstance().retrieve(TestConfigurationSearchMsg.class)
+                .getAllProperties();
     }
 }

@@ -17,12 +17,16 @@
 package org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.model.contextmenu;
 
 import org.nabucco.framework.base.facade.datatype.Datatype;
+import org.nabucco.framework.plugin.base.Activator;
 import org.nabucco.framework.plugin.base.component.picker.dialog.AbstractElementPickerContentProvider;
-import org.nabucco.testautomation.config.facade.datatype.TestConfigElement;
 import org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.model.TestConfigurationElementFactory;
-
 import org.nabucco.testautomation.schema.facade.datatype.SchemaElement;
 
+/**
+ * ConfigElementSelectElementPickerContentProvider
+ * 
+ * @author Markus Jorroch, PRODYNA AG
+ */
 public class ConfigElementSelectElementPickerContentProvider extends
         AbstractElementPickerContentProvider {
 
@@ -34,12 +38,7 @@ public class ConfigElementSelectElementPickerContentProvider extends
 
     @Override
     public Object[] getElements(Object arg0) {
-        Datatype[] existingConfigElements = TestConfigurationElementFactory.getExistingConfigElements(schemaElement);
-        for (Datatype datatype : existingConfigElements) {
-			if(datatype instanceof TestConfigElement){
-				((TestConfigElement) datatype).setReused(true);
-			}
-		}
+        Datatype[] existingConfigElements = TestConfigurationElementFactory.getExistingConfigElements(schemaElement, Activator.getDefault().getModel().getSecurityModel().getSubject().getOwner());
 		return existingConfigElements;
     }
 

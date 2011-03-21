@@ -64,4 +64,36 @@ public class ProduceTestConfigurationDelegate extends ServiceDelegateSupport {
         throw new ClientException(
                 "Cannot execute service operation: ProduceTestConfiguration.produceTestConfiguration");
     }
+
+    /**
+     * ProduceTestConfigurationClone.
+     *
+     * @param rq the TestConfigurationMsg.
+     * @return the TestConfigurationMsg.
+     * @throws ClientException
+     */
+    public TestConfigurationMsg produceTestConfigurationClone(TestConfigurationMsg rq)
+            throws ClientException {
+        ServiceRequest<TestConfigurationMsg> request = new ServiceRequest<TestConfigurationMsg>(
+                super.createServiceContext());
+        request.setRequestMessage(rq);
+        ServiceResponse<TestConfigurationMsg> rs;
+        if ((service != null)) {
+            long start = System.currentTimeMillis();
+            try {
+                rs = service.produceTestConfigurationClone(request);
+                return rs.getResponseMessage();
+            } catch (Exception exception) {
+                super.processException(exception);
+            } finally {
+                long end = System.currentTimeMillis();
+                Activator.getDefault().logDebug(
+                        new NabuccoLogMessage(ProduceTestConfigurationDelegate.class, "Service: ",
+                                "ProduceTestConfiguration.produceTestConfigurationClone",
+                                " Time: ", String.valueOf((end - start)), "ms."));
+            }
+        }
+        throw new ClientException(
+                "Cannot execute service operation: ProduceTestConfiguration.produceTestConfigurationClone");
+    }
 }

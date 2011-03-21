@@ -50,6 +50,10 @@ public class SearchTestConfigurationServiceHandlerImpl extends SearchTestConfigu
 
 		List<String> filter = new ArrayList<String>();
 
+		if (msg.getOwner() != null && msg.getOwner().getValue() != null) {
+			filter.add("c.owner = :owner");
+		}
+
 		if (msg.getName() != null && msg.getName().getValue() != null) {
 			filter.add("c.name LIKE '" + msg.getName().getValue() + "%'");
 		}
@@ -77,6 +81,10 @@ public class SearchTestConfigurationServiceHandlerImpl extends SearchTestConfigu
 		Query query = super.getEntityManager().createQuery(
 				queryString.toString());
 		
+		if (msg.getOwner() != null && msg.getOwner().getValue() != null) {
+			query.setParameter("owner", msg.getOwner());
+		}
+
 		if (msg.getDescription() != null && msg.getDescription().getValue() != null) {
 			query.setParameter("description", QuerySupport.searchParameter(msg.getDescription()));
 		}

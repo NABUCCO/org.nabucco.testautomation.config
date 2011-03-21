@@ -3,11 +3,17 @@
  */
 package org.nabucco.testautomation.config.facade.datatype.attribute;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.nabucco.framework.base.facade.datatype.Datatype;
 import org.nabucco.framework.base.facade.datatype.NabuccoDatatype;
-import org.nabucco.framework.base.facade.datatype.property.DatatypeProperty;
 import org.nabucco.framework.base.facade.datatype.property.NabuccoProperty;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyContainer;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyDescriptor;
+import org.nabucco.framework.base.facade.datatype.property.PropertyAssociationType;
+import org.nabucco.framework.base.facade.datatype.property.PropertyCache;
+import org.nabucco.framework.base.facade.datatype.property.PropertyDescriptorSupport;
 import org.nabucco.testautomation.schema.facade.datatype.attribute.Attribute;
 
 /**
@@ -19,9 +25,9 @@ public abstract class AttributeValue extends NabuccoDatatype implements Datatype
 
     private static final long serialVersionUID = 1L;
 
-    private static final String[] PROPERTY_NAMES = { "attribute" };
-
     private static final String[] PROPERTY_CONSTRAINTS = { "m1,1;" };
+
+    public static final String ATTRIBUTE = "attribute";
 
     private Attribute attribute;
 
@@ -52,17 +58,44 @@ public abstract class AttributeValue extends NabuccoDatatype implements Datatype
         }
     }
 
+    /**
+     * CreatePropertyContainer.
+     *
+     * @return the NabuccoPropertyContainer.
+     */
+    protected static NabuccoPropertyContainer createPropertyContainer() {
+        Map<String, NabuccoPropertyDescriptor> propertyMap = new HashMap<String, NabuccoPropertyDescriptor>();
+        propertyMap.putAll(PropertyCache.getInstance().retrieve(NabuccoDatatype.class)
+                .getPropertyMap());
+        propertyMap.put(ATTRIBUTE, PropertyDescriptorSupport.createDatatype(ATTRIBUTE,
+                Attribute.class, 2, PROPERTY_CONSTRAINTS[0], false,
+                PropertyAssociationType.COMPONENT));
+        return new NabuccoPropertyContainer(propertyMap);
+    }
+
     @Override
     public void init() {
         this.initDefaults();
     }
 
     @Override
-    public List<NabuccoProperty<?>> getProperties() {
-        List<NabuccoProperty<?>> properties = super.getProperties();
-        properties.add(new DatatypeProperty<Attribute>(PROPERTY_NAMES[0], Attribute.class,
-                PROPERTY_CONSTRAINTS[0], this.attribute));
+    public List<NabuccoProperty> getProperties() {
+        List<NabuccoProperty> properties = super.getProperties();
+        properties.add(super.createProperty(AttributeValue.getPropertyDescriptor(ATTRIBUTE),
+                this.attribute, this.attributeRefId));
         return properties;
+    }
+
+    @Override
+    public boolean setProperty(NabuccoProperty property) {
+        if (super.setProperty(property)) {
+            return true;
+        }
+        if ((property.getName().equals(ATTRIBUTE) && (property.getType() == Attribute.class))) {
+            this.setAttribute(((Attribute) property.getInstance()));
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -101,17 +134,6 @@ public abstract class AttributeValue extends NabuccoDatatype implements Datatype
         result = ((PRIME * result) + ((this.attributeRefId == null) ? 0 : this.attributeRefId
                 .hashCode()));
         return result;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder appendable = new StringBuilder();
-        appendable.append("<AttributeValue>\n");
-        appendable.append(super.toString());
-        appendable.append((("<attribute>" + this.attribute) + "</attribute>\n"));
-        appendable.append((("<attributeRefId>" + this.attributeRefId) + "</attributeRefId>\n"));
-        appendable.append("</AttributeValue>\n");
-        return appendable.toString();
     }
 
     @Override
@@ -156,5 +178,24 @@ public abstract class AttributeValue extends NabuccoDatatype implements Datatype
      */
     public void setAttributeRefId(Long attributeRefId) {
         this.attributeRefId = attributeRefId;
+    }
+
+    /**
+     * Getter for the PropertyDescriptor.
+     *
+     * @param propertyName the String.
+     * @return the NabuccoPropertyDescriptor.
+     */
+    public static NabuccoPropertyDescriptor getPropertyDescriptor(String propertyName) {
+        return PropertyCache.getInstance().retrieve(AttributeValue.class).getProperty(propertyName);
+    }
+
+    /**
+     * Getter for the PropertyDescriptorList.
+     *
+     * @return the List<NabuccoPropertyDescriptor>.
+     */
+    public static List<NabuccoPropertyDescriptor> getPropertyDescriptorList() {
+        return PropertyCache.getInstance().retrieve(AttributeValue.class).getAllProperties();
     }
 }

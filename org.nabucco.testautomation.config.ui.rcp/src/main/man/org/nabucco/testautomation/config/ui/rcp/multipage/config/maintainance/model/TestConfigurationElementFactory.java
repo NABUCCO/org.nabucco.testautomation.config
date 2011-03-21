@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.nabucco.framework.base.facade.datatype.Datatype;
 import org.nabucco.framework.base.facade.datatype.DatatypeState;
+import org.nabucco.framework.base.facade.datatype.Owner;
 import org.nabucco.framework.base.facade.exception.client.ClientException;
 import org.nabucco.framework.base.facade.message.EmptyServiceMessage;
 import org.nabucco.framework.plugin.base.Activator;
@@ -126,23 +127,6 @@ public class TestConfigurationElementFactory {
 	}
 
 	static TestConfigElement createTestConfigElement(SchemaElement schemaElement) {
-		TestConfigElement result = null;
-		// Check cache
-		Datatype datatype = cache.get(TestConfigElement.class);
-		boolean foundInCache = false;
-		if (datatype != null) {
-			TestConfigElement testConfigElement = (TestConfigElement) datatype;
-			if (testConfigElement.getSchemaElement().getLevel()
-					.equals(schemaElement.getLevel())) {
-				// Set SchemaElement
-				testConfigElement.setSchemaElement(schemaElement);
-				result = testConfigElement.cloneObject();
-				result.setSchemaElementRefId(schemaElement.getId());
-				foundInCache = true;
-
-			} 
-		}
-		if (!foundInCache) {
 			ConfigComponentServiceDelegateFactory configComponentServiceDelegateFactory = ConfigComponentServiceDelegateFactory
 			.getInstance();
 			try {
@@ -154,19 +138,11 @@ public class TestConfigurationElementFactory {
 				TestConfigElementMsg response = produceTestConfigElement
 				.produceTestConfigElement(produceMsg);
 				TestConfigElement testConfigElement = response.getTestConfigElement();
-				result = testConfigElement;
+				return testConfigElement;
 			} catch (ClientException e) {
 				Activator.getDefault().logError(e);
 			}
-			// Update Cache
-			Datatype clone = result.cloneObject();
-			TestConfigElement configElement = (TestConfigElement) clone;
-			configElement.setSchemaElement(schemaElement);
-			configElement.setSchemaElementRefId(((TestConfigElement) result)
-					.getSchemaElementRefId());
-			cache.put(TestConfigElement.class, clone);
-		}
-		return result;
+		return null;
 	}
 
 	static PropertyContainer createProperty(Class<? extends Datatype> className, SchemaElement schemaElement) {
@@ -204,19 +180,19 @@ public class TestConfigurationElementFactory {
 		return result;
 	}
 
-	public static Property[] getAllExistingProperties() {
-		Property[] search = testConfigElementSearchBusinessModel.searchProperty(null);
+	public static Property[] getAllExistingProperties(Owner owner) {
+		Property[] search = testConfigElementSearchBusinessModel.searchProperty(null, owner);
 		return search;
 	}
 
-	public static Property[] getAllExistingPropertyLists() {
-		Property[] search = testConfigElementSearchBusinessModel.searchProperty(PropertyType.LIST);
+	public static Property[] getAllExistingPropertyLists(Owner owner) {
+		Property[] search = testConfigElementSearchBusinessModel.searchProperty(PropertyType.LIST, owner);
 		return search;
 	}
 
-	public static Datatype[] getExistingConfigElements(SchemaElement schemaElement) {
+	public static Datatype[] getExistingConfigElements(SchemaElement schemaElement, Owner owner) {
 		TestConfigElement[] search = testConfigElementSearchBusinessModel
-		.searchConfigElement(schemaElement);
+		.searchConfigElement(schemaElement, owner);
 		return search;
 	}
 

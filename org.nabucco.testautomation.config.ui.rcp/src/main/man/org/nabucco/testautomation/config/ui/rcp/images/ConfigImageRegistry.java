@@ -40,8 +40,18 @@ public enum ConfigImageRegistry {
 
 	ICON_SKIP_8X8("icons/config/skip_8x8.png", "/icons/skip_8x8.png"),
 	
-	ICON_DETAIL_64X64("icons/config/detail_64x64.png", "/icons/detail_64x64.png");
+	ICON_DETAIL_64X64("icons/config/detail_64x64.png", "/icons/detail_64x64.png"),
 	
+	ICON_SHEET("icons/project.png", "icons/project.png"),
+
+	ICON_CASE("icons/folder.png", "icons/folder.png"),
+	
+	ICON_REUSED("icons/config/reused.png", "/icons/reused.png"),
+	
+	ICON_MANUAL("icons/config/hand_8x8.png", "/icons/hand_8x8.png"),
+	
+	ICON_CURRENT_ELEMENT("icons/config/arrow.png", "/icons/arrow.png");
+
 	/**
 	 * The unique symbolic name of the image used to identify the image in the
 	 * <code>ImageProvider</code>.

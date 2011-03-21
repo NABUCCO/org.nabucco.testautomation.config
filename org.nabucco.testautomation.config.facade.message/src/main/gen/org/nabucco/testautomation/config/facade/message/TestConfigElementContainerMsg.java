@@ -3,9 +3,15 @@
  */
 package org.nabucco.testautomation.config.facade.message;
 
+import java.util.HashMap;
 import java.util.List;
-import org.nabucco.framework.base.facade.datatype.property.DatatypeProperty;
+import java.util.Map;
 import org.nabucco.framework.base.facade.datatype.property.NabuccoProperty;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyContainer;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyDescriptor;
+import org.nabucco.framework.base.facade.datatype.property.PropertyAssociationType;
+import org.nabucco.framework.base.facade.datatype.property.PropertyCache;
+import org.nabucco.framework.base.facade.datatype.property.PropertyDescriptorSupport;
 import org.nabucco.framework.base.facade.message.ServiceMessage;
 import org.nabucco.framework.base.facade.message.ServiceMessageSupport;
 import org.nabucco.testautomation.config.facade.datatype.TestConfigElementContainer;
@@ -20,9 +26,9 @@ public class TestConfigElementContainerMsg extends ServiceMessageSupport impleme
 
     private static final long serialVersionUID = 1L;
 
-    private static final String[] PROPERTY_NAMES = { "testConfigElementContainer" };
-
     private static final String[] PROPERTY_CONSTRAINTS = { "m1,1;" };
+
+    public static final String TESTCONFIGELEMENTCONTAINER = "testConfigElementContainer";
 
     private TestConfigElementContainer testConfigElementContainer;
 
@@ -31,13 +37,38 @@ public class TestConfigElementContainerMsg extends ServiceMessageSupport impleme
         super();
     }
 
+    /**
+     * CreatePropertyContainer.
+     *
+     * @return the NabuccoPropertyContainer.
+     */
+    protected static NabuccoPropertyContainer createPropertyContainer() {
+        Map<String, NabuccoPropertyDescriptor> propertyMap = new HashMap<String, NabuccoPropertyDescriptor>();
+        propertyMap.put(TESTCONFIGELEMENTCONTAINER, PropertyDescriptorSupport.createDatatype(
+                TESTCONFIGELEMENTCONTAINER, TestConfigElementContainer.class, 0,
+                PROPERTY_CONSTRAINTS[0], false, PropertyAssociationType.COMPOSITION));
+        return new NabuccoPropertyContainer(propertyMap);
+    }
+
     @Override
-    public List<NabuccoProperty<?>> getProperties() {
-        List<NabuccoProperty<?>> properties = super.getProperties();
-        properties.add(new DatatypeProperty<TestConfigElementContainer>(PROPERTY_NAMES[0],
-                TestConfigElementContainer.class, PROPERTY_CONSTRAINTS[0],
+    public List<NabuccoProperty> getProperties() {
+        List<NabuccoProperty> properties = super.getProperties();
+        properties.add(super.createProperty(
+                TestConfigElementContainerMsg.getPropertyDescriptor(TESTCONFIGELEMENTCONTAINER),
                 this.testConfigElementContainer));
         return properties;
+    }
+
+    @Override
+    public boolean setProperty(NabuccoProperty property) {
+        if (super.setProperty(property)) {
+            return true;
+        }
+        if ((property.getName().equals(TESTCONFIGELEMENTCONTAINER) && (property.getType() == TestConfigElementContainer.class))) {
+            this.setTestConfigElementContainer(((TestConfigElementContainer) property.getInstance()));
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -73,17 +104,6 @@ public class TestConfigElementContainerMsg extends ServiceMessageSupport impleme
     }
 
     @Override
-    public String toString() {
-        StringBuilder appendable = new StringBuilder();
-        appendable.append("<TestConfigElementContainerMsg>\n");
-        appendable.append(super.toString());
-        appendable
-                .append((("<testConfigElementContainer>" + this.testConfigElementContainer) + "</testConfigElementContainer>\n"));
-        appendable.append("</TestConfigElementContainerMsg>\n");
-        return appendable.toString();
-    }
-
-    @Override
     public ServiceMessage cloneObject() {
         return this;
     }
@@ -104,5 +124,26 @@ public class TestConfigElementContainerMsg extends ServiceMessageSupport impleme
      */
     public void setTestConfigElementContainer(TestConfigElementContainer testConfigElementContainer) {
         this.testConfigElementContainer = testConfigElementContainer;
+    }
+
+    /**
+     * Getter for the PropertyDescriptor.
+     *
+     * @param propertyName the String.
+     * @return the NabuccoPropertyDescriptor.
+     */
+    public static NabuccoPropertyDescriptor getPropertyDescriptor(String propertyName) {
+        return PropertyCache.getInstance().retrieve(TestConfigElementContainerMsg.class)
+                .getProperty(propertyName);
+    }
+
+    /**
+     * Getter for the PropertyDescriptorList.
+     *
+     * @return the List<NabuccoPropertyDescriptor>.
+     */
+    public static List<NabuccoPropertyDescriptor> getPropertyDescriptorList() {
+        return PropertyCache.getInstance().retrieve(TestConfigElementContainerMsg.class)
+                .getAllProperties();
     }
 }

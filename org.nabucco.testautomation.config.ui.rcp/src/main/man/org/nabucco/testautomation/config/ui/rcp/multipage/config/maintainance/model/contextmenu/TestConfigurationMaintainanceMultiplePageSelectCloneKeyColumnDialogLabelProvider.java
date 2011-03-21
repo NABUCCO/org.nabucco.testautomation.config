@@ -22,7 +22,11 @@ import org.nabucco.framework.plugin.base.component.multipage.masterdetail.addDia
 import org.nabucco.testautomation.config.facade.datatype.TestConfigElement;
 import org.nabucco.testautomation.config.facade.datatype.TestConfigElementContainer;
 
-
+/**
+ * TestConfigurationMaintainanceMultiplePageSelectCloneKeyColumnDialogLabelProvider
+ * 
+ * @author Markus Jorroch, PRODYNA AG
+ */
 public class TestConfigurationMaintainanceMultiplePageSelectCloneKeyColumnDialogLabelProvider extends
         AddDialogLabelProvider {
 
@@ -36,7 +40,7 @@ public class TestConfigurationMaintainanceMultiplePageSelectCloneKeyColumnDialog
             TestConfigElement element = ((TestConfigElementContainer) obj).getElement();
             DatatypeState datatypeState = element.getDatatypeState();
             if (datatypeState != DatatypeState.INITIALIZED) {
-                String name = element.getElementKey().getValue();
+                String name = element.getIdentificationKey().getValue();
                 result = name;
             } else {
                 result = "";
@@ -45,7 +49,7 @@ public class TestConfigurationMaintainanceMultiplePageSelectCloneKeyColumnDialog
             TestConfigElement element = (TestConfigElement) obj;
             DatatypeState datatypeState = element.getDatatypeState();
             if (datatypeState != DatatypeState.INITIALIZED) {
-                String name = element.getElementKey().getValue();
+                String name = element.getIdentificationKey().getValue();
                 result = name;
             } else {
                 result = "";

@@ -3,13 +3,18 @@
  */
 package org.nabucco.testautomation.config.facade.datatype;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.nabucco.framework.base.facade.datatype.Datatype;
 import org.nabucco.framework.base.facade.datatype.NabuccoDatatype;
 import org.nabucco.framework.base.facade.datatype.Order;
-import org.nabucco.framework.base.facade.datatype.property.BasetypeProperty;
-import org.nabucco.framework.base.facade.datatype.property.DatatypeProperty;
 import org.nabucco.framework.base.facade.datatype.property.NabuccoProperty;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyContainer;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyDescriptor;
+import org.nabucco.framework.base.facade.datatype.property.PropertyAssociationType;
+import org.nabucco.framework.base.facade.datatype.property.PropertyCache;
+import org.nabucco.framework.base.facade.datatype.property.PropertyDescriptorSupport;
 import org.nabucco.testautomation.config.facade.datatype.TestConfigElement;
 
 /**
@@ -22,9 +27,11 @@ public class TestConfigElementContainer extends NabuccoDatatype implements Datat
 
     private static final long serialVersionUID = 1L;
 
-    private static final String[] PROPERTY_NAMES = { "element", "orderIndex" };
-
     private static final String[] PROPERTY_CONSTRAINTS = { "m1,1;", "l0,n;m1,1;" };
+
+    public static final String ELEMENT = "element";
+
+    public static final String ORDERINDEX = "orderIndex";
 
     private TestConfigElement element;
 
@@ -55,19 +62,53 @@ public class TestConfigElementContainer extends NabuccoDatatype implements Datat
         }
     }
 
+    /**
+     * CreatePropertyContainer.
+     *
+     * @return the NabuccoPropertyContainer.
+     */
+    protected static NabuccoPropertyContainer createPropertyContainer() {
+        Map<String, NabuccoPropertyDescriptor> propertyMap = new HashMap<String, NabuccoPropertyDescriptor>();
+        propertyMap.putAll(PropertyCache.getInstance().retrieve(NabuccoDatatype.class)
+                .getPropertyMap());
+        propertyMap.put(ELEMENT, PropertyDescriptorSupport.createDatatype(ELEMENT,
+                TestConfigElement.class, 2, PROPERTY_CONSTRAINTS[0], false,
+                PropertyAssociationType.AGGREGATION));
+        propertyMap.put(ORDERINDEX, PropertyDescriptorSupport.createBasetype(ORDERINDEX,
+                Order.class, 3, PROPERTY_CONSTRAINTS[1], false));
+        return new NabuccoPropertyContainer(propertyMap);
+    }
+
     @Override
     public void init() {
         this.initDefaults();
     }
 
     @Override
-    public List<NabuccoProperty<?>> getProperties() {
-        List<NabuccoProperty<?>> properties = super.getProperties();
-        properties.add(new DatatypeProperty<TestConfigElement>(PROPERTY_NAMES[0],
-                TestConfigElement.class, PROPERTY_CONSTRAINTS[0], this.element));
-        properties.add(new BasetypeProperty<Order>(PROPERTY_NAMES[1], Order.class,
-                PROPERTY_CONSTRAINTS[1], this.orderIndex));
+    public List<NabuccoProperty> getProperties() {
+        List<NabuccoProperty> properties = super.getProperties();
+        properties.add(super.createProperty(
+                TestConfigElementContainer.getPropertyDescriptor(ELEMENT), this.element, null));
+        properties
+                .add(super.createProperty(
+                        TestConfigElementContainer.getPropertyDescriptor(ORDERINDEX),
+                        this.orderIndex, null));
         return properties;
+    }
+
+    @Override
+    public boolean setProperty(NabuccoProperty property) {
+        if (super.setProperty(property)) {
+            return true;
+        }
+        if ((property.getName().equals(ELEMENT) && (property.getType() == TestConfigElement.class))) {
+            this.setElement(((TestConfigElement) property.getInstance()));
+            return true;
+        } else if ((property.getName().equals(ORDERINDEX) && (property.getType() == Order.class))) {
+            this.setOrderIndex(((Order) property.getInstance()));
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -105,17 +146,6 @@ public class TestConfigElementContainer extends NabuccoDatatype implements Datat
         result = ((PRIME * result) + ((this.element == null) ? 0 : this.element.hashCode()));
         result = ((PRIME * result) + ((this.orderIndex == null) ? 0 : this.orderIndex.hashCode()));
         return result;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder appendable = new StringBuilder();
-        appendable.append("<TestConfigElementContainer>\n");
-        appendable.append(super.toString());
-        appendable.append((("<element>" + this.element) + "</element>\n"));
-        appendable.append((("<orderIndex>" + this.orderIndex) + "</orderIndex>\n"));
-        appendable.append("</TestConfigElementContainer>\n");
-        return appendable.toString();
     }
 
     @Override
@@ -168,8 +198,32 @@ public class TestConfigElementContainer extends NabuccoDatatype implements Datat
      */
     public void setOrderIndex(Integer orderIndex) {
         if ((this.orderIndex == null)) {
+            if ((orderIndex == null)) {
+                return;
+            }
             this.orderIndex = new Order();
         }
         this.orderIndex.setValue(orderIndex);
+    }
+
+    /**
+     * Getter for the PropertyDescriptor.
+     *
+     * @param propertyName the String.
+     * @return the NabuccoPropertyDescriptor.
+     */
+    public static NabuccoPropertyDescriptor getPropertyDescriptor(String propertyName) {
+        return PropertyCache.getInstance().retrieve(TestConfigElementContainer.class)
+                .getProperty(propertyName);
+    }
+
+    /**
+     * Getter for the PropertyDescriptorList.
+     *
+     * @return the List<NabuccoPropertyDescriptor>.
+     */
+    public static List<NabuccoPropertyDescriptor> getPropertyDescriptorList() {
+        return PropertyCache.getInstance().retrieve(TestConfigElementContainer.class)
+                .getAllProperties();
     }
 }

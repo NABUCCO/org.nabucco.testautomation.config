@@ -27,4 +27,14 @@ public interface ProduceTestConfiguration extends Service {
      */
     ServiceResponse<TestConfigurationMsg> produceTestConfiguration(
             ServiceRequest<EmptyServiceMessage> rq) throws ProduceException;
+
+    /**
+     * Missing description at method produceTestConfigurationClone.
+     *
+     * @param rq the ServiceRequest<TestConfigurationMsg>.
+     * @return the ServiceResponse<TestConfigurationMsg>.
+     * @throws ProduceException
+     */
+    ServiceResponse<TestConfigurationMsg> produceTestConfigurationClone(
+            ServiceRequest<TestConfigurationMsg> rq) throws ProduceException;
 }

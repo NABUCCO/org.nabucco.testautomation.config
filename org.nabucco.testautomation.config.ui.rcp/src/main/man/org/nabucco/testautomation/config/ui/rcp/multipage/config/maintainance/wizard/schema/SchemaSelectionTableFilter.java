@@ -19,6 +19,11 @@ package org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.w
 import org.eclipse.jface.viewers.Viewer;
 import org.nabucco.framework.plugin.base.component.list.view.NabuccoTableFilter;
 
+/**
+ * SchemaSelectionTableFilter
+ * 
+ * @author Markus Jorroch, PRODYNA AG
+ */
 public class SchemaSelectionTableFilter extends NabuccoTableFilter{
 
 	@Override

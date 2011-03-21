@@ -3,7 +3,7 @@
  */
 package org.nabucco.testautomation.config.ui.web.communication.engine;
 
-import org.nabucco.framework.base.facade.datatype.security.Subject;
+import org.nabucco.framework.base.facade.datatype.session.NabuccoSession;
 import org.nabucco.framework.base.facade.message.ServiceRequest;
 import org.nabucco.framework.base.facade.message.ServiceResponse;
 import org.nabucco.framework.base.ui.web.communication.ServiceDelegateSupport;
@@ -37,36 +37,15 @@ public class TestEngineServiceDelegate extends ServiceDelegateSupport {
     /**
      * ExecuteTestConfiguration.
      *
+     * @param session the NabuccoSession.
      * @param rq the TestExecutionMsg.
      * @return the TestInfoMsg.
      * @throws TestEngineException
      */
-    public TestInfoMsg executeTestConfiguration(TestExecutionMsg rq) throws TestEngineException {
-        ServiceRequest<TestExecutionMsg> request = new ServiceRequest<TestExecutionMsg>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<TestInfoMsg> rs;
-        if ((service != null)) {
-            rs = service.executeTestConfiguration(request);
-        } else {
-            throw new TestEngineException(
-                    "Cannot execute service operation: TestEngineService.executeTestConfiguration");
-        }
-        return rs.getResponseMessage();
-    }
-
-    /**
-     * ExecuteTestConfiguration.
-     *
-     * @param subject the Subject.
-     * @param rq the TestExecutionMsg.
-     * @return the TestInfoMsg.
-     * @throws TestEngineException
-     */
-    public TestInfoMsg executeTestConfiguration(TestExecutionMsg rq, Subject subject)
+    public TestInfoMsg executeTestConfiguration(TestExecutionMsg rq, NabuccoSession session)
             throws TestEngineException {
         ServiceRequest<TestExecutionMsg> request = new ServiceRequest<TestExecutionMsg>(
-                super.createServiceContext(subject));
+                super.createServiceContext(session));
         request.setRequestMessage(rq);
         ServiceResponse<TestInfoMsg> rs;
         if ((service != null)) {
@@ -81,35 +60,15 @@ public class TestEngineServiceDelegate extends ServiceDelegateSupport {
     /**
      * Getter for the TestStatus.
      *
+     * @param session the NabuccoSession.
      * @param rq the TestInfoMsg.
      * @return the TestInfoMsg.
      * @throws TestEngineException
      */
-    public TestInfoMsg getTestStatus(TestInfoMsg rq) throws TestEngineException {
+    public TestInfoMsg getTestStatus(TestInfoMsg rq, NabuccoSession session)
+            throws TestEngineException {
         ServiceRequest<TestInfoMsg> request = new ServiceRequest<TestInfoMsg>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<TestInfoMsg> rs;
-        if ((service != null)) {
-            rs = service.getTestStatus(request);
-        } else {
-            throw new TestEngineException(
-                    "Cannot execute service operation: TestEngineService.getTestStatus");
-        }
-        return rs.getResponseMessage();
-    }
-
-    /**
-     * Getter for the TestStatus.
-     *
-     * @param subject the Subject.
-     * @param rq the TestInfoMsg.
-     * @return the TestInfoMsg.
-     * @throws TestEngineException
-     */
-    public TestInfoMsg getTestStatus(TestInfoMsg rq, Subject subject) throws TestEngineException {
-        ServiceRequest<TestInfoMsg> request = new ServiceRequest<TestInfoMsg>(
-                super.createServiceContext(subject));
+                super.createServiceContext(session));
         request.setRequestMessage(rq);
         ServiceResponse<TestInfoMsg> rs;
         if ((service != null)) {
@@ -124,36 +83,15 @@ public class TestEngineServiceDelegate extends ServiceDelegateSupport {
     /**
      * Getter for the TestConfigurationResult.
      *
+     * @param session the NabuccoSession.
      * @param rq the TestInfoMsg.
      * @return the TestResultMsg.
      * @throws TestEngineException
      */
-    public TestResultMsg getTestConfigurationResult(TestInfoMsg rq) throws TestEngineException {
-        ServiceRequest<TestInfoMsg> request = new ServiceRequest<TestInfoMsg>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<TestResultMsg> rs;
-        if ((service != null)) {
-            rs = service.getTestConfigurationResult(request);
-        } else {
-            throw new TestEngineException(
-                    "Cannot execute service operation: TestEngineService.getTestConfigurationResult");
-        }
-        return rs.getResponseMessage();
-    }
-
-    /**
-     * Getter for the TestConfigurationResult.
-     *
-     * @param subject the Subject.
-     * @param rq the TestInfoMsg.
-     * @return the TestResultMsg.
-     * @throws TestEngineException
-     */
-    public TestResultMsg getTestConfigurationResult(TestInfoMsg rq, Subject subject)
+    public TestResultMsg getTestConfigurationResult(TestInfoMsg rq, NabuccoSession session)
             throws TestEngineException {
         ServiceRequest<TestInfoMsg> request = new ServiceRequest<TestInfoMsg>(
-                super.createServiceContext(subject));
+                super.createServiceContext(session));
         request.setRequestMessage(rq);
         ServiceResponse<TestResultMsg> rs;
         if ((service != null)) {
@@ -168,36 +106,15 @@ public class TestEngineServiceDelegate extends ServiceDelegateSupport {
     /**
      * CancelTestConfiguration.
      *
+     * @param session the NabuccoSession.
      * @param rq the TestInfoMsg.
      * @return the TestInfoMsg.
      * @throws TestEngineException
      */
-    public TestInfoMsg cancelTestConfiguration(TestInfoMsg rq) throws TestEngineException {
-        ServiceRequest<TestInfoMsg> request = new ServiceRequest<TestInfoMsg>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<TestInfoMsg> rs;
-        if ((service != null)) {
-            rs = service.cancelTestConfiguration(request);
-        } else {
-            throw new TestEngineException(
-                    "Cannot execute service operation: TestEngineService.cancelTestConfiguration");
-        }
-        return rs.getResponseMessage();
-    }
-
-    /**
-     * CancelTestConfiguration.
-     *
-     * @param subject the Subject.
-     * @param rq the TestInfoMsg.
-     * @return the TestInfoMsg.
-     * @throws TestEngineException
-     */
-    public TestInfoMsg cancelTestConfiguration(TestInfoMsg rq, Subject subject)
+    public TestInfoMsg cancelTestConfiguration(TestInfoMsg rq, NabuccoSession session)
             throws TestEngineException {
         ServiceRequest<TestInfoMsg> request = new ServiceRequest<TestInfoMsg>(
-                super.createServiceContext(subject));
+                super.createServiceContext(session));
         request.setRequestMessage(rq);
         ServiceResponse<TestInfoMsg> rs;
         if ((service != null)) {
@@ -212,36 +129,15 @@ public class TestEngineServiceDelegate extends ServiceDelegateSupport {
     /**
      * ReturnManualTestResult.
      *
+     * @param session the NabuccoSession.
      * @param rq the ManualTestResultMsg.
      * @return the TestInfoMsg.
      * @throws TestEngineException
      */
-    public TestInfoMsg returnManualTestResult(ManualTestResultMsg rq) throws TestEngineException {
-        ServiceRequest<ManualTestResultMsg> request = new ServiceRequest<ManualTestResultMsg>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<TestInfoMsg> rs;
-        if ((service != null)) {
-            rs = service.returnManualTestResult(request);
-        } else {
-            throw new TestEngineException(
-                    "Cannot execute service operation: TestEngineService.returnManualTestResult");
-        }
-        return rs.getResponseMessage();
-    }
-
-    /**
-     * ReturnManualTestResult.
-     *
-     * @param subject the Subject.
-     * @param rq the ManualTestResultMsg.
-     * @return the TestInfoMsg.
-     * @throws TestEngineException
-     */
-    public TestInfoMsg returnManualTestResult(ManualTestResultMsg rq, Subject subject)
+    public TestInfoMsg returnManualTestResult(ManualTestResultMsg rq, NabuccoSession session)
             throws TestEngineException {
         ServiceRequest<ManualTestResultMsg> request = new ServiceRequest<ManualTestResultMsg>(
-                super.createServiceContext(subject));
+                super.createServiceContext(session));
         request.setRequestMessage(rq);
         ServiceResponse<TestInfoMsg> rs;
         if ((service != null)) {

@@ -12,6 +12,8 @@ import org.nabucco.framework.base.facade.exception.service.ServiceException;
 import org.nabucco.testautomation.config.facade.component.ConfigComponent;
 import org.nabucco.testautomation.config.facade.component.ConfigComponentLocator;
 import org.nabucco.testautomation.config.ui.rcp.communication.engine.TestEngineServiceDelegate;
+import org.nabucco.testautomation.config.ui.rcp.communication.export.ExportConfigDelegate;
+import org.nabucco.testautomation.config.ui.rcp.communication.importing.ImportConfigDelegate;
 import org.nabucco.testautomation.config.ui.rcp.communication.maintain.MaintainTestConfigurationDelegate;
 import org.nabucco.testautomation.config.ui.rcp.communication.produce.ProduceAttributeValueDelegate;
 import org.nabucco.testautomation.config.ui.rcp.communication.produce.ProduceDependencyDelegate;
@@ -53,6 +55,10 @@ public class ConfigComponentServiceDelegateFactory {
     private SearchTestConfigElementDelegate searchTestConfigElementDelegate;
 
     private TestEngineServiceDelegate testEngineServiceDelegate;
+
+    private ExportConfigDelegate exportConfigDelegate;
+
+    private ImportConfigDelegate importConfigDelegate;
 
     /** Constructs a new ConfigComponentServiceDelegateFactory instance. */
     private ConfigComponentServiceDelegateFactory() {
@@ -282,6 +288,46 @@ public class ConfigComponentServiceDelegateFactory {
             throw new ClientException("Cannot connect to component: ConfigComponent", e);
         } catch (ServiceException e) {
             throw new ClientException("Cannot locate service: TestEngineService", e);
+        }
+    }
+
+    /**
+     * Getter for the ExportConfig.
+     *
+     * @return the ExportConfigDelegate.
+     * @throws ClientException
+     */
+    public ExportConfigDelegate getExportConfig() throws ClientException {
+        try {
+            if ((this.exportConfigDelegate == null)) {
+                this.exportConfigDelegate = new ExportConfigDelegate(this.getComponent()
+                        .getExportConfig());
+            }
+            return this.exportConfigDelegate;
+        } catch (ConnectionException e) {
+            throw new ClientException("Cannot connect to component: ConfigComponent", e);
+        } catch (ServiceException e) {
+            throw new ClientException("Cannot locate service: ExportConfig", e);
+        }
+    }
+
+    /**
+     * Getter for the ImportConfig.
+     *
+     * @return the ImportConfigDelegate.
+     * @throws ClientException
+     */
+    public ImportConfigDelegate getImportConfig() throws ClientException {
+        try {
+            if ((this.importConfigDelegate == null)) {
+                this.importConfigDelegate = new ImportConfigDelegate(this.getComponent()
+                        .getImportConfig());
+            }
+            return this.importConfigDelegate;
+        } catch (ConnectionException e) {
+            throw new ClientException("Cannot connect to component: ConfigComponent", e);
+        } catch (ServiceException e) {
+            throw new ClientException("Cannot locate service: ImportConfig", e);
         }
     }
 

@@ -56,10 +56,7 @@ public class AttributeSupport {
 	public void resolveAttributes(TestConfigElement element, ServiceMessageContext ctx) throws ServiceException {
     	
 		SchemaElement schema = element.getSchemaElement();
-
-		if (schema.getAttributeList().isEmpty()) {
-			element.getAttributeValueList().size();
-		}
+		element.getAttributeValueList().size();
 		
     	for (Attribute attribute : schema.getAttributeList()) {
     		AttributeValue value = null;

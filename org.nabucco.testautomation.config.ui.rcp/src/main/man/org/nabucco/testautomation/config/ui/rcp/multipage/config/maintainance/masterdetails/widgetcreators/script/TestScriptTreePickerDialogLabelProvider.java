@@ -20,7 +20,6 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 import org.nabucco.framework.plugin.base.layout.ImageProvider;
-
 import org.nabucco.testautomation.script.facade.datatype.dictionary.TestScript;
 import org.nabucco.testautomation.script.facade.datatype.dictionary.base.Folder;
 import org.nabucco.testautomation.script.ui.rcp.images.ScriptImageRegistry;
@@ -64,18 +63,26 @@ public class TestScriptTreePickerDialogLabelProvider implements ILabelProvider {
 
 	@Override
 	public String getText(Object element) {
+		String result = null;
 		if (element instanceof TestScript) {
 			TestScript testScript = (TestScript) element;
 			if (testScript.getName() != null) {
-				return testScript.getName().getValue();
+				result = testScript.getName().getValue();
+			}
+			if(testScript.getOwner() != null){
+				result = result  + " (" + testScript.getOwner().getValue() + ")";
 			}
 		} else if (element instanceof Folder) {
 			Folder folder = (Folder) element;
 			if (folder.getName() != null) {
-				return folder.getName().getValue();
+				result = folder.getName().getValue();
+			}
+			if(folder.getOwner() != null){
+				result = result  + " (" + folder.getOwner().getValue() + ")";
 			}
 		}
-		return null;
+		return result;
 	}
+	
 
 }

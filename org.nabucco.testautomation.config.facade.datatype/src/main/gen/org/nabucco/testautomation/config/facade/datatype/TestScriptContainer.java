@@ -3,13 +3,18 @@
  */
 package org.nabucco.testautomation.config.facade.datatype;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.nabucco.framework.base.facade.datatype.Datatype;
 import org.nabucco.framework.base.facade.datatype.NabuccoDatatype;
 import org.nabucco.framework.base.facade.datatype.Order;
-import org.nabucco.framework.base.facade.datatype.property.BasetypeProperty;
-import org.nabucco.framework.base.facade.datatype.property.DatatypeProperty;
 import org.nabucco.framework.base.facade.datatype.property.NabuccoProperty;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyContainer;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyDescriptor;
+import org.nabucco.framework.base.facade.datatype.property.PropertyAssociationType;
+import org.nabucco.framework.base.facade.datatype.property.PropertyCache;
+import org.nabucco.framework.base.facade.datatype.property.PropertyDescriptorSupport;
 import org.nabucco.testautomation.script.facade.datatype.dictionary.TestScript;
 
 /**
@@ -22,9 +27,11 @@ public class TestScriptContainer extends NabuccoDatatype implements Datatype {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String[] PROPERTY_NAMES = { "testScript", "orderIndex" };
-
     private static final String[] PROPERTY_CONSTRAINTS = { "m1,1;", "l0,n;m1,1;" };
+
+    public static final String TESTSCRIPT = "testScript";
+
+    public static final String ORDERINDEX = "orderIndex";
 
     private TestScript testScript;
 
@@ -60,19 +67,51 @@ public class TestScriptContainer extends NabuccoDatatype implements Datatype {
         }
     }
 
+    /**
+     * CreatePropertyContainer.
+     *
+     * @return the NabuccoPropertyContainer.
+     */
+    protected static NabuccoPropertyContainer createPropertyContainer() {
+        Map<String, NabuccoPropertyDescriptor> propertyMap = new HashMap<String, NabuccoPropertyDescriptor>();
+        propertyMap.putAll(PropertyCache.getInstance().retrieve(NabuccoDatatype.class)
+                .getPropertyMap());
+        propertyMap.put(TESTSCRIPT, PropertyDescriptorSupport.createDatatype(TESTSCRIPT,
+                TestScript.class, 2, PROPERTY_CONSTRAINTS[0], false,
+                PropertyAssociationType.COMPONENT));
+        propertyMap.put(ORDERINDEX, PropertyDescriptorSupport.createBasetype(ORDERINDEX,
+                Order.class, 3, PROPERTY_CONSTRAINTS[1], false));
+        return new NabuccoPropertyContainer(propertyMap);
+    }
+
     @Override
     public void init() {
         this.initDefaults();
     }
 
     @Override
-    public List<NabuccoProperty<?>> getProperties() {
-        List<NabuccoProperty<?>> properties = super.getProperties();
-        properties.add(new DatatypeProperty<TestScript>(PROPERTY_NAMES[0], TestScript.class,
-                PROPERTY_CONSTRAINTS[0], this.testScript));
-        properties.add(new BasetypeProperty<Order>(PROPERTY_NAMES[1], Order.class,
-                PROPERTY_CONSTRAINTS[1], this.orderIndex));
+    public List<NabuccoProperty> getProperties() {
+        List<NabuccoProperty> properties = super.getProperties();
+        properties.add(super.createProperty(TestScriptContainer.getPropertyDescriptor(TESTSCRIPT),
+                this.testScript, this.testScriptRefId));
+        properties.add(super.createProperty(TestScriptContainer.getPropertyDescriptor(ORDERINDEX),
+                this.orderIndex, null));
         return properties;
+    }
+
+    @Override
+    public boolean setProperty(NabuccoProperty property) {
+        if (super.setProperty(property)) {
+            return true;
+        }
+        if ((property.getName().equals(TESTSCRIPT) && (property.getType() == TestScript.class))) {
+            this.setTestScript(((TestScript) property.getInstance()));
+            return true;
+        } else if ((property.getName().equals(ORDERINDEX) && (property.getType() == Order.class))) {
+            this.setOrderIndex(((Order) property.getInstance()));
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -117,18 +156,6 @@ public class TestScriptContainer extends NabuccoDatatype implements Datatype {
                 .hashCode()));
         result = ((PRIME * result) + ((this.orderIndex == null) ? 0 : this.orderIndex.hashCode()));
         return result;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder appendable = new StringBuilder();
-        appendable.append("<TestScriptContainer>\n");
-        appendable.append(super.toString());
-        appendable.append((("<testScript>" + this.testScript) + "</testScript>\n"));
-        appendable.append((("<testScriptRefId>" + this.testScriptRefId) + "</testScriptRefId>\n"));
-        appendable.append((("<orderIndex>" + this.orderIndex) + "</orderIndex>\n"));
-        appendable.append("</TestScriptContainer>\n");
-        return appendable.toString();
     }
 
     @Override
@@ -204,8 +231,31 @@ public class TestScriptContainer extends NabuccoDatatype implements Datatype {
      */
     public void setOrderIndex(Integer orderIndex) {
         if ((this.orderIndex == null)) {
+            if ((orderIndex == null)) {
+                return;
+            }
             this.orderIndex = new Order();
         }
         this.orderIndex.setValue(orderIndex);
+    }
+
+    /**
+     * Getter for the PropertyDescriptor.
+     *
+     * @param propertyName the String.
+     * @return the NabuccoPropertyDescriptor.
+     */
+    public static NabuccoPropertyDescriptor getPropertyDescriptor(String propertyName) {
+        return PropertyCache.getInstance().retrieve(TestScriptContainer.class)
+                .getProperty(propertyName);
+    }
+
+    /**
+     * Getter for the PropertyDescriptorList.
+     *
+     * @return the List<NabuccoPropertyDescriptor>.
+     */
+    public static List<NabuccoPropertyDescriptor> getPropertyDescriptorList() {
+        return PropertyCache.getInstance().retrieve(TestScriptContainer.class).getAllProperties();
     }
 }

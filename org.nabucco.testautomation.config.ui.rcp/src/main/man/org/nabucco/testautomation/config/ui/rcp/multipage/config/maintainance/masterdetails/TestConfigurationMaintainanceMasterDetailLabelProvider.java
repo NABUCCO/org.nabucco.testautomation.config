@@ -29,16 +29,10 @@ import org.nabucco.testautomation.config.facade.datatype.TestConfigElement;
 import org.nabucco.testautomation.config.facade.datatype.TestConfigElementContainer;
 import org.nabucco.testautomation.config.facade.datatype.TestConfiguration;
 import org.nabucco.testautomation.config.ui.rcp.images.ConfigImageRegistry;
-
-import org.nabucco.testautomation.facade.datatype.property.DoubleProperty;
-import org.nabucco.testautomation.facade.datatype.property.IntegerProperty;
-import org.nabucco.testautomation.facade.datatype.property.LongProperty;
-import org.nabucco.testautomation.facade.datatype.property.StringProperty;
-import org.nabucco.testautomation.facade.datatype.property.XmlProperty;
 import org.nabucco.testautomation.facade.datatype.property.base.Property;
-import org.nabucco.testautomation.facade.datatype.property.base.PropertyComposite;
 import org.nabucco.testautomation.facade.datatype.property.base.PropertyContainer;
 import org.nabucco.testautomation.schema.facade.datatype.SchemaElement;
+import org.nabucco.testautomation.ui.rcp.images.TestautomationImageRegistry;
 
 /**
  * TestConfigurationMaintainanceMasterDetailLabelProvider
@@ -46,27 +40,12 @@ import org.nabucco.testautomation.schema.facade.datatype.SchemaElement;
  * @author Markus Jorroch, PRODYNA AG
  */
 public class TestConfigurationMaintainanceMasterDetailLabelProvider implements
-I18NLabelProviderContributor {
+	I18NLabelProviderContributor {
 
-	private static final String ICON_SHEET = "icons/project.png";
-
-	private static final String ICON_CASE = "icons/folder.png";
-
-	private static final String ICON_PROPERTY = "icons/text.png";
-
-	private static final String ICON_PROPERTY_LIST = "icons/browser_list.png";
-
-	private static final String ICON_PROPERTY_STRING = "icons/text.png";
-
-	private static final String ICON_PROPERTY_NUMERIC = "icons/calculator.png";
-
-	private static final String ICON_PROPERTY_XML = "icons/xml.png";
-	
 	private static TestConfigurationMaintainanceMasterDetailLabelProvider instance = new TestConfigurationMaintainanceMasterDetailLabelProvider();
 	
 	private TestConfigurationMaintainanceMasterDetailLabelProvider(){
 	}
-
 	
 	public static TestConfigurationMaintainanceMasterDetailLabelProvider getInstance(){
 		return instance;
@@ -144,12 +123,12 @@ I18NLabelProviderContributor {
 	}
 
 	private String getImage(Datatype datatype) {
+		
 		if(datatype instanceof TestConfigElementContainer){
 			datatype = ((TestConfigElementContainer) datatype).getElement();
 		} else if(datatype instanceof PropertyContainer){
 			datatype = ((PropertyContainer) datatype).getProperty();
 		}
-
 
 		if (datatype instanceof TestConfiguration) {
 			return ConfigImageRegistry.ICON_CONFIG.getId();
@@ -159,33 +138,36 @@ I18NLabelProviderContributor {
 
 			switch (schema.getLevel()) {
 			case ONE:
-				return ICON_SHEET;
+				return ConfigImageRegistry.ICON_SHEET.getId();
 			case TWO:
-				return ICON_CASE;
+				return ConfigImageRegistry.ICON_CASE.getId();
 			default:
 				return ConfigImageRegistry.ICON_STEP.getId();
 			}
 
 		} else if (datatype instanceof Property) {
-			if (datatype instanceof PropertyComposite) {
-				return ICON_PROPERTY_LIST;
+			Property property = (Property) datatype;
+			
+			switch (property.getType()) {
+			case LIST:
+				return TestautomationImageRegistry.ICON_PROPERTY_LIST.getId();
+			case STRING:
+				return TestautomationImageRegistry.ICON_PROPERTY_STRING.getId();
+			case INTEGER:
+			case LONG:
+			case DOUBLE:
+				return TestautomationImageRegistry.ICON_PROPERTY_NUMERIC.getId();
+			case XML:
+				return TestautomationImageRegistry.ICON_PROPERTY_XML.getId();
+			case DATE:
+				return TestautomationImageRegistry.ICON_PROPERTY_DATE.getId();
+			case BOOLEAN:
+				return TestautomationImageRegistry.ICON_PROPERTY_BOOLEAN.getId();
+			case FILE:
+				return TestautomationImageRegistry.ICON_PROPERTY_FILE.getId();
+			default:
+				return TestautomationImageRegistry.ICON_PROPERTY.getId();
 			}
-			if (datatype instanceof StringProperty) {
-				return ICON_PROPERTY_STRING;
-			}
-			if (datatype instanceof IntegerProperty) {
-				return ICON_PROPERTY_NUMERIC;
-			}
-			if (datatype instanceof LongProperty) {
-				return ICON_PROPERTY_NUMERIC;
-			}
-			if (datatype instanceof DoubleProperty) {
-				return ICON_PROPERTY_NUMERIC;
-			}
-			if (datatype instanceof XmlProperty) {
-				return ICON_PROPERTY_XML;
-			}
-			return ICON_PROPERTY;
 		}
 		return null;
 	}

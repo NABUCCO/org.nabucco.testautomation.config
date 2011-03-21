@@ -112,9 +112,11 @@ TestConfigurationMaintainanceMultiplePageEditViewModelHandler {
 			} else if (newChild instanceof TestConfigElement) {
 				TestConfigElement newTestConfigElement = (TestConfigElement) newChild;
 				newTestConfigElement = editBusinessModel.readTestConfigElement(newTestConfigElement);
+				
 				// set reused flag
 				if (newTestConfigElement.getReused() == null || !newTestConfigElement.getReused().getValue()) {
 					newTestConfigElement.setReused(true);
+					
 					if(newTestConfigElement.getDatatypeState() == DatatypeState.PERSISTENT){
 						newTestConfigElement.setDatatypeState(DatatypeState.MODIFIED);
 					}
@@ -130,6 +132,16 @@ TestConfigurationMaintainanceMultiplePageEditViewModelHandler {
 					((TestConfigElementContainer) newChild).setOrderIndex(parentTestConfigElement.getTestConfigElementList().size());
 				}
 			} else if (newChild instanceof PropertyList) {
+				PropertyList propertyList = (PropertyList) newChild;
+				
+				// set reused flag
+				if (propertyList.getReused() == null || !propertyList.getReused().getValue()) {
+					propertyList.setReused(true);
+					
+					if(propertyList.getDatatypeState() == DatatypeState.PERSISTENT){
+						propertyList.setDatatypeState(DatatypeState.MODIFIED);
+					}
+				}
 				newChild = editBusinessModel.readPropertyList((PropertyList) newChild);
 			}
 		} else if (newChild instanceof TestConfigElement) {
@@ -282,9 +294,14 @@ TestConfigurationMaintainanceMultiplePageEditViewModelHandler {
 		} else if (parentDatatype instanceof PropertyList) {
 			PropertyList propertyList = (PropertyList) parentDatatype;
 			List<PropertyContainer> propertyListProperyList = propertyList.getPropertyList();
+			PropertyContainer containerToBeDeleted = propertyListProperyList.get(indexOfNodeToDelete);
 			decreaseOrderOfAllElementWithOrderIndexHigherThanIndexOfNodeToDelete(indexOfNodeToDelete, propertyListProperyList);
 			propertyListProperyList.remove(indexOfNodeToDelete);
 			removedFromDataModel = true;
+			DatatypeState datatypeState = containerToBeDeleted.getDatatypeState();
+			if(datatypeState == DatatypeState.PERSISTENT || datatypeState == DatatypeState.MODIFIED){
+        		containerToBeDeleted.setDatatypeState(DatatypeState.DELETED);
+        	}
 		}
 
 		if (removedFromDataModel) {

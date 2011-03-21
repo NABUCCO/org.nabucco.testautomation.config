@@ -9,6 +9,8 @@ import org.nabucco.framework.base.impl.component.ComponentSupport;
 import org.nabucco.framework.common.dynamiccode.facade.component.DynamicCodeComponent;
 import org.nabucco.testautomation.config.facade.component.ConfigComponent;
 import org.nabucco.testautomation.config.facade.service.engine.TestEngineService;
+import org.nabucco.testautomation.config.facade.service.export.ExportConfig;
+import org.nabucco.testautomation.config.facade.service.importing.ImportConfig;
 import org.nabucco.testautomation.config.facade.service.maintain.MaintainTestConfiguration;
 import org.nabucco.testautomation.config.facade.service.produce.ProduceAttributeValue;
 import org.nabucco.testautomation.config.facade.service.produce.ProduceDependency;
@@ -61,6 +63,10 @@ public class ConfigComponentImpl extends ComponentSupport implements ConfigCompo
     private SearchTestConfigElement searchTestConfigElement;
 
     private TestEngineService testEngineService;
+
+    private ExportConfig exportConfig;
+
+    private ImportConfig importConfig;
 
     /** Constructs a new ConfigComponentImpl instance. */
     public ConfigComponentImpl() {
@@ -196,5 +202,23 @@ public class ConfigComponentImpl extends ComponentSupport implements ConfigCompo
      */
     public TestEngineService getTestEngineService() {
         return this.testEngineService;
+    }
+
+    /**
+     * Getter for the ExportConfig.
+     *
+     * @return the ExportConfig.
+     */
+    public ExportConfig getExportConfig() {
+        return this.exportConfig;
+    }
+
+    /**
+     * Getter for the ImportConfig.
+     *
+     * @return the ImportConfig.
+     */
+    public ImportConfig getImportConfig() {
+        return this.importConfig;
     }
 }

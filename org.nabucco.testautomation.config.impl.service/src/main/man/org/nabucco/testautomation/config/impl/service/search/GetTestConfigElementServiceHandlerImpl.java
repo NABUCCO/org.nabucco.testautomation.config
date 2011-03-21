@@ -18,10 +18,13 @@ package org.nabucco.testautomation.config.impl.service.search;
 
 import javax.persistence.Query;
 
+import org.nabucco.framework.base.facade.component.NabuccoInstance;
 import org.nabucco.framework.base.facade.datatype.DatatypeState;
 import org.nabucco.framework.base.facade.datatype.Flag;
+import org.nabucco.framework.base.facade.datatype.validation.constraint.element.ConstraintFactory;
+import org.nabucco.framework.base.facade.datatype.visitor.VisitorException;
 import org.nabucco.framework.base.facade.exception.service.SearchException;
-import org.nabucco.testautomation.config.facade.datatype.Dependency;
+import org.nabucco.framework.base.impl.service.maintain.PersistenceCleaner;
 import org.nabucco.testautomation.config.facade.datatype.TestConfigElement;
 import org.nabucco.testautomation.config.facade.datatype.TestConfigElementContainer;
 import org.nabucco.testautomation.config.facade.datatype.comparator.TestConfigElementSorter;
@@ -32,7 +35,6 @@ import org.nabucco.testautomation.config.impl.service.DynamicCodeSupport;
 import org.nabucco.testautomation.config.impl.service.PropertySupport;
 import org.nabucco.testautomation.config.impl.service.SchemaSupport;
 import org.nabucco.testautomation.config.impl.service.ScriptSupport;
-import org.nabucco.testautomation.schema.facade.datatype.SchemaElement;
 
 /**
  * GetTestConfigElementServiceHandlerImpl
@@ -77,9 +79,25 @@ public class GetTestConfigElementServiceHandlerImpl extends GetTestConfigElement
 		
 		// Detach Entity
     	this.getEntityManager().clear();
+    	try {
+			result.accept(new PersistenceCleaner());
+		} catch (VisitorException e) {
+			throw new SearchException(e);
+		}
     	
     	// Sort
     	elementSorter.sort(result);
+		
+		
+		// Check owner and set Editable-Constraint
+		if (!result.getOwner().equals(NabuccoInstance.getInstance().getOwner())) {
+			try {
+				result.addConstraint(ConstraintFactory.getInstance()
+						.createEditableConstraint(false), true);
+			} catch (VisitorException ex) {
+				throw new SearchException(ex);
+			}
+		}
 		
 		TestConfigElementMsg rs = new TestConfigElementMsg();
 		rs.setTestConfigElement(result);
@@ -117,11 +135,7 @@ public class GetTestConfigElementServiceHandlerImpl extends GetTestConfigElement
 		}
 		
 		// Load Dependencies
-		if (hasDependecies(element)) {
-			for (Dependency dependency : element.getDependencyList()) {
-				dependency.getElement().setDatatypeState(DatatypeState.PERSISTENT);
-			}
-		}
+		element.getDependencyList().size();
 		
 		// resolve TestScripts
 		try {
@@ -140,23 +154,4 @@ public class GetTestConfigElementServiceHandlerImpl extends GetTestConfigElement
 		}
 	}
 	
-	private boolean hasDependecies(TestConfigElement element) {
-
-		SchemaElement schemaElement = element.getSchemaElement();
-
-		if (schemaElement != null && schemaElement.getHasDependencies() != null
-				&& schemaElement.getHasDependencies().getValue().booleanValue()) {
-
-			if (schemaElement.getDefaultDependency() != null
-					&& schemaElement.getDefaultDependency().getValue() != null
-					&& !schemaElement.getDefaultDependency().getValue()
-							.booleanValue()) {
-				return true;
-			} else
-				return false;
-		} else {
-			return false;
-		}
-	}
-
 }

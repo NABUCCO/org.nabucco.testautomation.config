@@ -3,7 +3,7 @@
  */
 package org.nabucco.testautomation.config.ui.web.communication.produce;
 
-import org.nabucco.framework.base.facade.datatype.security.Subject;
+import org.nabucco.framework.base.facade.datatype.session.NabuccoSession;
 import org.nabucco.framework.base.facade.exception.service.ProduceException;
 import org.nabucco.framework.base.facade.message.ServiceRequest;
 import org.nabucco.framework.base.facade.message.ServiceResponse;
@@ -35,37 +35,15 @@ public class ProduceAttributeValueDelegate extends ServiceDelegateSupport {
     /**
      * ProduceAttributeValue.
      *
+     * @param session the NabuccoSession.
      * @param rq the ProduceAttributeValueMsg.
      * @return the AttributeValueMsg.
      * @throws ProduceException
      */
-    public AttributeValueMsg produceAttributeValue(ProduceAttributeValueMsg rq)
-            throws ProduceException {
+    public AttributeValueMsg produceAttributeValue(ProduceAttributeValueMsg rq,
+            NabuccoSession session) throws ProduceException {
         ServiceRequest<ProduceAttributeValueMsg> request = new ServiceRequest<ProduceAttributeValueMsg>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<AttributeValueMsg> rs;
-        if ((service != null)) {
-            rs = service.produceAttributeValue(request);
-        } else {
-            throw new ProduceException(
-                    "Cannot execute service operation: ProduceAttributeValue.produceAttributeValue");
-        }
-        return rs.getResponseMessage();
-    }
-
-    /**
-     * ProduceAttributeValue.
-     *
-     * @param subject the Subject.
-     * @param rq the ProduceAttributeValueMsg.
-     * @return the AttributeValueMsg.
-     * @throws ProduceException
-     */
-    public AttributeValueMsg produceAttributeValue(ProduceAttributeValueMsg rq, Subject subject)
-            throws ProduceException {
-        ServiceRequest<ProduceAttributeValueMsg> request = new ServiceRequest<ProduceAttributeValueMsg>(
-                super.createServiceContext(subject));
+                super.createServiceContext(session));
         request.setRequestMessage(rq);
         ServiceResponse<AttributeValueMsg> rs;
         if ((service != null)) {

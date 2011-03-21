@@ -16,6 +16,7 @@
 */
 package org.nabucco.testautomation.config.impl.service.produce;
 
+import org.nabucco.framework.base.facade.component.NabuccoInstance;
 import org.nabucco.framework.base.facade.datatype.DatatypeState;
 import org.nabucco.framework.base.facade.exception.service.ProduceException;
 import org.nabucco.framework.base.facade.message.ServiceRequest;
@@ -27,6 +28,7 @@ import org.nabucco.testautomation.config.facade.message.ProduceAttributeValueMsg
 import org.nabucco.testautomation.config.facade.message.ProduceTestConfigElementMsg;
 import org.nabucco.testautomation.config.facade.message.TestConfigElementMsg;
 import org.nabucco.testautomation.config.facade.service.produce.ProduceAttributeValue;
+import org.nabucco.testautomation.result.facade.datatype.ExecutionType;
 import org.nabucco.testautomation.schema.facade.datatype.SchemaElement;
 import org.nabucco.testautomation.schema.facade.datatype.attribute.Attribute;
 
@@ -57,6 +59,8 @@ public class ProduceTestConfigElementServiceHandlerImpl extends ProduceTestConfi
 		testConfigElement.setSchemaElement(schemaElement);
 		testConfigElement.setReused(Boolean.FALSE);
 		testConfigElement.setSkip(Boolean.FALSE);
+		testConfigElement.setExecutionType(ExecutionType.AUTOMATED);
+		testConfigElement.setOwner(NabuccoInstance.getInstance().getOwner());
 		
 		if (schemaElement.getName() != null) {
 			testConfigElement.setName(schemaElement.getName());

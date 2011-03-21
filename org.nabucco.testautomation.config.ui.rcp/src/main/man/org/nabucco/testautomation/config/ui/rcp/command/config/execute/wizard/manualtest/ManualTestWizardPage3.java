@@ -59,7 +59,9 @@ import org.nabucco.testautomation.result.ui.rcp.communication.produce.ProduceTra
 public class ManualTestWizardPage3 extends WizardPage {
 
 	private static final String ID = "org.nabucco.testautomation.config.ui.rcp.command.config.execute.wizard.manualtest.ManualTestWizardPage3";
+	
 	private ManualTestResult manualTestResult;
+	
 	private Image screenShot;
 
 	private ScreenshotTrace screenshotTrace;
@@ -72,8 +74,6 @@ public class ManualTestWizardPage3 extends WizardPage {
 		super("");
 		this.manualTestResult = manualTestResult;
 	}
-
-
 
 	/**
 	 * {@inheritDoc}
@@ -98,10 +98,10 @@ public class ManualTestWizardPage3 extends WizardPage {
 		canvas.setBounds(0, 0, scrolledComposite.getSize().x, scrolledComposite.getSize().y);
 
 		Label label = new Label(plate, SWT.NULL);
-		label.setText(I18N.i18n(ID + ".ScreenshotName"));
+		label.setText(" " + I18N.i18n(ID + ".ScreenshotName") + " ");
 		final Text screenshotNameText = new Text(plate, SWT.BORDER);
 		GridData gridData = new GridData();
-		gridData.widthHint = 100;
+		gridData.widthHint = 250;
 		screenshotNameText.setLayoutData(gridData);
 		screenshotNameText.addModifyListener(new ModifyListener() {
 

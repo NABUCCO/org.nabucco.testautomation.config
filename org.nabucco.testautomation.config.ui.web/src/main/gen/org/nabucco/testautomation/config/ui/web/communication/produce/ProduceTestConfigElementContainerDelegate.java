@@ -3,7 +3,7 @@
  */
 package org.nabucco.testautomation.config.ui.web.communication.produce;
 
-import org.nabucco.framework.base.facade.datatype.security.Subject;
+import org.nabucco.framework.base.facade.datatype.session.NabuccoSession;
 import org.nabucco.framework.base.facade.exception.service.ProduceException;
 import org.nabucco.framework.base.facade.message.ServiceRequest;
 import org.nabucco.framework.base.facade.message.ServiceResponse;
@@ -35,37 +35,15 @@ public class ProduceTestConfigElementContainerDelegate extends ServiceDelegateSu
     /**
      * ProduceTestConfigElementContainer.
      *
-     * @param rq the TestConfigElementMsg.
-     * @return the TestConfigElementContainerMsg.
-     * @throws ProduceException
-     */
-    public TestConfigElementContainerMsg produceTestConfigElementContainer(TestConfigElementMsg rq)
-            throws ProduceException {
-        ServiceRequest<TestConfigElementMsg> request = new ServiceRequest<TestConfigElementMsg>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<TestConfigElementContainerMsg> rs;
-        if ((service != null)) {
-            rs = service.produceTestConfigElementContainer(request);
-        } else {
-            throw new ProduceException(
-                    "Cannot execute service operation: ProduceTestConfigElementContainer.produceTestConfigElementContainer");
-        }
-        return rs.getResponseMessage();
-    }
-
-    /**
-     * ProduceTestConfigElementContainer.
-     *
-     * @param subject the Subject.
+     * @param session the NabuccoSession.
      * @param rq the TestConfigElementMsg.
      * @return the TestConfigElementContainerMsg.
      * @throws ProduceException
      */
     public TestConfigElementContainerMsg produceTestConfigElementContainer(TestConfigElementMsg rq,
-            Subject subject) throws ProduceException {
+            NabuccoSession session) throws ProduceException {
         ServiceRequest<TestConfigElementMsg> request = new ServiceRequest<TestConfigElementMsg>(
-                super.createServiceContext(subject));
+                super.createServiceContext(session));
         request.setRequestMessage(rq);
         ServiceResponse<TestConfigElementContainerMsg> rs;
         if ((service != null)) {

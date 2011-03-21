@@ -3,7 +3,7 @@
  */
 package org.nabucco.testautomation.config.ui.web.communication.produce;
 
-import org.nabucco.framework.base.facade.datatype.security.Subject;
+import org.nabucco.framework.base.facade.datatype.session.NabuccoSession;
 import org.nabucco.framework.base.facade.exception.service.ProduceException;
 import org.nabucco.framework.base.facade.message.EmptyServiceMessage;
 import org.nabucco.framework.base.facade.message.ServiceRequest;
@@ -35,14 +35,15 @@ public class ProduceTestConfigurationDelegate extends ServiceDelegateSupport {
     /**
      * ProduceTestConfiguration.
      *
+     * @param session the NabuccoSession.
      * @param rq the EmptyServiceMessage.
      * @return the TestConfigurationMsg.
      * @throws ProduceException
      */
-    public TestConfigurationMsg produceTestConfiguration(EmptyServiceMessage rq)
-            throws ProduceException {
+    public TestConfigurationMsg produceTestConfiguration(EmptyServiceMessage rq,
+            NabuccoSession session) throws ProduceException {
         ServiceRequest<EmptyServiceMessage> request = new ServiceRequest<EmptyServiceMessage>(
-                super.createServiceContext());
+                super.createServiceContext(session));
         request.setRequestMessage(rq);
         ServiceResponse<TestConfigurationMsg> rs;
         if ((service != null)) {
@@ -55,24 +56,24 @@ public class ProduceTestConfigurationDelegate extends ServiceDelegateSupport {
     }
 
     /**
-     * ProduceTestConfiguration.
+     * ProduceTestConfigurationClone.
      *
-     * @param subject the Subject.
-     * @param rq the EmptyServiceMessage.
+     * @param session the NabuccoSession.
+     * @param rq the TestConfigurationMsg.
      * @return the TestConfigurationMsg.
      * @throws ProduceException
      */
-    public TestConfigurationMsg produceTestConfiguration(EmptyServiceMessage rq, Subject subject)
-            throws ProduceException {
-        ServiceRequest<EmptyServiceMessage> request = new ServiceRequest<EmptyServiceMessage>(
-                super.createServiceContext(subject));
+    public TestConfigurationMsg produceTestConfigurationClone(TestConfigurationMsg rq,
+            NabuccoSession session) throws ProduceException {
+        ServiceRequest<TestConfigurationMsg> request = new ServiceRequest<TestConfigurationMsg>(
+                super.createServiceContext(session));
         request.setRequestMessage(rq);
         ServiceResponse<TestConfigurationMsg> rs;
         if ((service != null)) {
-            rs = service.produceTestConfiguration(request);
+            rs = service.produceTestConfigurationClone(request);
         } else {
             throw new ProduceException(
-                    "Cannot execute service operation: ProduceTestConfiguration.produceTestConfiguration");
+                    "Cannot execute service operation: ProduceTestConfiguration.produceTestConfigurationClone");
         }
         return rs.getResponseMessage();
     }

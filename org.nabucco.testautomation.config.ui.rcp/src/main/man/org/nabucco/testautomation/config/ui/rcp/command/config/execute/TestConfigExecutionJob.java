@@ -250,7 +250,7 @@ public class TestConfigExecutionJob extends Job implements ExecutionConstants {
 	        	wizard.init(Activator.getDefault().getWorkbench(), StructuredSelection.EMPTY);
 	        	WizardDialog wizardDialog = new WizardDialog(null, wizard);
 	        	wizardDialog.setBlockOnOpen(true);
-	        	wizardDialog.setPageSize(600, 400);
+	        	wizardDialog.setPageSize(600, 450);
 	        	wizardDialog.setTitleImage(ImageProvider.createImage(ConfigImageRegistry.ICON_CONFIG.getId()));
 	        	wizardDialog.open();
 			}

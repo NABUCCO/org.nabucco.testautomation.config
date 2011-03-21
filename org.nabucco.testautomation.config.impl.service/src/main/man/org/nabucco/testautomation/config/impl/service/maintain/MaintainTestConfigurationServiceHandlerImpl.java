@@ -45,6 +45,7 @@ import org.nabucco.testautomation.config.impl.service.maintain.visitor.SchemaAll
 import org.nabucco.testautomation.config.impl.service.maintain.visitor.SchemaCollector;
 import org.nabucco.testautomation.config.impl.service.maintain.visitor.TestConfigElementModificationVisitor;
 import org.nabucco.testautomation.facade.datatype.property.PropertyList;
+import org.nabucco.testautomation.facade.datatype.property.base.PropertyUsageType;
 import org.nabucco.testautomation.facade.datatype.visitor.PropertyModificationVisitor;
 import org.nabucco.testautomation.schema.facade.datatype.SchemaConfig;
 import org.nabucco.testautomation.schema.facade.datatype.SchemaElement;
@@ -60,6 +61,8 @@ public class MaintainTestConfigurationServiceHandlerImpl extends
 	private static final long serialVersionUID = 1L;
     
 	private static final String KEY_SEPARATOR = "-";
+	
+	private static final String PREFIX = "TCO-";
 
 	private static final TestConfigElementSorter elementSorter = new TestConfigElementSorter();
 	
@@ -161,6 +164,9 @@ public class MaintainTestConfigurationServiceHandlerImpl extends
         
         NabuccoCollectionAccessor.getInstance().clearAssignments(testConfigElementList);
         entity = this.persistenceHelper.persist(entity);
+        entity.setIdentificationKey(PREFIX + entity.getId());
+        entity.setDatatypeState(DatatypeState.MODIFIED);
+        entity = this.persistenceHelper.persist(entity);
         return entity;
     }
 
@@ -178,10 +184,8 @@ public class MaintainTestConfigurationServiceHandlerImpl extends
         }
         NabuccoCollectionAccessor.getInstance().clearAssignments(testConfigElementList);
         
-        if (hasDependecies(element)) {
-        	// Create Dependencies
-	        create(element.getDependencyList());
-        }
+    	// Create Dependencies
+        create(element.getDependencyList());
         
         // Create AttributeValues
         List<AttributeValue> attributeValueList = element.getAttributeValueList();
@@ -251,6 +255,7 @@ public class MaintainTestConfigurationServiceHandlerImpl extends
     private TestConfiguration update(TestConfiguration entity) throws PersistenceException {
 
         List<TestConfigElementContainer> children = entity.getTestConfigElementList();
+        List<TestConfigElementContainer> deletedContainer = NabuccoCollectionAccessor.getInstance().getUnassignedList(children);
 
         // Update children
         for (int i = 0; i < children.size(); i++) {
@@ -258,6 +263,12 @@ public class MaintainTestConfigurationServiceHandlerImpl extends
             children.set(i, updatedElement);
         }
         NabuccoCollectionAccessor.getInstance().clearAssignments(children);
+        
+        // Delete unassigned TestConfigElementContainer
+        for (TestConfigElementContainer testConfigElementContainer : deletedContainer) {
+        	testConfigElementContainer.setDatatypeState(DatatypeState.DELETED);
+        	testConfigElementContainer = this.persistenceHelper.persist(testConfigElementContainer);
+        }
         
         // Update TestConfiguration
         entity = this.persistenceHelper.persist(entity);
@@ -285,10 +296,8 @@ public class MaintainTestConfigurationServiceHandlerImpl extends
         	testConfigElementContainer = this.persistenceHelper.persist(testConfigElementContainer);
         }
         
-        if (hasDependecies(element)) {        
-        	// Update Dependencies
-	        update(element.getDependencyList());
-        }
+    	// Update Dependencies
+        update(element.getDependencyList());
 
         // Create or update AttributeValues
         List<AttributeValue> attributeValueList = element.getAttributeValueList();
@@ -360,8 +369,8 @@ public class MaintainTestConfigurationServiceHandlerImpl extends
         
         // Delete unassigned Dependencies
         for (Dependency dependency : unassignedDependencies) {
-        	dependency = super.getMaintainHandler(Dependency.class).find(dependency.getId());
-        	super.getMaintainHandler(Dependency.class).remove(dependency);
+        	dependency.setDatatypeState(DatatypeState.DELETED);
+        	this.persistenceHelper.persist(dependency);
         }
         
         for (Dependency ignore : ignoreList) {
@@ -370,28 +379,26 @@ public class MaintainTestConfigurationServiceHandlerImpl extends
         NabuccoCollectionAccessor.getInstance().clearAssignments(dependencyList);
     }
     
-    private PropertyList update(PropertyList propertyList) {
-    	
-    	if (propertyList.getDatatypeState() == DatatypeState.PERSISTENT) {
-        	try {
-				PropertyModificationVisitor visitor = new PropertyModificationVisitor(propertyList);
-				propertyList.accept(visitor);
-			} catch (VisitorException e) {
-				super.getLogger().error(e, "Could not check PropertyList '" 
-						+ propertyList.getName().getValue() + "' (ID:" + propertyList.getId() + ") for modification");
-			}
-        }
-        	
-    	if (propertyList.getDatatypeState() != DatatypeState.PERSISTENT) {        	
-            try {
-				propertyList = PropertySupport.getInstance().maintainPropertyList(propertyList, super.getContext());
+	private PropertyList update(PropertyList entity) throws PersistenceException {
+		
+		if (entity != null) {
+			
+			try {
+				if (entity.getDatatypeState() == DatatypeState.PERSISTENT) {
+					PropertyModificationVisitor visitor = new PropertyModificationVisitor(entity);
+					entity.accept(visitor);
+				}
+			
+				if (entity.getDatatypeState() != DatatypeState.PERSISTENT) {
+					entity.setUsageType(PropertyUsageType.TEST_CONFIG_ELEMENT_PARAM);
+					entity = PropertySupport.getInstance().maintainPropertyList(entity, getContext());
+				}
 			} catch (Exception e) {
-				super.getLogger().error(e, "Could not maintain PropertyList '" 
-						+ propertyList.getName().getValue() + "' (ID:" + propertyList.getId() + ")");
+				this.getLogger().error("Could not maintain PropertyList '" + entity.getName().getValue() + "'");
 			}
-    	}
-    	return propertyList;
-    }
+		}
+		return entity;
+	}
     
     private void delete(TestConfiguration entity) throws PersistenceException {
 
@@ -405,7 +412,6 @@ public class MaintainTestConfigurationServiceHandlerImpl extends
     }
     
     private void load(TestConfiguration testConfiguration) {
-    	testConfiguration.setDatatypeState(DatatypeState.PERSISTENT);
     	resolveSchemaConfig(testConfiguration);
 		resolveDynamicCodes(testConfiguration);
         
@@ -447,11 +453,7 @@ public class MaintainTestConfigurationServiceHandlerImpl extends
 		}
 		
 		// Load Dependencies
-		if (hasDependecies(element)) {
-			for (Dependency dependency : element.getDependencyList()) {
-				dependency.getElement().setDatatypeState(DatatypeState.PERSISTENT);
-			}
-		}
+		element.getDependencyList().size();
 		
 		// resolve TestScripts
 		if (hasTestScripts(element)) {
@@ -464,9 +466,6 @@ public class MaintainTestConfigurationServiceHandlerImpl extends
 			}
 		}
 	
-		container.setDatatypeState(DatatypeState.PERSISTENT);
-		element.setDatatypeState(DatatypeState.PERSISTENT);
-		
 		// Load children
 		for (TestConfigElementContainer child : element.getTestConfigElementList()) {
 			load(child);
@@ -492,39 +491,14 @@ public class MaintainTestConfigurationServiceHandlerImpl extends
 	}
 	
 	private boolean hasTestScripts(TestConfigElement element) {
-		
-		List<TestScriptContainer> testScriptList = element.getTestScriptList();
-		
-		for (TestScriptContainer container : testScriptList) {
-			container.setDatatypeState(DatatypeState.PERSISTENT);
-		}
-		return !testScriptList.isEmpty();
+		return element.getTestScriptList().size() > 0;
 	}
     
-	private boolean hasDependecies(TestConfigElement element) {
-
-		SchemaElement schemaElement = element.getSchemaElement();
-
-		if (schemaElement != null && schemaElement.getHasDependencies() != null
-				&& schemaElement.getHasDependencies().getValue().booleanValue()) {
-
-			if (schemaElement.getDefaultDependency() != null
-					&& schemaElement.getDefaultDependency().getValue() != null
-					&& !schemaElement.getDefaultDependency().getValue()
-							.booleanValue()) {
-				return true;
-			} else
-				return false;
-		} else {
-			return false;
-		}
-	}
-	
 	private TestConfigElement setElementKey(TestConfigElement element) throws PersistenceException {
 		
 		if (element != null && element.getSchemaElement() != null && element.getSchemaElement().getPrefix() != null) {
 			String key = element.getSchemaElement().getPrefix().getValue() + KEY_SEPARATOR + element.getId();
-			element.setElementKey(key);
+			element.setIdentificationKey(key);
 			element.setDatatypeState(DatatypeState.MODIFIED);
 			element = this.persistenceHelper.persist(element);
 		}

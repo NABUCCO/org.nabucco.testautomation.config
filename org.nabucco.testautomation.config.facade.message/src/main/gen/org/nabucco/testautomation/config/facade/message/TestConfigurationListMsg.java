@@ -3,10 +3,18 @@
  */
 package org.nabucco.testautomation.config.facade.message;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import org.nabucco.framework.base.facade.datatype.property.ListProperty;
+import java.util.Map;
+import org.nabucco.framework.base.facade.datatype.collection.NabuccoCollectionState;
+import org.nabucco.framework.base.facade.datatype.collection.NabuccoList;
+import org.nabucco.framework.base.facade.datatype.collection.NabuccoListImpl;
 import org.nabucco.framework.base.facade.datatype.property.NabuccoProperty;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyContainer;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyDescriptor;
+import org.nabucco.framework.base.facade.datatype.property.PropertyAssociationType;
+import org.nabucco.framework.base.facade.datatype.property.PropertyCache;
+import org.nabucco.framework.base.facade.datatype.property.PropertyDescriptorSupport;
 import org.nabucco.framework.base.facade.message.ServiceMessage;
 import org.nabucco.framework.base.facade.message.ServiceMessageSupport;
 import org.nabucco.testautomation.config.facade.datatype.TestConfiguration;
@@ -21,23 +29,51 @@ public class TestConfigurationListMsg extends ServiceMessageSupport implements S
 
     private static final long serialVersionUID = 1L;
 
-    private static final String[] PROPERTY_NAMES = { "testConfigList" };
-
     private static final String[] PROPERTY_CONSTRAINTS = { "m0,n;" };
 
-    private List<TestConfiguration> testConfigList;
+    public static final String TESTCONFIGLIST = "testConfigList";
+
+    private NabuccoList<TestConfiguration> testConfigList;
 
     /** Constructs a new TestConfigurationListMsg instance. */
     public TestConfigurationListMsg() {
         super();
     }
 
+    /**
+     * CreatePropertyContainer.
+     *
+     * @return the NabuccoPropertyContainer.
+     */
+    protected static NabuccoPropertyContainer createPropertyContainer() {
+        Map<String, NabuccoPropertyDescriptor> propertyMap = new HashMap<String, NabuccoPropertyDescriptor>();
+        propertyMap.put(TESTCONFIGLIST, PropertyDescriptorSupport.createCollection(TESTCONFIGLIST,
+                TestConfiguration.class, 0, PROPERTY_CONSTRAINTS[0], false,
+                PropertyAssociationType.COMPOSITION));
+        return new NabuccoPropertyContainer(propertyMap);
+    }
+
     @Override
-    public List<NabuccoProperty<?>> getProperties() {
-        List<NabuccoProperty<?>> properties = super.getProperties();
-        properties.add(new ListProperty<TestConfiguration>(PROPERTY_NAMES[0],
-                TestConfiguration.class, PROPERTY_CONSTRAINTS[0], this.testConfigList));
+    public List<NabuccoProperty> getProperties() {
+        List<NabuccoProperty> properties = super.getProperties();
+        properties
+                .add(super.createProperty(
+                        TestConfigurationListMsg.getPropertyDescriptor(TESTCONFIGLIST),
+                        this.testConfigList));
         return properties;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean setProperty(NabuccoProperty property) {
+        if (super.setProperty(property)) {
+            return true;
+        }
+        if ((property.getName().equals(TESTCONFIGLIST) && (property.getType() == TestConfiguration.class))) {
+            this.testConfigList = ((NabuccoList<TestConfiguration>) property.getInstance());
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -73,16 +109,6 @@ public class TestConfigurationListMsg extends ServiceMessageSupport implements S
     }
 
     @Override
-    public String toString() {
-        StringBuilder appendable = new StringBuilder();
-        appendable.append("<TestConfigurationListMsg>\n");
-        appendable.append(super.toString());
-        appendable.append((("<testConfigList>" + this.testConfigList) + "</testConfigList>\n"));
-        appendable.append("</TestConfigurationListMsg>\n");
-        return appendable.toString();
-    }
-
-    @Override
     public ServiceMessage cloneObject() {
         return this;
     }
@@ -90,12 +116,34 @@ public class TestConfigurationListMsg extends ServiceMessageSupport implements S
     /**
      * Missing description at method getTestConfigList.
      *
-     * @return the List<TestConfiguration>.
+     * @return the NabuccoList<TestConfiguration>.
      */
-    public List<TestConfiguration> getTestConfigList() {
+    public NabuccoList<TestConfiguration> getTestConfigList() {
         if ((this.testConfigList == null)) {
-            this.testConfigList = new ArrayList<TestConfiguration>();
+            this.testConfigList = new NabuccoListImpl<TestConfiguration>(
+                    NabuccoCollectionState.INITIALIZED);
         }
         return this.testConfigList;
+    }
+
+    /**
+     * Getter for the PropertyDescriptor.
+     *
+     * @param propertyName the String.
+     * @return the NabuccoPropertyDescriptor.
+     */
+    public static NabuccoPropertyDescriptor getPropertyDescriptor(String propertyName) {
+        return PropertyCache.getInstance().retrieve(TestConfigurationListMsg.class)
+                .getProperty(propertyName);
+    }
+
+    /**
+     * Getter for the PropertyDescriptorList.
+     *
+     * @return the List<NabuccoPropertyDescriptor>.
+     */
+    public static List<NabuccoPropertyDescriptor> getPropertyDescriptorList() {
+        return PropertyCache.getInstance().retrieve(TestConfigurationListMsg.class)
+                .getAllProperties();
     }
 }

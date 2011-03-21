@@ -1,19 +1,19 @@
 /*
-* Copyright 2010 PRODYNA AG
-*
-* Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.opensource.org/licenses/eclipse-1.0.php or
-* http://www.nabucco-source.org/nabucco-license.html
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2010 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco-source.org/nabucco-license.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.masterdetails.widgetcreators.script;
 
 import java.lang.reflect.Method;
@@ -37,7 +37,6 @@ import org.nabucco.framework.plugin.base.component.newpicker.composite.table.Tab
 import org.nabucco.framework.plugin.base.component.newpicker.composite.table.TablePickerRefreshListener;
 import org.nabucco.framework.plugin.base.component.newpicker.dialog.tree.TreePickerDialog;
 import org.nabucco.framework.plugin.base.component.newpicker.dialog.tree.TreePickerDialogLabel;
-import org.nabucco.framework.plugin.base.component.newpicker.dialog.tree.TreePickerDialogParameter;
 import org.nabucco.framework.plugin.base.model.ViewModel;
 import org.nabucco.framework.plugin.base.view.NabuccoFormToolkit;
 import org.nabucco.framework.plugin.base.view.NabuccoMessageManager;
@@ -48,17 +47,17 @@ import org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.ma
 import org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.masterdetails.widgetcreators.script.listener.RemoveListener;
 import org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.masterdetails.widgetcreators.script.listener.TestScriptTreePickerDialogListener;
 import org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.masterdetails.widgetcreators.script.listener.UpListener;
-
 import org.nabucco.testautomation.script.facade.datatype.dictionary.TestScript;
 import org.nabucco.testautomation.script.ui.rcp.command.script.OpenTestScriptHandlerImpl;
+import org.nabucco.testautomation.ui.rcp.base.dialog.OwnerSelectionTreePickerDialog;
+import org.nabucco.testautomation.ui.rcp.base.dialog.OwnerSelectionTreePickerDialogParameter;
 
 /**
  * TestScriptTableWidgetCreator
  * 
  * @author Markus Jorroch, PRODYNA AG
  */
-public class TestScriptTableWidgetCreator extends
-		AbstractBaseTypeWidgetCreator<List<TestScript>> {
+public class TestScriptTableWidgetCreator extends AbstractBaseTypeWidgetCreator<List<TestScript>> {
 
 	private static final String ID = "org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.masterdetails.widgetcreators.script.TestScriptTable";
 
@@ -76,15 +75,13 @@ public class TestScriptTableWidgetCreator extends
 
 	public static final String COLUMN_NAME_LABEL = ID + ".column.name.label";
 
-	public static final String COLUMN_NAME_TOOLTIP = ID
-			+ ".column.name.tooltip";
+	public static final String COLUMN_NAME_TOOLTIP = ID + ".column.name.tooltip";
 
 	private static final String TREE_TITLE = ID + ".treeTitle";
 
 	private static final String COLUMN_KEY_LABEL = ID + ".column.key.label";
 
-	private static final String COLUMN_KEY_TOOLTIP = ID
-		+ ".column.key.tooltip";
+	private static final String COLUMN_KEY_TOOLTIP = ID + ".column.key.tooltip";
 
 	/**
 	 * Creates a new {@link TestScriptTableWidgetCreator} instance.
@@ -97,14 +94,11 @@ public class TestScriptTableWidgetCreator extends
 	}
 
 	@Override
-	protected Control createWidget(Composite parent, List<TestScript> script,
-			Method method, Object testConfigElement, boolean readOnly,
-			ViewModel viewModel, NabuccoMessageManager messageManager,
-			String propertyName) {
+	protected Control createWidget(Composite parent, List<TestScript> script, Method method, Object testConfigElement, boolean readOnly, ViewModel viewModel,
+			NabuccoMessageManager messageManager, String propertyName) {
 
 		if (testConfigElement instanceof TestConfigElement) {
-			return layoutTreeDialogPickerTable(parent,
-					(TestConfigElement) testConfigElement, viewModel);
+			return layoutTreeDialogPickerTable(parent, (TestConfigElement) testConfigElement, viewModel, readOnly);
 		}
 
 		return null;
@@ -115,33 +109,27 @@ public class TestScriptTableWidgetCreator extends
 	 * 
 	 * @param parent
 	 *            the parent composite
+	 * @param readOnly 
 	 * 
 	 * @return the layouted table
 	 */
-	private Control layoutTreeDialogPickerTable(Composite parent,
-			TestConfigElement testConfigElement, ViewModel viewModel) {
+	private Control layoutTreeDialogPickerTable(Composite parent, TestConfigElement testConfigElement, ViewModel viewModel, boolean readOnly) {
 
-		TestScriptTableMiniModel model = new TestScriptTableMiniModel(
-				viewModel, testConfigElement);
+		TestScriptTableMiniModel model = new TestScriptTableMiniModel(viewModel, testConfigElement);
 
-		TablePickerComposite<TreePickerDialog> composite = this
-				.TreeDialogPickerTable(parent, model);
+		TablePickerComposite<TreePickerDialog> composite = this.TreeDialogPickerTable(parent, model, readOnly);
 		composite.addDoubleClickListener(new IDoubleClickListener() {
 
 			@Override
 			public void doubleClick(DoubleClickEvent arg0) {
-				TestScriptContainer testScriptContainer = (TestScriptContainer) ((IStructuredSelection) arg0
-						.getSelection()).getFirstElement();
-				OpenTestScriptHandlerImpl openTestScriptHandlerImpl = new OpenTestScriptHandlerImpl(
-						testScriptContainer.getTestScriptRefId());
+				TestScriptContainer testScriptContainer = (TestScriptContainer) ((IStructuredSelection) arg0.getSelection()).getFirstElement();
+				OpenTestScriptHandlerImpl openTestScriptHandlerImpl = new OpenTestScriptHandlerImpl(testScriptContainer.getTestScriptRefId());
 				openTestScriptHandlerImpl.run();
 			}
 		});
 
-		TablePickerRefreshListener listener = new TablePickerRefreshListener(
-				composite);
-		model.addPropertyChangeListener(
-				TestScriptTableMiniModel.PROPERTY_TEST_SCRIPT_LIST, listener);
+		TablePickerRefreshListener listener = new TablePickerRefreshListener(composite);
+		model.addPropertyChangeListener(TestScriptTableMiniModel.PROPERTY_TEST_SCRIPT_LIST, listener);
 
 		return composite;
 	}
@@ -153,33 +141,26 @@ public class TestScriptTableWidgetCreator extends
 	 *            the parent composite
 	 * @param model
 	 *            the model
+	 * @param readOnly 
 	 * 
 	 * @return the table picker composite
 	 */
-	private TablePickerComposite<TreePickerDialog> TreeDialogPickerTable(
-			Composite parent, TestScriptTableMiniModel model) {
+	private TablePickerComposite<TreePickerDialog> TreeDialogPickerTable(Composite parent, TestScriptTableMiniModel model, boolean readOnly) {
 		TablePickerParameter outerTableParameter = this.createParameters(model);
 
-		TreePickerDialogLabel label = new TreePickerDialogLabel(TITLE, MESSAGE,
-				SHELL_TITLE, "Tree", TREE_TITLE);
+		TreePickerDialogLabel label = new TreePickerDialogLabel(TITLE, MESSAGE, SHELL_TITLE, "Tree", TREE_TITLE);
 
-		TreePickerDialogParameter treeDialogParameter = new TreePickerDialogParameter(
-				label, model);
+		OwnerSelectionTreePickerDialogParameter treeDialogParameter = new OwnerSelectionTreePickerDialogParameter(label, model);
 
-		treeDialogParameter
-				.setContentProvider(new TestScriptTreePickerDialogContentProvider());
-		treeDialogParameter
-				.setLabelProvider(new TestScriptTreePickerDialogLabelProvider());
+		TestScriptTreePickerDialogContentProvider contentProvider = new TestScriptTreePickerDialogContentProvider();
+		treeDialogParameter.setContentProvider(contentProvider);
+		treeDialogParameter.setLabelProvider(new TestScriptTreePickerDialogLabelProvider());
 
-		TreePickerDialog dialog = new TreePickerDialog(parent.getShell(),
-				treeDialogParameter);
+		TreePickerDialog dialog = new OwnerSelectionTreePickerDialog(parent.getShell(), treeDialogParameter);
 
-		dialog.addSelectionListener(TestScriptTreePickerDialogListener.ID,
-				new TestScriptTreePickerDialogListener(model));
+		dialog.addSelectionListener(TestScriptTreePickerDialogListener.ID, new TestScriptTreePickerDialogListener(model));
 
-		return new TablePickerComposite<TreePickerDialog>(parent, SWT.NONE
-				| TablePickerComposite.ALL_BUTTONS, 150, outerTableParameter,
-				dialog);
+		return new TablePickerComposite<TreePickerDialog>(parent, SWT.NONE | TablePickerComposite.ALL_BUTTONS, 150, outerTableParameter, dialog, readOnly);
 	}
 
 	/**
@@ -195,12 +176,9 @@ public class TestScriptTableWidgetCreator extends
 		NabuccoTableSorter tableSorter = this.createTableSorter();
 		NabuccoTableColumnInfo[] columnInfo = this.createTableColumnInfo();
 
-		TestScriptTableContentProvider tableContent = new TestScriptTableContentProvider(
-				model);
+		TestScriptTableContentProvider tableContent = new TestScriptTableContentProvider(model);
 
-		return new TablePickerParameter(columnInfo, tableSorter,
-				new TestScriptTableFilter(), tableContent,
-				createListeners(model));
+		return new TablePickerParameter(columnInfo, tableSorter, new TestScriptTableFilter(), tableContent, createListeners(model));
 	}
 
 	/**
@@ -216,8 +194,7 @@ public class TestScriptTableWidgetCreator extends
 		UpListener upListener = new UpListener(model);
 		DownListener downListener = new DownListener(model);
 
-		return new TablePickerListener(null, removeListener, upListener,
-				downListener);
+		return new TablePickerListener(null, removeListener, upListener, downListener);
 	}
 
 	/**
@@ -238,16 +215,14 @@ public class TestScriptTableWidgetCreator extends
 	 */
 	private NabuccoTableColumnInfo[] createTableColumnInfo() {
 
-		NabuccoTableColumnInfo info1 = new NabuccoTableColumnInfo(
-				COLUMN_KEY_LABEL, COLUMN_KEY_TOOLTIP, 75, SWT.LEFT,
-				SWT.CENTER, new TestScriptTableKeyColumnLabelProvider());
+		NabuccoTableColumnInfo info1 = new NabuccoTableColumnInfo(COLUMN_KEY_LABEL, COLUMN_KEY_TOOLTIP, 75, SWT.LEFT, SWT.CENTER,
+				new TestScriptTableKeyColumnLabelProvider());
 
 		info1.setResizable(true);
 		info1.setMoveable(false);
-		
-		NabuccoTableColumnInfo info2 = new NabuccoTableColumnInfo(
-				COLUMN_NAME_LABEL, COLUMN_NAME_TOOLTIP, 250, SWT.LEFT,
-				SWT.CENTER, new TestScriptTableNameColumnLabelProvider());
+
+		NabuccoTableColumnInfo info2 = new NabuccoTableColumnInfo(COLUMN_NAME_LABEL, COLUMN_NAME_TOOLTIP, 250, SWT.LEFT, SWT.CENTER,
+				new TestScriptTableNameColumnLabelProvider());
 
 		info2.setResizable(true);
 		info2.setMoveable(false);

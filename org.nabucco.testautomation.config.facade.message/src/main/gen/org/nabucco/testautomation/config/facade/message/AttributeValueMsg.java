@@ -3,9 +3,15 @@
  */
 package org.nabucco.testautomation.config.facade.message;
 
+import java.util.HashMap;
 import java.util.List;
-import org.nabucco.framework.base.facade.datatype.property.DatatypeProperty;
+import java.util.Map;
 import org.nabucco.framework.base.facade.datatype.property.NabuccoProperty;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyContainer;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyDescriptor;
+import org.nabucco.framework.base.facade.datatype.property.PropertyAssociationType;
+import org.nabucco.framework.base.facade.datatype.property.PropertyCache;
+import org.nabucco.framework.base.facade.datatype.property.PropertyDescriptorSupport;
 import org.nabucco.framework.base.facade.message.ServiceMessage;
 import org.nabucco.framework.base.facade.message.ServiceMessageSupport;
 import org.nabucco.testautomation.config.facade.datatype.attribute.AttributeValue;
@@ -20,9 +26,9 @@ public class AttributeValueMsg extends ServiceMessageSupport implements ServiceM
 
     private static final long serialVersionUID = 1L;
 
-    private static final String[] PROPERTY_NAMES = { "attributeValue" };
-
     private static final String[] PROPERTY_CONSTRAINTS = { "m1,1;" };
+
+    public static final String ATTRIBUTEVALUE = "attributeValue";
 
     private AttributeValue attributeValue;
 
@@ -31,12 +37,37 @@ public class AttributeValueMsg extends ServiceMessageSupport implements ServiceM
         super();
     }
 
+    /**
+     * CreatePropertyContainer.
+     *
+     * @return the NabuccoPropertyContainer.
+     */
+    protected static NabuccoPropertyContainer createPropertyContainer() {
+        Map<String, NabuccoPropertyDescriptor> propertyMap = new HashMap<String, NabuccoPropertyDescriptor>();
+        propertyMap.put(ATTRIBUTEVALUE, PropertyDescriptorSupport.createDatatype(ATTRIBUTEVALUE,
+                AttributeValue.class, 0, PROPERTY_CONSTRAINTS[0], false,
+                PropertyAssociationType.COMPOSITION));
+        return new NabuccoPropertyContainer(propertyMap);
+    }
+
     @Override
-    public List<NabuccoProperty<?>> getProperties() {
-        List<NabuccoProperty<?>> properties = super.getProperties();
-        properties.add(new DatatypeProperty<AttributeValue>(PROPERTY_NAMES[0],
-                AttributeValue.class, PROPERTY_CONSTRAINTS[0], this.attributeValue));
+    public List<NabuccoProperty> getProperties() {
+        List<NabuccoProperty> properties = super.getProperties();
+        properties.add(super.createProperty(
+                AttributeValueMsg.getPropertyDescriptor(ATTRIBUTEVALUE), this.attributeValue));
         return properties;
+    }
+
+    @Override
+    public boolean setProperty(NabuccoProperty property) {
+        if (super.setProperty(property)) {
+            return true;
+        }
+        if ((property.getName().equals(ATTRIBUTEVALUE) && (property.getType() == AttributeValue.class))) {
+            this.setAttributeValue(((AttributeValue) property.getInstance()));
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -72,16 +103,6 @@ public class AttributeValueMsg extends ServiceMessageSupport implements ServiceM
     }
 
     @Override
-    public String toString() {
-        StringBuilder appendable = new StringBuilder();
-        appendable.append("<AttributeValueMsg>\n");
-        appendable.append(super.toString());
-        appendable.append((("<attributeValue>" + this.attributeValue) + "</attributeValue>\n"));
-        appendable.append("</AttributeValueMsg>\n");
-        return appendable.toString();
-    }
-
-    @Override
     public ServiceMessage cloneObject() {
         return this;
     }
@@ -102,5 +123,25 @@ public class AttributeValueMsg extends ServiceMessageSupport implements ServiceM
      */
     public void setAttributeValue(AttributeValue attributeValue) {
         this.attributeValue = attributeValue;
+    }
+
+    /**
+     * Getter for the PropertyDescriptor.
+     *
+     * @param propertyName the String.
+     * @return the NabuccoPropertyDescriptor.
+     */
+    public static NabuccoPropertyDescriptor getPropertyDescriptor(String propertyName) {
+        return PropertyCache.getInstance().retrieve(AttributeValueMsg.class)
+                .getProperty(propertyName);
+    }
+
+    /**
+     * Getter for the PropertyDescriptorList.
+     *
+     * @return the List<NabuccoPropertyDescriptor>.
+     */
+    public static List<NabuccoPropertyDescriptor> getPropertyDescriptorList() {
+        return PropertyCache.getInstance().retrieve(AttributeValueMsg.class).getAllProperties();
     }
 }

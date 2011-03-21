@@ -20,25 +20,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.nabucco.framework.base.facade.datatype.Datatype;
+import org.nabucco.framework.base.facade.datatype.code.CodePath;
 import org.nabucco.framework.base.facade.datatype.collection.NabuccoCollection;
 import org.nabucco.framework.base.facade.datatype.collection.NabuccoCollectionState;
+import org.nabucco.framework.base.facade.datatype.collection.NabuccoList;
 import org.nabucco.framework.base.facade.exception.client.ClientException;
-import org.nabucco.framework.base.facade.message.EmptyServiceMessage;
+import org.nabucco.framework.common.dynamiccode.facade.datatype.DynamicCodeCode;
+import org.nabucco.framework.common.dynamiccode.facade.message.DynamicCodeCodeListMsg;
+import org.nabucco.framework.common.dynamiccode.facade.message.search.CodePathSearchMsg;
+import org.nabucco.framework.common.dynamiccode.ui.rcp.communication.DynamicCodeComponentServiceDelegateFactory;
 import org.nabucco.framework.plugin.base.Activator;
-import org.nabucco.framework.plugin.base.component.newpicker.dialog.tree.TreePickerDialogContentProvider;
-
 import org.nabucco.testautomation.script.facade.datatype.dictionary.TestScript;
 import org.nabucco.testautomation.script.facade.datatype.dictionary.base.Folder;
-import org.nabucco.testautomation.script.facade.message.FolderMsg;
+import org.nabucco.testautomation.script.facade.message.FolderListMsg;
+import org.nabucco.testautomation.script.facade.message.FolderSearchMsg;
 import org.nabucco.testautomation.script.ui.rcp.communication.ScriptComponentServiceDelegateFactory;
 import org.nabucco.testautomation.script.ui.rcp.communication.search.SearchFolderDelegate;
+import org.nabucco.testautomation.ui.rcp.base.dialog.OwnerSelectionTreePickerDialogContentProvider;
 
 /**
  * TestScriptTreePickerDialogContentProvider
  * 
  * @author Markus Jorroch, PRODYNA AG
  */
-public class TestScriptTreePickerDialogContentProvider extends TreePickerDialogContentProvider<Datatype> {
+public class TestScriptTreePickerDialogContentProvider extends OwnerSelectionTreePickerDialogContentProvider<Datatype> {
 
 	 @Override
 	    public boolean hasChildren(Object element) {
@@ -80,10 +85,8 @@ public class TestScriptTreePickerDialogContentProvider extends TreePickerDialogC
 		@Override
 	    public Datatype[] getElements(Object element) {
 	        if (element instanceof TestScriptTableMiniModel) {
-	            Folder root = this.loadFolderRoots();
-	            List<Datatype> result = new ArrayList<Datatype>();
-	            result.add(root);
-	            return result.toArray(new Datatype[result.size()]);
+	        	List<Folder> rootFolderList = this.loadFolderRoots();
+	            return rootFolderList.toArray(new Datatype[rootFolderList.size()]);
 	        }
 
 	        if (element instanceof List<?>) {
@@ -121,20 +124,45 @@ public class TestScriptTreePickerDialogContentProvider extends TreePickerDialogC
 	     * 
 	     * @return the loaded folder roots
 	     */
-	    private Folder loadFolderRoots() {
+	    private List<Folder> loadFolderRoots() {
 	        try {
 	        	SearchFolderDelegate searchFolderDelegate = ScriptComponentServiceDelegateFactory
 	            	.getInstance().getSearchFolder();
 
-	            FolderMsg rs = searchFolderDelegate.getFolderStructure(new EmptyServiceMessage());
+//	            FolderSearchMsg msg = new FolderSearchMsg();
+//	            msg.setOwner(this.selectedOwner);
+//				FolderListMsg rs = searchFolderDelegate.getFolderStructure(msg);
+//	            return rs.getFolderList().get(0);
 
-	            return rs.getFolder();
-
+	            FolderSearchMsg msg = new FolderSearchMsg();
+	            msg.setOwner(this.selectedOwner);
+				FolderListMsg rs = searchFolderDelegate.getFolderStructure(msg);
+	            return rs.getFolderList();
 	        } catch (ClientException e) {
 	            Activator.getDefault().logError(e);
 	        }
 
 			return null;
 	    }
+
+		
+		@Override
+		public String[] getOwners() {
+			CodePathSearchMsg rq = new CodePathSearchMsg();
+			rq.setCodePath(new CodePath("nabucco.owner"));
+			try {
+				DynamicCodeCodeListMsg codeListMsg = DynamicCodeComponentServiceDelegateFactory.getInstance().getSearchDynamicCode().searchByCodePath(rq);
+				NabuccoList<DynamicCodeCode> codeList = codeListMsg.getCodeList();
+				this.availableOwners.clear();
+				this.availableOwners.add("");
+				for (DynamicCodeCode dynamicCodeCode : codeList) {
+					this.availableOwners.add(dynamicCodeCode.getName().getValue());
+				}
+				return this.availableOwners.toArray(new String[this.availableOwners.size()]);
+			} catch (ClientException e) {
+				Activator.getDefault().logError(e);
+			}
+			return null;
+		}
 	    
 }

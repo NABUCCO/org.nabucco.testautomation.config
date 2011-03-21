@@ -18,6 +18,7 @@ package org.nabucco.testautomation.config.ui.rcp.search.config.model;
 
 import java.util.List;
 
+import org.nabucco.framework.base.facade.datatype.Owner;
 import org.nabucco.framework.base.facade.exception.client.ClientException;
 import org.nabucco.framework.plugin.base.Activator;
 import org.nabucco.framework.plugin.base.component.search.model.NabuccoComponentSearchModel;
@@ -58,6 +59,10 @@ public class TestConfigElementSearchBusinessModel implements NabuccoComponentSea
     }
 
     public TestConfigElement[] searchConfigElement(SchemaElement schemaElement) {
+       return searchConfigElement(schemaElement, null);
+    }
+    
+    public TestConfigElement[] searchConfigElement(SchemaElement schemaElement, Owner owner) {
         TestConfigElementSearchMsg rq = new TestConfigElementSearchMsg();
         rq.setSchemaElement(schemaElement);
 
@@ -76,9 +81,14 @@ public class TestConfigElementSearchBusinessModel implements NabuccoComponentSea
     }
 
     public Property[] searchProperty(PropertyType propertyType) {
+        return searchProperty(propertyType, null);
+    }
+    
+    public Property[] searchProperty(PropertyType propertyType, Owner owner) {
         PropertySearchMsg rq = new PropertySearchMsg();
         rq.setPropertyType(propertyType);
         rq.setUsageType(PropertyUsageType.TEST_CONFIG_ELEMENT_PARAM);
+        rq.setOwner(owner);
 
         List<Property> result = null;
         try {

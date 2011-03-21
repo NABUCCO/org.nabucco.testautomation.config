@@ -28,6 +28,8 @@ public class ProduceTestConfigurationImpl extends ServiceSupport implements
 
     private ProduceTestConfigurationServiceHandler produceTestConfigurationServiceHandler;
 
+    private ProduceTestConfigurationCloneServiceHandler produceTestConfigurationCloneServiceHandler;
+
     /** Constructs a new ProduceTestConfigurationImpl instance. */
     public ProduceTestConfigurationImpl() {
         super();
@@ -41,6 +43,12 @@ public class ProduceTestConfigurationImpl extends ServiceSupport implements
         if ((this.produceTestConfigurationServiceHandler != null)) {
             this.produceTestConfigurationServiceHandler.setEntityManager(null);
             this.produceTestConfigurationServiceHandler.setLogger(super.getLogger());
+        }
+        this.produceTestConfigurationCloneServiceHandler = injector
+                .inject(ProduceTestConfigurationCloneServiceHandler.getId());
+        if ((this.produceTestConfigurationCloneServiceHandler != null)) {
+            this.produceTestConfigurationCloneServiceHandler.setEntityManager(null);
+            this.produceTestConfigurationCloneServiceHandler.setLogger(super.getLogger());
         }
     }
 
@@ -61,6 +69,22 @@ public class ProduceTestConfigurationImpl extends ServiceSupport implements
         this.produceTestConfigurationServiceHandler.init();
         rs = this.produceTestConfigurationServiceHandler.invoke(rq);
         this.produceTestConfigurationServiceHandler.finish();
+        return rs;
+    }
+
+    @Override
+    public ServiceResponse<TestConfigurationMsg> produceTestConfigurationClone(
+            ServiceRequest<TestConfigurationMsg> rq) throws ProduceException {
+        if ((this.produceTestConfigurationCloneServiceHandler == null)) {
+            super.getLogger().error(
+                    "No service implementation configured for produceTestConfigurationClone().");
+            throw new InjectionException(
+                    "No service implementation configured for produceTestConfigurationClone().");
+        }
+        ServiceResponse<TestConfigurationMsg> rs;
+        this.produceTestConfigurationCloneServiceHandler.init();
+        rs = this.produceTestConfigurationCloneServiceHandler.invoke(rq);
+        this.produceTestConfigurationCloneServiceHandler.finish();
         return rs;
     }
 }

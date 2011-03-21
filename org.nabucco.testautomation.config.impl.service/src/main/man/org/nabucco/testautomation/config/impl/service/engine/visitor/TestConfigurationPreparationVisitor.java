@@ -53,6 +53,8 @@ public class TestConfigurationPreparationVisitor extends
 	private ServiceRequest<TestScriptSearchMsg> rq;
 	
 	private TestScriptSearchMsg msg;
+	
+	private ServiceMessageContext ctx;
 
 	private Code environment;
 	
@@ -64,6 +66,7 @@ public class TestConfigurationPreparationVisitor extends
 		this.scriptCache = new HashMap<Long, TestScript>();
 		this.search = ConfigComponentLocator.getInstance().getComponent()
 				.getScriptComponent().getSearchTestScript();
+		this.ctx = ctx;
 		this.rq = new ServiceRequest<TestScriptSearchMsg>(ctx);
 		this.msg = new TestScriptSearchMsg();
 	}
@@ -138,7 +141,7 @@ public class TestConfigurationPreparationVisitor extends
 		}
 		
 		new TestScriptPreparationVisitor(this.environment, this.release,
-				this.brand).visit(script);
+				this.brand, this.ctx, this.scriptCache, this.search).visit(script);
 		return script;
 	}
 	

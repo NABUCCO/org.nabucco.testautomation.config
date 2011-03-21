@@ -16,11 +16,17 @@
 */
 package org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.model.contextmenu;
 
+import org.nabucco.framework.plugin.base.Activator;
 import org.nabucco.framework.plugin.base.component.picker.dialog.AbstractElementPickerContentProvider;
 import org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.model.TestConfigurationElementFactory;
 
 import org.nabucco.testautomation.schema.facade.datatype.SchemaElement;
 
+/**
+ * ConfigElementCloneElementPickerContentProvider
+ * 
+ * @author Markus Jorroch, PRODYNA AG
+ */
 public class ConfigElementCloneElementPickerContentProvider extends
         AbstractElementPickerContentProvider {
 
@@ -32,7 +38,7 @@ public class ConfigElementCloneElementPickerContentProvider extends
 
     @Override
     public Object[] getElements(Object arg0) {
-        return TestConfigurationElementFactory.getExistingConfigElements(schemaElement);
+        return TestConfigurationElementFactory.getExistingConfigElements(schemaElement, Activator.getDefault().getModel().getSecurityModel().getSubject().getOwner());
     }
 
 }

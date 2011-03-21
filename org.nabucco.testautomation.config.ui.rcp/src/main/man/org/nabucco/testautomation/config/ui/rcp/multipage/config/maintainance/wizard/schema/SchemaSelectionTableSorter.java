@@ -18,6 +18,11 @@ package org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.w
 
 import org.nabucco.framework.plugin.base.component.list.view.NabuccoTableSorter;
 
+/**
+ * SchemaSelectionTableSorter
+ * 
+ * @author Markus Jorroch, PRODYNA AG
+ */
 public class SchemaSelectionTableSorter extends NabuccoTableSorter{
 
 	@Override

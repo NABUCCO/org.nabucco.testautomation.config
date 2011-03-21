@@ -20,66 +20,58 @@ import java.util.Map;
 
 import org.eclipse.jface.viewers.IDecoration;
 import org.nabucco.framework.base.facade.datatype.Datatype;
-import org.nabucco.framework.plugin.base.Activator;
 import org.nabucco.framework.plugin.base.component.multipage.masterdetail.MasterDetailTreeNode;
 import org.nabucco.testautomation.config.facade.datatype.TestConfigElement;
 import org.nabucco.testautomation.config.facade.datatype.TestConfigElementContainer;
 import org.nabucco.testautomation.config.ui.rcp.images.ConfigImageRegistry;
-import org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.TestConfigurationMaintainanceMultiplePageEditView;
 import org.nabucco.testautomation.facade.datatype.property.PropertyList;
 import org.nabucco.testautomation.result.facade.datatype.ExecutionType;
 
+/**
+ * TreeNodeDecorator
+ * 
+ * @author Markus Jorroch, PRODYNA AG
+ */
 public class TreeNodeDecorator {
 
-	private static String ICON_REUSED = "icons/reused.png";
-	private static String ICON_SKIPPED = ConfigImageRegistry.ICON_SKIP_8X8.getId();
-	private static String ICON_MANUAL = "icons/hand_8x8.png";
-
 	public static void decorateNode(MasterDetailTreeNode node, Datatype datatype) {
-		boolean refresh = false;
+
 		// Reused PropertyLists and ConfigElements should be decorated
 		if (datatype instanceof TestConfigElementContainer) {
 			TestConfigElement newTestConfigElement = ((TestConfigElementContainer) datatype).getElement();
 			Map<Integer, String> decorations = node.getDecorations();
+			
 			if (newTestConfigElement.getReused() != null && newTestConfigElement.getReused().getValue()) {
 				if (!decorations.containsKey(IDecoration.BOTTOM_RIGHT)) {
-					decorations.put(IDecoration.BOTTOM_RIGHT, ICON_REUSED);
-					refresh = true;
+					decorations.put(IDecoration.BOTTOM_RIGHT, ConfigImageRegistry.ICON_REUSED.getId());
 				}
-			} else {
-				if (decorations.containsKey(IDecoration.BOTTOM_RIGHT)) {
-					decorations.remove(IDecoration.BOTTOM_RIGHT);
-					refresh = true;
-				}
+			} else if (decorations.containsKey(IDecoration.BOTTOM_RIGHT)) {
+				decorations.remove(IDecoration.BOTTOM_RIGHT);
 			}
 		}
+		
 		if (datatype instanceof TestConfigElement) {
 			TestConfigElement newTestConfigElement = (TestConfigElement) datatype;
 			Map<Integer, String> decorations = node.getDecorations();
+			
 			if (newTestConfigElement.getReused() != null && newTestConfigElement.getReused().getValue()) {
 				if (!decorations.containsKey(IDecoration.BOTTOM_RIGHT)) {
-					decorations.put(IDecoration.BOTTOM_RIGHT, ICON_REUSED);
-					refresh = true;
+					decorations.put(IDecoration.BOTTOM_RIGHT, ConfigImageRegistry.ICON_REUSED.getId());
 				}
-			} else {
-				if (decorations.containsKey(IDecoration.BOTTOM_RIGHT)) {
-					decorations.remove(IDecoration.BOTTOM_RIGHT);
-					refresh = true;
-				}
+			} else if (decorations.containsKey(IDecoration.BOTTOM_RIGHT)) {
+				decorations.remove(IDecoration.BOTTOM_RIGHT);
 			}
 		} else if (datatype instanceof PropertyList) {
-			PropertyList newProperty = (PropertyList) datatype;
+			PropertyList propertyList = (PropertyList) datatype;
 			Map<Integer, String> decorations = node.getDecorations();
-			if (newProperty.getReused() != null && newProperty.getReused().getValue()) {
+			
+			if (propertyList.getReused() != null && propertyList.getReused().getValue() != null
+					&& propertyList.getReused().getValue().booleanValue()) {
 				if (!decorations.containsKey(IDecoration.BOTTOM_RIGHT)) {
-					decorations.put(IDecoration.BOTTOM_RIGHT, ICON_REUSED);
-					refresh = true;
+					decorations.put(IDecoration.BOTTOM_RIGHT, ConfigImageRegistry.ICON_REUSED.getId());
 				}
-			} else {
-				if (decorations.containsKey(IDecoration.BOTTOM_RIGHT)) {
-					decorations.remove(IDecoration.BOTTOM_RIGHT);
-					refresh = true;
-				}
+			} else if (decorations.containsKey(IDecoration.BOTTOM_RIGHT)) {
+				decorations.remove(IDecoration.BOTTOM_RIGHT);
 			}
 		}
 
@@ -87,36 +79,22 @@ public class TreeNodeDecorator {
 		if (datatype instanceof TestConfigElement) {
 			TestConfigElement testConfigElement = (TestConfigElement) datatype;
 			Map<Integer, String> decorations = node.getDecorations();
+			
 			if (testConfigElement.getSkip() != null && testConfigElement.getSkip().getValue() != null && testConfigElement.getSkip().getValue()) {
 				if (!decorations.containsKey(IDecoration.TOP_LEFT)) {
-					decorations.put(IDecoration.TOP_LEFT, ICON_SKIPPED);
-					refresh = true;
+					decorations.put(IDecoration.TOP_LEFT, ConfigImageRegistry.ICON_SKIP_8X8.getId());
 				}
-			} else {
-				if (decorations.containsKey(IDecoration.TOP_LEFT)) {
-					decorations.remove(IDecoration.TOP_LEFT);
-					refresh = true;
-				}
-
+			} else if (decorations.containsKey(IDecoration.TOP_LEFT)) {
+				decorations.remove(IDecoration.TOP_LEFT);
 			}
+			
 			if (testConfigElement.getExecutionType() != null && testConfigElement.getExecutionType() == ExecutionType.MANUAL) {
 				if (!decorations.containsKey(IDecoration.TOP_RIGHT)) {
-					decorations.put(IDecoration.TOP_RIGHT, ICON_MANUAL);
-					refresh = true;
+					decorations.put(IDecoration.TOP_RIGHT, ConfigImageRegistry.ICON_MANUAL.getId());
 				}
-			} else {
-				if (decorations.containsKey(IDecoration.TOP_RIGHT)) {
-					decorations.remove(IDecoration.TOP_RIGHT);
-					refresh = true;
-				}
-
+			} else if (decorations.containsKey(IDecoration.TOP_RIGHT)) {
+				decorations.remove(IDecoration.TOP_RIGHT);
 			}
-		}
-		// refreshTree
-		if (refresh) {
-			TestConfigurationMaintainanceMultiplePageEditView view = (TestConfigurationMaintainanceMultiplePageEditView) Activator.getDefault().getView(
-					TestConfigurationMaintainanceMultiplePageEditView.ID);
-			view.getMasterDetailsBlock().getTreeViewer().refresh();
 		}
 	}
 

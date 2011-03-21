@@ -7,6 +7,8 @@ import org.nabucco.framework.base.facade.component.Component;
 import org.nabucco.framework.base.facade.exception.service.ServiceException;
 import org.nabucco.framework.common.dynamiccode.facade.component.DynamicCodeComponent;
 import org.nabucco.testautomation.config.facade.service.engine.TestEngineService;
+import org.nabucco.testautomation.config.facade.service.export.ExportConfig;
+import org.nabucco.testautomation.config.facade.service.importing.ImportConfig;
 import org.nabucco.testautomation.config.facade.service.maintain.MaintainTestConfiguration;
 import org.nabucco.testautomation.config.facade.service.produce.ProduceAttributeValue;
 import org.nabucco.testautomation.config.facade.service.produce.ProduceDependency;
@@ -142,4 +144,20 @@ public interface ConfigComponent extends Component {
      * @throws ServiceException
      */
     TestEngineService getTestEngineService() throws ServiceException;
+
+    /**
+     * Getter for the ExportConfig.
+     *
+     * @return the ExportConfig.
+     * @throws ServiceException
+     */
+    ExportConfig getExportConfig() throws ServiceException;
+
+    /**
+     * Getter for the ImportConfig.
+     *
+     * @return the ImportConfig.
+     * @throws ServiceException
+     */
+    ImportConfig getImportConfig() throws ServiceException;
 }

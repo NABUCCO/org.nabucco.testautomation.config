@@ -16,6 +16,7 @@
 */
 package org.nabucco.testautomation.config.impl.service.produce;
 
+import org.nabucco.framework.base.facade.component.NabuccoInstance;
 import org.nabucco.framework.base.facade.datatype.DatatypeState;
 import org.nabucco.framework.base.facade.exception.service.ProduceException;
 import org.nabucco.framework.base.facade.message.EmptyServiceMessage;
@@ -40,6 +41,7 @@ public class ProduceTestConfigurationServiceHandlerImpl extends ProduceTestConfi
 		TestConfiguration testConfiguration = new TestConfiguration();
 		testConfiguration.setDatatypeState(DatatypeState.INITIALIZED);
 		testConfiguration.setName("Enter name ...");
+		testConfiguration.setOwner(NabuccoInstance.getInstance().getOwner());
 		rs.setTestConfiguration(testConfiguration);
 		return rs;
 	}

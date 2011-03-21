@@ -3,20 +3,25 @@
  */
 package org.nabucco.testautomation.config.facade.datatype;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.nabucco.framework.base.facade.datatype.Datatype;
 import org.nabucco.framework.base.facade.datatype.Description;
-import org.nabucco.framework.base.facade.datatype.NabuccoDatatype;
 import org.nabucco.framework.base.facade.datatype.Name;
 import org.nabucco.framework.base.facade.datatype.code.Code;
 import org.nabucco.framework.base.facade.datatype.code.CodePath;
 import org.nabucco.framework.base.facade.datatype.collection.NabuccoCollectionState;
 import org.nabucco.framework.base.facade.datatype.collection.NabuccoList;
-import org.nabucco.framework.base.facade.datatype.property.BasetypeProperty;
-import org.nabucco.framework.base.facade.datatype.property.DatatypeProperty;
-import org.nabucco.framework.base.facade.datatype.property.ListProperty;
+import org.nabucco.framework.base.facade.datatype.collection.NabuccoListImpl;
 import org.nabucco.framework.base.facade.datatype.property.NabuccoProperty;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyContainer;
+import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyDescriptor;
+import org.nabucco.framework.base.facade.datatype.property.PropertyAssociationType;
+import org.nabucco.framework.base.facade.datatype.property.PropertyCache;
+import org.nabucco.framework.base.facade.datatype.property.PropertyDescriptorSupport;
 import org.nabucco.testautomation.config.facade.datatype.TestConfigElementContainer;
+import org.nabucco.testautomation.facade.datatype.base.ExportDatatype;
 import org.nabucco.testautomation.facade.datatype.engine.TestEngineConfiguration;
 import org.nabucco.testautomation.schema.facade.datatype.SchemaConfig;
 
@@ -25,22 +30,32 @@ import org.nabucco.testautomation.schema.facade.datatype.SchemaConfig;
  *
  * @author Steffen Schmidt, PRODYNA AG, 2010-04-14
  */
-public class TestConfiguration extends NabuccoDatatype implements Datatype {
+public class TestConfiguration extends ExportDatatype implements Datatype {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String[] PROPERTY_NAMES = { "name", "description",
-            "testConfigElementList", "schemaConfig", "environmentType", "releaseType",
-            "testEngineConfiguration" };
-
-    private static final String[] PROPERTY_CONSTRAINTS = { "l0,n;m1,1;", "l0,n;m0,1;", "m0,n;",
+    private static final String[] PROPERTY_CONSTRAINTS = { "l0,255;m1,1;", "l0,255;m0,1;", "m0,n;",
             "m1,1;", "m0,1;", "m0,1;", "m0,1;" };
+
+    public static final String NAME = "name";
+
+    public static final String DESCRIPTION = "description";
+
+    public static final String TESTCONFIGELEMENTLIST = "testConfigElementList";
+
+    public static final String SCHEMACONFIG = "schemaConfig";
+
+    public static final String ENVIRONMENTTYPE = "environmentType";
+
+    public static final String RELEASETYPE = "releaseType";
+
+    public static final String TESTENGINECONFIGURATION = "testEngineConfiguration";
 
     private Name name;
 
     private Description description;
 
-    private List<TestConfigElementContainer> testConfigElementList;
+    private NabuccoList<TestConfigElementContainer> testConfigElementList;
 
     private SchemaConfig schemaConfig;
 
@@ -87,9 +102,8 @@ public class TestConfiguration extends NabuccoDatatype implements Datatype {
         if ((this.getDescription() != null)) {
             clone.setDescription(this.getDescription().cloneObject());
         }
-        if ((this.testConfigElementList instanceof NabuccoList<?>)) {
-            clone.testConfigElementList = ((NabuccoList<TestConfigElementContainer>) this.testConfigElementList)
-                    .cloneCollection();
+        if ((this.testConfigElementList != null)) {
+            clone.testConfigElementList = this.testConfigElementList.cloneCollection();
         }
         if ((this.getSchemaConfig() != null)) {
             clone.setSchemaConfig(this.getSchemaConfig().cloneObject());
@@ -124,10 +138,11 @@ public class TestConfiguration extends NabuccoDatatype implements Datatype {
      */
     List<TestConfigElementContainer> getTestConfigElementListJPA() {
         if ((this.testConfigElementList == null)) {
-            this.testConfigElementList = new NabuccoList<TestConfigElementContainer>(
+            this.testConfigElementList = new NabuccoListImpl<TestConfigElementContainer>(
                     NabuccoCollectionState.LAZY);
         }
-        return ((NabuccoList<TestConfigElementContainer>) this.testConfigElementList).getDelegate();
+        return ((NabuccoListImpl<TestConfigElementContainer>) this.testConfigElementList)
+                .getDelegate();
     }
 
     /**
@@ -137,11 +152,40 @@ public class TestConfiguration extends NabuccoDatatype implements Datatype {
      */
     void setTestConfigElementListJPA(List<TestConfigElementContainer> testConfigElementList) {
         if ((this.testConfigElementList == null)) {
-            this.testConfigElementList = new NabuccoList<TestConfigElementContainer>(
+            this.testConfigElementList = new NabuccoListImpl<TestConfigElementContainer>(
                     NabuccoCollectionState.LAZY);
         }
-        ((NabuccoList<TestConfigElementContainer>) this.testConfigElementList)
+        ((NabuccoListImpl<TestConfigElementContainer>) this.testConfigElementList)
                 .setDelegate(testConfigElementList);
+    }
+
+    /**
+     * CreatePropertyContainer.
+     *
+     * @return the NabuccoPropertyContainer.
+     */
+    protected static NabuccoPropertyContainer createPropertyContainer() {
+        Map<String, NabuccoPropertyDescriptor> propertyMap = new HashMap<String, NabuccoPropertyDescriptor>();
+        propertyMap.putAll(PropertyCache.getInstance().retrieve(ExportDatatype.class)
+                .getPropertyMap());
+        propertyMap.put(NAME, PropertyDescriptorSupport.createBasetype(NAME, Name.class, 4,
+                PROPERTY_CONSTRAINTS[0], false));
+        propertyMap.put(DESCRIPTION, PropertyDescriptorSupport.createBasetype(DESCRIPTION,
+                Description.class, 5, PROPERTY_CONSTRAINTS[1], false));
+        propertyMap.put(TESTCONFIGELEMENTLIST, PropertyDescriptorSupport.createCollection(
+                TESTCONFIGELEMENTLIST, TestConfigElementContainer.class, 6,
+                PROPERTY_CONSTRAINTS[2], false, PropertyAssociationType.COMPOSITION));
+        propertyMap.put(SCHEMACONFIG, PropertyDescriptorSupport.createDatatype(SCHEMACONFIG,
+                SchemaConfig.class, 7, PROPERTY_CONSTRAINTS[3], false,
+                PropertyAssociationType.COMPONENT));
+        propertyMap.put(ENVIRONMENTTYPE, PropertyDescriptorSupport.createDatatype(ENVIRONMENTTYPE,
+                Code.class, 8, PROPERTY_CONSTRAINTS[4], false, PropertyAssociationType.COMPONENT));
+        propertyMap.put(RELEASETYPE, PropertyDescriptorSupport.createDatatype(RELEASETYPE,
+                Code.class, 9, PROPERTY_CONSTRAINTS[5], false, PropertyAssociationType.COMPONENT));
+        propertyMap.put(TESTENGINECONFIGURATION, PropertyDescriptorSupport.createDatatype(
+                TESTENGINECONFIGURATION, TestEngineConfiguration.class, 10,
+                PROPERTY_CONSTRAINTS[6], false, PropertyAssociationType.COMPONENT));
+        return new NabuccoPropertyContainer(propertyMap);
     }
 
     @Override
@@ -150,25 +194,58 @@ public class TestConfiguration extends NabuccoDatatype implements Datatype {
     }
 
     @Override
-    public List<NabuccoProperty<?>> getProperties() {
-        List<NabuccoProperty<?>> properties = super.getProperties();
-        properties.add(new BasetypeProperty<Name>(PROPERTY_NAMES[0], Name.class,
-                PROPERTY_CONSTRAINTS[0], this.name));
-        properties.add(new BasetypeProperty<Description>(PROPERTY_NAMES[1], Description.class,
-                PROPERTY_CONSTRAINTS[1], this.description));
-        properties.add(new ListProperty<TestConfigElementContainer>(PROPERTY_NAMES[2],
-                TestConfigElementContainer.class, PROPERTY_CONSTRAINTS[2],
-                this.testConfigElementList));
-        properties.add(new DatatypeProperty<SchemaConfig>(PROPERTY_NAMES[3], SchemaConfig.class,
-                PROPERTY_CONSTRAINTS[3], this.schemaConfig));
-        properties.add(new DatatypeProperty<Code>(PROPERTY_NAMES[4], Code.class,
-                PROPERTY_CONSTRAINTS[4], this.environmentType));
-        properties.add(new DatatypeProperty<Code>(PROPERTY_NAMES[5], Code.class,
-                PROPERTY_CONSTRAINTS[5], this.releaseType));
-        properties.add(new DatatypeProperty<TestEngineConfiguration>(PROPERTY_NAMES[6],
-                TestEngineConfiguration.class, PROPERTY_CONSTRAINTS[6],
-                this.testEngineConfiguration));
+    public List<NabuccoProperty> getProperties() {
+        List<NabuccoProperty> properties = super.getProperties();
+        properties.add(super.createProperty(TestConfiguration.getPropertyDescriptor(NAME),
+                this.name, null));
+        properties.add(super.createProperty(TestConfiguration.getPropertyDescriptor(DESCRIPTION),
+                this.description, null));
+        properties.add(super.createProperty(
+                TestConfiguration.getPropertyDescriptor(TESTCONFIGELEMENTLIST),
+                this.testConfigElementList, null));
+        properties.add(super.createProperty(TestConfiguration.getPropertyDescriptor(SCHEMACONFIG),
+                this.schemaConfig, this.schemaConfigRefId));
+        properties.add(super.createProperty(
+                TestConfiguration.getPropertyDescriptor(ENVIRONMENTTYPE), this.environmentType,
+                this.environmentTypeRefId));
+        properties.add(super.createProperty(TestConfiguration.getPropertyDescriptor(RELEASETYPE),
+                this.releaseType, this.releaseTypeRefId));
+        properties.add(super.createProperty(
+                TestConfiguration.getPropertyDescriptor(TESTENGINECONFIGURATION),
+                this.testEngineConfiguration, this.testEngineConfigurationRefId));
         return properties;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean setProperty(NabuccoProperty property) {
+        if (super.setProperty(property)) {
+            return true;
+        }
+        if ((property.getName().equals(NAME) && (property.getType() == Name.class))) {
+            this.setName(((Name) property.getInstance()));
+            return true;
+        } else if ((property.getName().equals(DESCRIPTION) && (property.getType() == Description.class))) {
+            this.setDescription(((Description) property.getInstance()));
+            return true;
+        } else if ((property.getName().equals(TESTCONFIGELEMENTLIST) && (property.getType() == TestConfigElementContainer.class))) {
+            this.testConfigElementList = ((NabuccoList<TestConfigElementContainer>) property
+                    .getInstance());
+            return true;
+        } else if ((property.getName().equals(SCHEMACONFIG) && (property.getType() == SchemaConfig.class))) {
+            this.setSchemaConfig(((SchemaConfig) property.getInstance()));
+            return true;
+        } else if ((property.getName().equals(ENVIRONMENTTYPE) && (property.getType() == Code.class))) {
+            this.setEnvironmentType(((Code) property.getInstance()));
+            return true;
+        } else if ((property.getName().equals(RELEASETYPE) && (property.getType() == Code.class))) {
+            this.setReleaseType(((Code) property.getInstance()));
+            return true;
+        } else if ((property.getName().equals(TESTENGINECONFIGURATION) && (property.getType() == TestEngineConfiguration.class))) {
+            this.setTestEngineConfiguration(((TestEngineConfiguration) property.getInstance()));
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -264,30 +341,6 @@ public class TestConfiguration extends NabuccoDatatype implements Datatype {
     }
 
     @Override
-    public String toString() {
-        StringBuilder appendable = new StringBuilder();
-        appendable.append("<TestConfiguration>\n");
-        appendable.append(super.toString());
-        appendable.append((("<name>" + this.name) + "</name>\n"));
-        appendable.append((("<description>" + this.description) + "</description>\n"));
-        appendable.append((("<schemaConfig>" + this.schemaConfig) + "</schemaConfig>\n"));
-        appendable
-                .append((("<schemaConfigRefId>" + this.schemaConfigRefId) + "</schemaConfigRefId>\n"));
-        appendable.append((("<environmentType>" + this.environmentType) + "</environmentType>\n"));
-        appendable
-                .append((("<environmentTypeRefId>" + this.environmentTypeRefId) + "</environmentTypeRefId>\n"));
-        appendable.append((("<releaseType>" + this.releaseType) + "</releaseType>\n"));
-        appendable
-                .append((("<releaseTypeRefId>" + this.releaseTypeRefId) + "</releaseTypeRefId>\n"));
-        appendable
-                .append((("<testEngineConfiguration>" + this.testEngineConfiguration) + "</testEngineConfiguration>\n"));
-        appendable
-                .append((("<testEngineConfigurationRefId>" + this.testEngineConfigurationRefId) + "</testEngineConfigurationRefId>\n"));
-        appendable.append("</TestConfiguration>\n");
-        return appendable.toString();
-    }
-
-    @Override
     public TestConfiguration cloneObject() {
         TestConfiguration clone = new TestConfiguration();
         this.cloneObject(clone);
@@ -319,6 +372,9 @@ public class TestConfiguration extends NabuccoDatatype implements Datatype {
      */
     public void setName(String name) {
         if ((this.name == null)) {
+            if ((name == null)) {
+                return;
+            }
             this.name = new Name();
         }
         this.name.setValue(name);
@@ -349,6 +405,9 @@ public class TestConfiguration extends NabuccoDatatype implements Datatype {
      */
     public void setDescription(String description) {
         if ((this.description == null)) {
+            if ((description == null)) {
+                return;
+            }
             this.description = new Description();
         }
         this.description.setValue(description);
@@ -357,11 +416,11 @@ public class TestConfiguration extends NabuccoDatatype implements Datatype {
     /**
      * Missing description at method getTestConfigElementList.
      *
-     * @return the List<TestConfigElementContainer>.
+     * @return the NabuccoList<TestConfigElementContainer>.
      */
-    public List<TestConfigElementContainer> getTestConfigElementList() {
+    public NabuccoList<TestConfigElementContainer> getTestConfigElementList() {
         if ((this.testConfigElementList == null)) {
-            this.testConfigElementList = new NabuccoList<TestConfigElementContainer>(
+            this.testConfigElementList = new NabuccoListImpl<TestConfigElementContainer>(
                     NabuccoCollectionState.INITIALIZED);
         }
         return this.testConfigElementList;
@@ -529,6 +588,26 @@ public class TestConfiguration extends NabuccoDatatype implements Datatype {
      */
     public void setTestEngineConfigurationRefId(Long testEngineConfigurationRefId) {
         this.testEngineConfigurationRefId = testEngineConfigurationRefId;
+    }
+
+    /**
+     * Getter for the PropertyDescriptor.
+     *
+     * @param propertyName the String.
+     * @return the NabuccoPropertyDescriptor.
+     */
+    public static NabuccoPropertyDescriptor getPropertyDescriptor(String propertyName) {
+        return PropertyCache.getInstance().retrieve(TestConfiguration.class)
+                .getProperty(propertyName);
+    }
+
+    /**
+     * Getter for the PropertyDescriptorList.
+     *
+     * @return the List<NabuccoPropertyDescriptor>.
+     */
+    public static List<NabuccoPropertyDescriptor> getPropertyDescriptorList() {
+        return PropertyCache.getInstance().retrieve(TestConfiguration.class).getAllProperties();
     }
 
     /**

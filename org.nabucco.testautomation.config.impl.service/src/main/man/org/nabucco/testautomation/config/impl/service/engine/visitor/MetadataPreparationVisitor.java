@@ -60,14 +60,16 @@ public class MetadataPreparationVisitor extends MetadataVisitor {
 	@Override
 	protected void visit(Metadata metadata) {
 		this.metadata = metadata;
-		super.visit(metadata);
+
+		for (MetadataLabel label : metadata.getLabelList()) {
+			this.visit(label);
+		}
 		setPropertyList();
 	}
 
 	@Override
 	protected void visit(MetadataLabel label) {
 		this.labelSet.add(label);
-		super.visit(label);
 	}
 	
 	private void setPropertyList() {

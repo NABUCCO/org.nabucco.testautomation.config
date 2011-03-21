@@ -55,8 +55,8 @@ public class TestScriptTableKeyColumnLabelProvider implements ILabelProvider {
      */
     private String labelScriptContainer(TestScriptContainer container) {
         if (container.getTestScript() != null
-                && container.getTestScript().getTestScriptKey() != null) {
-            return container.getTestScript().getTestScriptKey().getValue();
+                && container.getTestScript().getIdentificationKey() != null) {
+            return container.getTestScript().getIdentificationKey().getValue();
         }
         return "";
     }
@@ -70,8 +70,8 @@ public class TestScriptTableKeyColumnLabelProvider implements ILabelProvider {
      * @return the label
      */
     private String labelScript(TestScript script) {
-        if (script.getName() != null && script.getTestScriptKey().getValue() != null) {
-            return script.getTestScriptKey().getValue();
+        if (script.getName() != null && script.getIdentificationKey().getValue() != null) {
+            return script.getIdentificationKey().getValue();
         }
         return "";
     }

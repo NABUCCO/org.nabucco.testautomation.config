@@ -21,17 +21,22 @@ import java.util.List;
 import org.nabucco.framework.base.facade.datatype.Datatype;
 import org.nabucco.framework.base.facade.datatype.DatatypeState;
 import org.nabucco.framework.plugin.base.component.multipage.masterdetail.MasterDetailTreeNode;
+import org.nabucco.framework.plugin.base.component.multipage.masterdetail.master.copypaste.AbstractCopyPasteHandler;
 import org.nabucco.framework.plugin.base.component.multipage.masterdetail.master.copypaste.CopyPasteHandler;
 import org.nabucco.testautomation.config.facade.datatype.TestConfigElement;
 import org.nabucco.testautomation.config.facade.datatype.TestConfigElementContainer;
 import org.nabucco.testautomation.config.facade.datatype.TestConfiguration;
 import org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.masterdetails.TestConfigurationMaintainanceMasterDetailTreeNodeCreator;
-
 import org.nabucco.testautomation.facade.datatype.property.PropertyList;
 import org.nabucco.testautomation.facade.datatype.property.base.Property;
 import org.nabucco.testautomation.facade.datatype.property.base.PropertyContainer;
 
-public class TestConfigurationCopyPasteHandler implements CopyPasteHandler {
+/**
+ * TestConfigurationCopyPasteHandler
+ * 
+ * @author Markus Jorroch, PRODYNA AG
+ */
+public class TestConfigurationCopyPasteHandler extends AbstractCopyPasteHandler implements CopyPasteHandler {
 
 	private TestConfigurationMaintainanceMasterDetailTreeNodeCreator treeNodeCreator;
 
@@ -44,6 +49,10 @@ public class TestConfigurationCopyPasteHandler implements CopyPasteHandler {
 	public void paste(MasterDetailTreeNode targetNode,
 			Datatype copiedDatatype) {
 
+		if(!super.validate(targetNode, copiedDatatype)){
+			return;
+		}
+		
 		Datatype targetDatatype = targetNode.getDatatype();
 		Datatype clone = null;
 
@@ -51,7 +60,6 @@ public class TestConfigurationCopyPasteHandler implements CopyPasteHandler {
 			// Update datamodel
 			if(targetDatatype instanceof TestConfiguration && copiedDatatype instanceof TestConfigElement){
 				TestConfigElement copiedTestConfigElement = (TestConfigElement) copiedDatatype;
-				copiedTestConfigElement.setId(null);
 				TestConfigElementContainer testConfigElementContainer = TestConfigurationElementFactory.clone(copiedTestConfigElement);	
 				clone = testConfigElementContainer.getElement();
 				List<TestConfigElementContainer> testConfigElementList = ((TestConfiguration) targetDatatype).getTestConfigElementList();
@@ -60,7 +68,6 @@ public class TestConfigurationCopyPasteHandler implements CopyPasteHandler {
 			} else if(targetDatatype instanceof TestConfigElement){
 				if(copiedDatatype instanceof TestConfigElement){
 					TestConfigElement copiedTestConfigElement = (TestConfigElement) copiedDatatype;
-					copiedTestConfigElement.setId(null);
 					TestConfigElementContainer testConfigElementContainer = TestConfigurationElementFactory.clone(copiedTestConfigElement);	
 					clone = testConfigElementContainer.getElement();
 					List<TestConfigElementContainer> testConfigElementList = ((TestConfigElement) targetDatatype).getTestConfigElementList();
@@ -68,14 +75,12 @@ public class TestConfigurationCopyPasteHandler implements CopyPasteHandler {
 					testConfigElementList.add(testConfigElementContainer);
 				} else if(copiedDatatype instanceof PropertyList){
 					PropertyList copiedPropertyList = (PropertyList) copiedDatatype;
-					copiedPropertyList.setId(null);
 					PropertyContainer propertyContainer = TestConfigurationElementFactory.clone(copiedPropertyList);	
 					clone = propertyContainer.getProperty();
 					((TestConfigElement) targetDatatype).setPropertyList((PropertyList) clone);
 				}
 			} else if(targetDatatype instanceof PropertyList && copiedDatatype instanceof Property){
 				Property copiedProperty = (Property) copiedDatatype;
-				copiedProperty.setId(null);
 				PropertyContainer propertyContainer = TestConfigurationElementFactory.clone(copiedProperty);
 				clone = propertyContainer.getProperty();
 				List<PropertyContainer> targetPropertyList = ((PropertyList) targetDatatype).getPropertyList();

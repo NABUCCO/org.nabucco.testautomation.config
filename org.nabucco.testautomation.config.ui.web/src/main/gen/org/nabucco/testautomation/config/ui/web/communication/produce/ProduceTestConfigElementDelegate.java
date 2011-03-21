@@ -3,7 +3,7 @@
  */
 package org.nabucco.testautomation.config.ui.web.communication.produce;
 
-import org.nabucco.framework.base.facade.datatype.security.Subject;
+import org.nabucco.framework.base.facade.datatype.session.NabuccoSession;
 import org.nabucco.framework.base.facade.exception.service.ProduceException;
 import org.nabucco.framework.base.facade.message.ServiceRequest;
 import org.nabucco.framework.base.facade.message.ServiceResponse;
@@ -35,37 +35,15 @@ public class ProduceTestConfigElementDelegate extends ServiceDelegateSupport {
     /**
      * ProduceTestConfigElement.
      *
-     * @param rq the ProduceTestConfigElementMsg.
-     * @return the TestConfigElementMsg.
-     * @throws ProduceException
-     */
-    public TestConfigElementMsg produceTestConfigElement(ProduceTestConfigElementMsg rq)
-            throws ProduceException {
-        ServiceRequest<ProduceTestConfigElementMsg> request = new ServiceRequest<ProduceTestConfigElementMsg>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<TestConfigElementMsg> rs;
-        if ((service != null)) {
-            rs = service.produceTestConfigElement(request);
-        } else {
-            throw new ProduceException(
-                    "Cannot execute service operation: ProduceTestConfigElement.produceTestConfigElement");
-        }
-        return rs.getResponseMessage();
-    }
-
-    /**
-     * ProduceTestConfigElement.
-     *
-     * @param subject the Subject.
+     * @param session the NabuccoSession.
      * @param rq the ProduceTestConfigElementMsg.
      * @return the TestConfigElementMsg.
      * @throws ProduceException
      */
     public TestConfigElementMsg produceTestConfigElement(ProduceTestConfigElementMsg rq,
-            Subject subject) throws ProduceException {
+            NabuccoSession session) throws ProduceException {
         ServiceRequest<ProduceTestConfigElementMsg> request = new ServiceRequest<ProduceTestConfigElementMsg>(
-                super.createServiceContext(subject));
+                super.createServiceContext(session));
         request.setRequestMessage(rq);
         ServiceResponse<TestConfigElementMsg> rs;
         if ((service != null)) {
@@ -80,37 +58,15 @@ public class ProduceTestConfigElementDelegate extends ServiceDelegateSupport {
     /**
      * ProduceTestConfigElementClone.
      *
-     * @param rq the TestConfigElementMsg.
-     * @return the TestConfigElementMsg.
-     * @throws ProduceException
-     */
-    public TestConfigElementMsg produceTestConfigElementClone(TestConfigElementMsg rq)
-            throws ProduceException {
-        ServiceRequest<TestConfigElementMsg> request = new ServiceRequest<TestConfigElementMsg>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<TestConfigElementMsg> rs;
-        if ((service != null)) {
-            rs = service.produceTestConfigElementClone(request);
-        } else {
-            throw new ProduceException(
-                    "Cannot execute service operation: ProduceTestConfigElement.produceTestConfigElementClone");
-        }
-        return rs.getResponseMessage();
-    }
-
-    /**
-     * ProduceTestConfigElementClone.
-     *
-     * @param subject the Subject.
+     * @param session the NabuccoSession.
      * @param rq the TestConfigElementMsg.
      * @return the TestConfigElementMsg.
      * @throws ProduceException
      */
     public TestConfigElementMsg produceTestConfigElementClone(TestConfigElementMsg rq,
-            Subject subject) throws ProduceException {
+            NabuccoSession session) throws ProduceException {
         ServiceRequest<TestConfigElementMsg> request = new ServiceRequest<TestConfigElementMsg>(
-                super.createServiceContext(subject));
+                super.createServiceContext(session));
         request.setRequestMessage(rq);
         ServiceResponse<TestConfigElementMsg> rs;
         if ((service != null)) {

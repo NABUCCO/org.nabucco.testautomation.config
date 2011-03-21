@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.nabucco.framework.base.facade.datatype.DatatypeState;
 import org.nabucco.framework.base.facade.datatype.utils.I18N;
 import org.nabucco.framework.plugin.base.component.multipage.masterdetail.MasterDetailBlock;
+import org.nabucco.framework.plugin.base.component.multipage.masterdetail.MasterDetailHelper;
 import org.nabucco.framework.plugin.base.component.multipage.view.MultiPageEditView;
 import org.nabucco.framework.plugin.base.component.multipage.xml.XMLEditorPage;
 import org.nabucco.framework.plugin.base.component.multipage.xml.example.XmlDefaultPage;
@@ -113,20 +114,52 @@ public class TestConfigurationMaintainanceMultiplePageEditView
 		final ToolBar toolBar = ((ToolBarManager) getToolBarManager())
 				.getControl();
 		ToolItem reloadItem = null;
+		ToolItem importItem = null;
+		ToolItem saveItem = null;
+		ToolItem deleteItem = null;
 
 		for (ToolItem item : toolBar.getItems()) {
 			if (item.getToolTipText().equals("Reload")) {
 				reloadItem = item;
+			} else if(item.getToolTipText().equals("Import")) {
+				importItem = item;
+			} else if(item.getToolTipText().equals("Save")) {
+				saveItem = item;
+			} else if(item.getToolTipText().equals("Delete")) {
+				deleteItem = item;
 			}
 		}
 
 		if (reloadItem != null) {
-			if (super.getModel().getTestConfiguration().getDatatypeState() == DatatypeState.INITIALIZED) {
+			if (super.getModel().getTestConfiguration().getDatatypeState() == DatatypeState.INITIALIZED
+					|| !MasterDetailHelper.isDatatypeEditable(super.getModel().getTestConfiguration())) {
 				reloadItem.setEnabled(false);
 			} else {
 				reloadItem.setEnabled(true);
 			}
 		}
+		if (importItem != null) {
+			if (MasterDetailHelper.isImportPossible(super.getModel().getTestConfiguration())) {
+				importItem.setEnabled(true);
+			} else {
+				importItem.setEnabled(false);
+			}
+		}
+		if (saveItem != null) {
+			if (MasterDetailHelper.isDatatypeEditable(super.getModel().getTestConfiguration())) {
+				saveItem.setEnabled(true);
+			} else {
+				saveItem.setEnabled(false);
+			}
+		}
+		if (deleteItem != null) {
+			if (MasterDetailHelper.isDatatypeEditable(super.getModel().getTestConfiguration())) {
+				deleteItem.setEnabled(true);
+			} else {
+				deleteItem.setEnabled(false);
+			}
+		}
 	}
+
 
 }

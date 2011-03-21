@@ -30,6 +30,7 @@ import org.nabucco.testautomation.config.facade.datatype.TestConfigElement;
 import org.nabucco.testautomation.config.facade.datatype.TestConfiguration;
 import org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.TestConfigurationMaintainanceMultiplePageEditView;
 import org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.masterdetails.detail.TestConfigDetailPageView;
+import org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.masterdetails.detail.fileproperty.FilePropertyDetailPageView;
 import org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.model.TestConfigurationMaintainanceMultiplePageEditViewModel;
 
 import org.nabucco.testautomation.facade.datatype.property.BooleanProperty;
@@ -85,7 +86,8 @@ public class TestConfigurationMaintainanceMasterDetailBlock extends
          */
         invisibleProperties = new HashSet<String>();
         readOnlyProperties = new HashSet<String>();
-        readOnlyProperties.add("elementKey");
+        readOnlyProperties.add("owner");
+        readOnlyProperties.add("identificationKey");
     	invisibleProperties.add("id");
     	invisibleProperties.add("version");
         invisibleProperties.add("schemaConfigRefId");
@@ -102,7 +104,6 @@ public class TestConfigurationMaintainanceMasterDetailBlock extends
         /*
          * TestConfigElements
          */
-
         detailsPart.registerPage(TestConfigElement.class, new TestConfigDetailPageView(this,
                 getManagedForm(), getManagedFormViewPart(), nabuccoMessageManager, ID, ID
                         + "TestConfigElement", invisibleProperties, readOnlyProperties));
@@ -111,14 +112,15 @@ public class TestConfigurationMaintainanceMasterDetailBlock extends
         /*
          * Properties
          */
-
-        
-        invisibleProperties = new HashSet<String>();
         readOnlyProperties = new HashSet<String>();
+        readOnlyProperties.add("owner");
         readOnlyProperties.add("type");
+        readOnlyProperties.add("identificationKey");
+        invisibleProperties = new HashSet<String>();
         invisibleProperties.add("reference");
     	invisibleProperties.add("id");
     	invisibleProperties.add("version");
+    	invisibleProperties.add("filename");
         
         detailsPart.registerPage(StringProperty.class, new TestautomationDetailPageView<TestConfigurationMaintainanceMultiplePageEditViewModel>(
                 this, getManagedForm(), getManagedFormViewPart(), nabuccoMessageManager, ID, ID
@@ -155,12 +157,12 @@ public class TestConfigurationMaintainanceMasterDetailBlock extends
         detailsPart.registerPage(XmlProperty.class, new TestautomationDetailPageView<TestConfigurationMaintainanceMultiplePageEditViewModel>(
                 this, getManagedForm(), getManagedFormViewPart(), nabuccoMessageManager, ID, ID
                         + "XmlProperty", invisibleProperties, readOnlyProperties));
-        typeToInvisiblePropertiesMap.put(LongProperty.class, invisibleProperties);
+        typeToInvisiblePropertiesMap.put(XmlProperty.class, invisibleProperties);
         
-        detailsPart.registerPage(FileProperty.class, new TestautomationDetailPageView<TestConfigurationMaintainanceMultiplePageEditViewModel>(
-                this, getManagedForm(), getManagedFormViewPart(), nabuccoMessageManager, ID, ID
-                        + "FileProperty", invisibleProperties, readOnlyProperties));
-        typeToInvisiblePropertiesMap.put(LongProperty.class, invisibleProperties);
+        detailsPart.registerPage(FileProperty.class, new FilePropertyDetailPageView(this,
+                getManagedForm(), getManagedFormViewPart(), nabuccoMessageManager, ID, ID
+                + "FileProperty", invisibleProperties, readOnlyProperties));
+        typeToInvisiblePropertiesMap.put(FileProperty.class, invisibleProperties);
         
         invisibleProperties.add("reused");
         invisibleProperties.add("usageType");

@@ -3,7 +3,7 @@
  */
 package org.nabucco.testautomation.config.ui.web.communication.search;
 
-import org.nabucco.framework.base.facade.datatype.security.Subject;
+import org.nabucco.framework.base.facade.datatype.session.NabuccoSession;
 import org.nabucco.framework.base.facade.exception.service.SearchException;
 import org.nabucco.framework.base.facade.message.ServiceRequest;
 import org.nabucco.framework.base.facade.message.ServiceResponse;
@@ -36,37 +36,15 @@ public class SearchTestConfigElementDelegate extends ServiceDelegateSupport {
     /**
      * SearchTestConfigElement.
      *
-     * @param rq the TestConfigElementSearchMsg.
-     * @return the TestConfigElementListMsg.
-     * @throws SearchException
-     */
-    public TestConfigElementListMsg searchTestConfigElement(TestConfigElementSearchMsg rq)
-            throws SearchException {
-        ServiceRequest<TestConfigElementSearchMsg> request = new ServiceRequest<TestConfigElementSearchMsg>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<TestConfigElementListMsg> rs;
-        if ((service != null)) {
-            rs = service.searchTestConfigElement(request);
-        } else {
-            throw new SearchException(
-                    "Cannot execute service operation: SearchTestConfigElement.searchTestConfigElement");
-        }
-        return rs.getResponseMessage();
-    }
-
-    /**
-     * SearchTestConfigElement.
-     *
-     * @param subject the Subject.
+     * @param session the NabuccoSession.
      * @param rq the TestConfigElementSearchMsg.
      * @return the TestConfigElementListMsg.
      * @throws SearchException
      */
     public TestConfigElementListMsg searchTestConfigElement(TestConfigElementSearchMsg rq,
-            Subject subject) throws SearchException {
+            NabuccoSession session) throws SearchException {
         ServiceRequest<TestConfigElementSearchMsg> request = new ServiceRequest<TestConfigElementSearchMsg>(
-                super.createServiceContext(subject));
+                super.createServiceContext(session));
         request.setRequestMessage(rq);
         ServiceResponse<TestConfigElementListMsg> rs;
         if ((service != null)) {
@@ -81,37 +59,15 @@ public class SearchTestConfigElementDelegate extends ServiceDelegateSupport {
     /**
      * Getter for the TestConfigElement.
      *
+     * @param session the NabuccoSession.
      * @param rq the TestConfigElementSearchMsg.
      * @return the TestConfigElementMsg.
      * @throws SearchException
      */
-    public TestConfigElementMsg getTestConfigElement(TestConfigElementSearchMsg rq)
-            throws SearchException {
+    public TestConfigElementMsg getTestConfigElement(TestConfigElementSearchMsg rq,
+            NabuccoSession session) throws SearchException {
         ServiceRequest<TestConfigElementSearchMsg> request = new ServiceRequest<TestConfigElementSearchMsg>(
-                super.createServiceContext());
-        request.setRequestMessage(rq);
-        ServiceResponse<TestConfigElementMsg> rs;
-        if ((service != null)) {
-            rs = service.getTestConfigElement(request);
-        } else {
-            throw new SearchException(
-                    "Cannot execute service operation: SearchTestConfigElement.getTestConfigElement");
-        }
-        return rs.getResponseMessage();
-    }
-
-    /**
-     * Getter for the TestConfigElement.
-     *
-     * @param subject the Subject.
-     * @param rq the TestConfigElementSearchMsg.
-     * @return the TestConfigElementMsg.
-     * @throws SearchException
-     */
-    public TestConfigElementMsg getTestConfigElement(TestConfigElementSearchMsg rq, Subject subject)
-            throws SearchException {
-        ServiceRequest<TestConfigElementSearchMsg> request = new ServiceRequest<TestConfigElementSearchMsg>(
-                super.createServiceContext(subject));
+                super.createServiceContext(session));
         request.setRequestMessage(rq);
         ServiceResponse<TestConfigElementMsg> rs;
         if ((service != null)) {

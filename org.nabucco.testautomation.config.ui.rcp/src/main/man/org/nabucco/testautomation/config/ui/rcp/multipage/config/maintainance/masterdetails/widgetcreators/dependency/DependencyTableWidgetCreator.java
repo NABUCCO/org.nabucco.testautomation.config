@@ -79,6 +79,8 @@ public class DependencyTableWidgetCreator extends
 
 	private static final String COLUMN_KEY_LABEL = ID + ".column.key.label";
 
+	private boolean readOnly;
+
 	/**
 	 * Creates a new {@link DependencyTableWidgetCreator} instance.
 	 * 
@@ -95,6 +97,8 @@ public class DependencyTableWidgetCreator extends
 			Object testConfigElement, boolean readOnly, ViewModel viewModel,
 			NabuccoMessageManager messageManager, String propertyName) {
 
+		this.readOnly = readOnly;
+		
 		if (testConfigElement instanceof TestConfigElement) {
 			return layoutTreeDialogPickerTable(parent,
 					(TestConfigElement) testConfigElement, viewModel);
@@ -162,7 +166,7 @@ public class DependencyTableWidgetCreator extends
 		return new TablePickerComposite<TreePickerDialog>(parent, SWT.NONE
 				| TablePickerComposite.ADD_BUTTON
 				| TablePickerComposite.REMOVE_BUTTON, 150, outerTableParameter,
-				dialog);
+				dialog, this.readOnly);
 	}
 
 	/**

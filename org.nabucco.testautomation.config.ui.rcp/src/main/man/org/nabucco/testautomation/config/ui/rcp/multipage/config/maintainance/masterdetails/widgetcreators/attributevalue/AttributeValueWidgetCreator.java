@@ -61,7 +61,7 @@ public class AttributeValueWidgetCreator {
             }
             // call base WidgetCreatorForNString
             NStringWidgetCreator widgetCreator = new NStringWidgetCreator(nft);
-            Control newWidget = widgetCreator.createViewInputElement(parent, value, method,
+            Control newWidget = widgetCreator.createViewInputElement(parent, stringAttributeValue.getProperty(StringAttributeValue.VALUE), method,
                     attributeValue, readOnly, externalViewModel, messageManager, propertyName);
             Text text = (Text) newWidget;
             text.addModifyListener(new ModifyListener() {

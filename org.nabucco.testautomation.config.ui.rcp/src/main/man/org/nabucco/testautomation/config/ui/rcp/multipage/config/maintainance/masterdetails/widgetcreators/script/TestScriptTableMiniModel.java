@@ -160,10 +160,17 @@ public class TestScriptTableMiniModel extends MiniViewModel {
             TestScriptContainer oldElement = this.testScriptList.get(newIndex);
             this.testScriptList.set(newIndex, container);
             container.setOrderIndex(newIndex);
-            container.setDatatypeState(DatatypeState.MODIFIED);
+            
+            if (container.getDatatypeState() == DatatypeState.PERSISTENT) {
+            	container.setDatatypeState(DatatypeState.MODIFIED);
+            }
+            
             this.testScriptList.set(oldIndex, oldElement);
             oldElement.setOrderIndex(oldIndex);
-            oldElement.setDatatypeState(DatatypeState.MODIFIED);
+            
+            if (oldElement.getDatatypeState() == DatatypeState.PERSISTENT) {
+            	oldElement.setDatatypeState(DatatypeState.MODIFIED);
+            }
         }
 
         Object newValue = this.testScriptList.hashCode();
@@ -202,10 +209,17 @@ public class TestScriptTableMiniModel extends MiniViewModel {
             TestScriptContainer oldElement = this.testScriptList.get(newIndex);
             this.testScriptList.set(newIndex, container);
             container.setOrderIndex(newIndex);
-            container.setDatatypeState(DatatypeState.MODIFIED);
+            
+            if (container.getDatatypeState() == DatatypeState.PERSISTENT) {
+            	container.setDatatypeState(DatatypeState.MODIFIED);
+            }
+            
             this.testScriptList.set(oldIndex, oldElement);
             oldElement.setOrderIndex(oldIndex);
-            oldElement.setDatatypeState(DatatypeState.MODIFIED);
+            
+            if (oldElement.getDatatypeState() == DatatypeState.PERSISTENT) {
+            	oldElement.setDatatypeState(DatatypeState.MODIFIED);
+            }
         }
 
         Object newValue = this.testScriptList.hashCode();

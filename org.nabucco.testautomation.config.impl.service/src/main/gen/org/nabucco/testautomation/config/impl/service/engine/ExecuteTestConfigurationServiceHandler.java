@@ -62,7 +62,7 @@ public abstract class ExecuteTestConfigurationServiceHandler extends ServiceHand
             throw wrappedException;
         } catch (Exception e) {
             super.getLogger().error(e);
-            throw new TestEngineException(e.getMessage());
+            throw new TestEngineException("Error during service invocation.", e);
         }
     }
 

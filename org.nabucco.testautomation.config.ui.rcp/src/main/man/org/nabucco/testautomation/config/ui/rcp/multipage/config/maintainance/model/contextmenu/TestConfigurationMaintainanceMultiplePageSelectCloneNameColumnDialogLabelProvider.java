@@ -22,7 +22,11 @@ import org.nabucco.framework.plugin.base.component.multipage.masterdetail.addDia
 import org.nabucco.testautomation.config.facade.datatype.TestConfigElement;
 import org.nabucco.testautomation.config.facade.datatype.TestConfigElementContainer;
 
-
+/**
+ * TestConfigurationMaintainanceMultiplePageSelectCloneNameColumnDialogLabelProvider
+ * 
+ * @author Markus Jorroch, PRODYNA AG
+ */
 public class TestConfigurationMaintainanceMultiplePageSelectCloneNameColumnDialogLabelProvider extends
         AddDialogLabelProvider {
 
