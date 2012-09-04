@@ -16,7 +16,7 @@
 */
 package org.nabucco.testautomation.config.facade.service.engine;
 
-import org.nabucco.testautomation.facade.exception.engine.TestEngineException;
+import org.nabucco.testautomation.settings.facade.exception.engine.TestEngineException;
 import org.nabucco.testautomation.config.facade.message.engine.TestInfoMsg;
 import org.nabucco.testautomation.config.facade.message.engine.TestExecutionMsg;
 import org.nabucco.testautomation.config.facade.message.engine.TestResultMsg;

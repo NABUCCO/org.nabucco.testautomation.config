@@ -42,9 +42,4 @@ public ListView TestConfigurationListView {
 	@ColumnLabelDefault 	"Config Description"
 	private Column testConfigurationDescription;
 
-	@MappedField 			testConfiguration.owner
-	@ColumnLabelId			testConfiguration.owner 
-	@ColumnLabelDefault 	"Owner"
-	private Column owner;
-	 
 }

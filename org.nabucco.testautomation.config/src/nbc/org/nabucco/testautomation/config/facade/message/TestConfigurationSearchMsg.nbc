@@ -16,11 +16,12 @@
 */
 package org.nabucco.testautomation.config.facade.message;
 
-import org.nabucco.framework.base.facade.datatype.Owner;
-import org.nabucco.framework.base.facade.datatype.Flag;
-import org.nabucco.framework.base.facade.datatype.Name;
-import org.nabucco.framework.base.facade.datatype.Identifier;
 import org.nabucco.framework.base.facade.datatype.Description;
+import org.nabucco.framework.base.facade.datatype.Flag;
+import org.nabucco.framework.base.facade.datatype.Identifier;
+import org.nabucco.framework.base.facade.datatype.Key;
+import org.nabucco.framework.base.facade.datatype.Name;
+import org.nabucco.framework.base.facade.datatype.Owner;
 
 @Author			Steffen Schmidt
 @Company		PRODYNA AG
@@ -34,6 +35,8 @@ public Message TestConfigurationSearchMsg {
 	private Basetype Identifier[0..1] id;
 
 	private Basetype Name[0..1] name;
+
+	private Basetype Key[0..1] testConfigKey;
 
 	private Basetype Description[0..1] description;
 	

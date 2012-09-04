@@ -16,8 +16,8 @@
 */
 package org.nabucco.testautomation.config.facade.message.engine;
 
-import org.nabucco.testautomation.facade.datatype.engine.TestEngineConfiguration;
-import org.nabucco.testautomation.facade.datatype.engine.TestExecutionInfo;
+import org.nabucco.testautomation.settings.facade.datatype.engine.TestEngineConfiguration;
+import org.nabucco.testautomation.settings.facade.datatype.engine.TestExecutionInfo;
 
 @Author			Steffen Schmidt
 @Company		PRODYNA AG

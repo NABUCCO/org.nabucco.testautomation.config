@@ -1,11 +1,23 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ * 
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at
+ * 
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language governing permissions
+ * and limitations under the License.
  */
 package org.nabucco.testautomation.config.facade.message.engine;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.nabucco.framework.base.facade.datatype.property.NabuccoProperty;
 import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyContainer;
 import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyDescriptor;
@@ -14,9 +26,9 @@ import org.nabucco.framework.base.facade.datatype.property.PropertyCache;
 import org.nabucco.framework.base.facade.datatype.property.PropertyDescriptorSupport;
 import org.nabucco.framework.base.facade.message.ServiceMessage;
 import org.nabucco.framework.base.facade.message.ServiceMessageSupport;
-import org.nabucco.testautomation.facade.datatype.engine.TestEngineConfiguration;
-import org.nabucco.testautomation.facade.datatype.engine.TestExecutionInfo;
 import org.nabucco.testautomation.result.facade.datatype.manual.ManualTestResult;
+import org.nabucco.testautomation.settings.facade.datatype.engine.TestEngineConfiguration;
+import org.nabucco.testautomation.settings.facade.datatype.engine.TestExecutionInfo;
 
 /**
  * ManualTestResultMsg<p/>Message to transport a ManualTestResult-object<p/>
@@ -45,6 +57,11 @@ public class ManualTestResultMsg extends ServiceMessageSupport implements Servic
     /** Constructs a new ManualTestResultMsg instance. */
     public ManualTestResultMsg() {
         super();
+        this.initDefaults();
+    }
+
+    /** InitDefaults. */
+    private void initDefaults() {
     }
 
     /**
@@ -54,29 +71,29 @@ public class ManualTestResultMsg extends ServiceMessageSupport implements Servic
      */
     protected static NabuccoPropertyContainer createPropertyContainer() {
         Map<String, NabuccoPropertyDescriptor> propertyMap = new HashMap<String, NabuccoPropertyDescriptor>();
-        propertyMap.put(TESTEXECUTIONINFO, PropertyDescriptorSupport.createDatatype(
-                TESTEXECUTIONINFO, TestExecutionInfo.class, 0, PROPERTY_CONSTRAINTS[0], false,
-                PropertyAssociationType.COMPONENT));
-        propertyMap.put(TESTENGINECONFIGURATION, PropertyDescriptorSupport.createDatatype(
-                TESTENGINECONFIGURATION, TestEngineConfiguration.class, 1, PROPERTY_CONSTRAINTS[1],
-                false, PropertyAssociationType.COMPONENT));
-        propertyMap.put(TESTRESULT, PropertyDescriptorSupport.createDatatype(TESTRESULT,
-                ManualTestResult.class, 2, PROPERTY_CONSTRAINTS[2], false,
-                PropertyAssociationType.COMPONENT));
+        propertyMap.put(TESTEXECUTIONINFO, PropertyDescriptorSupport.createDatatype(TESTEXECUTIONINFO,
+                TestExecutionInfo.class, 0, PROPERTY_CONSTRAINTS[0], false, PropertyAssociationType.COMPONENT));
+        propertyMap.put(TESTENGINECONFIGURATION, PropertyDescriptorSupport.createDatatype(TESTENGINECONFIGURATION,
+                TestEngineConfiguration.class, 1, PROPERTY_CONSTRAINTS[1], false, PropertyAssociationType.COMPONENT));
+        propertyMap.put(TESTRESULT, PropertyDescriptorSupport.createDatatype(TESTRESULT, ManualTestResult.class, 2,
+                PROPERTY_CONSTRAINTS[2], false, PropertyAssociationType.COMPONENT));
         return new NabuccoPropertyContainer(propertyMap);
     }
 
+    /** Init. */
+    public void init() {
+        this.initDefaults();
+    }
+
     @Override
-    public List<NabuccoProperty> getProperties() {
-        List<NabuccoProperty> properties = super.getProperties();
-        properties.add(super.createProperty(
-                ManualTestResultMsg.getPropertyDescriptor(TESTEXECUTIONINFO),
-                this.testExecutionInfo));
-        properties.add(super.createProperty(
-                ManualTestResultMsg.getPropertyDescriptor(TESTENGINECONFIGURATION),
-                this.testEngineConfiguration));
-        properties.add(super.createProperty(ManualTestResultMsg.getPropertyDescriptor(TESTRESULT),
-                this.testResult));
+    public Set<NabuccoProperty> getProperties() {
+        Set<NabuccoProperty> properties = super.getProperties();
+        properties.add(super.createProperty(ManualTestResultMsg.getPropertyDescriptor(TESTEXECUTIONINFO),
+                this.getTestExecutionInfo()));
+        properties.add(super.createProperty(ManualTestResultMsg.getPropertyDescriptor(TESTENGINECONFIGURATION),
+                this.getTestEngineConfiguration()));
+        properties
+                .add(super.createProperty(ManualTestResultMsg.getPropertyDescriptor(TESTRESULT), this.getTestResult()));
         return properties;
     }
 
@@ -135,10 +152,9 @@ public class ManualTestResultMsg extends ServiceMessageSupport implements Servic
     public int hashCode() {
         final int PRIME = 31;
         int result = super.hashCode();
-        result = ((PRIME * result) + ((this.testExecutionInfo == null) ? 0 : this.testExecutionInfo
+        result = ((PRIME * result) + ((this.testExecutionInfo == null) ? 0 : this.testExecutionInfo.hashCode()));
+        result = ((PRIME * result) + ((this.testEngineConfiguration == null) ? 0 : this.testEngineConfiguration
                 .hashCode()));
-        result = ((PRIME * result) + ((this.testEngineConfiguration == null) ? 0
-                : this.testEngineConfiguration.hashCode()));
         result = ((PRIME * result) + ((this.testResult == null) ? 0 : this.testResult.hashCode()));
         return result;
     }
@@ -209,8 +225,7 @@ public class ManualTestResultMsg extends ServiceMessageSupport implements Servic
      * @return the NabuccoPropertyDescriptor.
      */
     public static NabuccoPropertyDescriptor getPropertyDescriptor(String propertyName) {
-        return PropertyCache.getInstance().retrieve(ManualTestResultMsg.class)
-                .getProperty(propertyName);
+        return PropertyCache.getInstance().retrieve(ManualTestResultMsg.class).getProperty(propertyName);
     }
 
     /**

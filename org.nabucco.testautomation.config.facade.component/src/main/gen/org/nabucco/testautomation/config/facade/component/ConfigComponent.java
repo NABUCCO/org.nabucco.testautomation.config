@@ -1,26 +1,27 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ * 
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at
+ * 
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language governing permissions
+ * and limitations under the License.
  */
 package org.nabucco.testautomation.config.facade.component;
 
 import org.nabucco.framework.base.facade.component.Component;
 import org.nabucco.framework.base.facade.exception.service.ServiceException;
-import org.nabucco.framework.common.dynamiccode.facade.component.DynamicCodeComponent;
 import org.nabucco.testautomation.config.facade.service.engine.TestEngineService;
-import org.nabucco.testautomation.config.facade.service.export.ExportConfig;
-import org.nabucco.testautomation.config.facade.service.importing.ImportConfig;
-import org.nabucco.testautomation.config.facade.service.maintain.MaintainTestConfiguration;
-import org.nabucco.testautomation.config.facade.service.produce.ProduceAttributeValue;
-import org.nabucco.testautomation.config.facade.service.produce.ProduceDependency;
-import org.nabucco.testautomation.config.facade.service.produce.ProduceTestConfigElement;
-import org.nabucco.testautomation.config.facade.service.produce.ProduceTestConfigElementContainer;
-import org.nabucco.testautomation.config.facade.service.produce.ProduceTestConfiguration;
-import org.nabucco.testautomation.config.facade.service.produce.ProduceTestScriptContainer;
-import org.nabucco.testautomation.config.facade.service.search.SearchTestConfigElement;
-import org.nabucco.testautomation.config.facade.service.search.SearchTestConfiguration;
-import org.nabucco.testautomation.facade.component.TestautomationComponent;
-import org.nabucco.testautomation.schema.facade.component.SchemaComponent;
-import org.nabucco.testautomation.script.facade.component.ScriptComponent;
+import org.nabucco.testautomation.config.facade.service.maintain.MaintainConfig;
+import org.nabucco.testautomation.config.facade.service.produce.ProduceConfig;
+import org.nabucco.testautomation.config.facade.service.report.ReportConfig;
+import org.nabucco.testautomation.config.facade.service.resolve.ResolveConfig;
+import org.nabucco.testautomation.config.facade.service.search.SearchConfig;
 
 /**
  * ConfigComponent<p/>Component for testautomation config<p/>
@@ -32,110 +33,49 @@ public interface ConfigComponent extends Component {
 
     final String COMPONENT_NAME = "org.nabucco.testautomation.config";
 
-    /**
-     * Getter for the TestautomationComponent.
-     *
-     * @return the TestautomationComponent.
-     * @throws ServiceException
-     */
-    TestautomationComponent getTestautomationComponent() throws ServiceException;
+    final String COMPONENT_PREFIX = "conf";
+
+    final String JNDI_NAME = ((((JNDI_PREFIX + "/") + COMPONENT_NAME) + "/") + "org.nabucco.testautomation.config.facade.component.ConfigComponent");
 
     /**
-     * Getter for the SchemaComponent.
+     * Getter for the MaintainConfig.
      *
-     * @return the SchemaComponent.
+     * @return the MaintainConfig.
      * @throws ServiceException
      */
-    SchemaComponent getSchemaComponent() throws ServiceException;
+    MaintainConfig getMaintainConfig() throws ServiceException;
 
     /**
-     * Getter for the DynamicCodeComponent.
+     * Getter for the ProduceConfig.
      *
-     * @return the DynamicCodeComponent.
+     * @return the ProduceConfig.
      * @throws ServiceException
      */
-    DynamicCodeComponent getDynamicCodeComponent() throws ServiceException;
+    ProduceConfig getProduceConfig() throws ServiceException;
 
     /**
-     * Getter for the ScriptComponent.
+     * Getter for the SearchConfig.
      *
-     * @return the ScriptComponent.
+     * @return the SearchConfig.
      * @throws ServiceException
      */
-    ScriptComponent getScriptComponent() throws ServiceException;
+    SearchConfig getSearchConfig() throws ServiceException;
 
     /**
-     * Getter for the MaintainTestConfiguration.
+     * Getter for the ResolveConfig.
      *
-     * @return the MaintainTestConfiguration.
+     * @return the ResolveConfig.
      * @throws ServiceException
      */
-    MaintainTestConfiguration getMaintainTestConfiguration() throws ServiceException;
+    ResolveConfig getResolveConfig() throws ServiceException;
 
     /**
-     * Getter for the ProduceTestConfiguration.
+     * Getter for the ReportConfig.
      *
-     * @return the ProduceTestConfiguration.
+     * @return the ReportConfig.
      * @throws ServiceException
      */
-    ProduceTestConfiguration getProduceTestConfiguration() throws ServiceException;
-
-    /**
-     * Getter for the ProduceTestConfigElement.
-     *
-     * @return the ProduceTestConfigElement.
-     * @throws ServiceException
-     */
-    ProduceTestConfigElement getProduceTestConfigElement() throws ServiceException;
-
-    /**
-     * Getter for the ProduceTestConfigElementContainer.
-     *
-     * @return the ProduceTestConfigElementContainer.
-     * @throws ServiceException
-     */
-    ProduceTestConfigElementContainer getProduceTestConfigElementContainer()
-            throws ServiceException;
-
-    /**
-     * Getter for the ProduceDependency.
-     *
-     * @return the ProduceDependency.
-     * @throws ServiceException
-     */
-    ProduceDependency getProduceDependency() throws ServiceException;
-
-    /**
-     * Getter for the ProduceAttributeValue.
-     *
-     * @return the ProduceAttributeValue.
-     * @throws ServiceException
-     */
-    ProduceAttributeValue getProduceAttributeValue() throws ServiceException;
-
-    /**
-     * Getter for the ProduceTestScriptContainer.
-     *
-     * @return the ProduceTestScriptContainer.
-     * @throws ServiceException
-     */
-    ProduceTestScriptContainer getProduceTestScriptContainer() throws ServiceException;
-
-    /**
-     * Getter for the SearchTestConfiguration.
-     *
-     * @return the SearchTestConfiguration.
-     * @throws ServiceException
-     */
-    SearchTestConfiguration getSearchTestConfiguration() throws ServiceException;
-
-    /**
-     * Getter for the SearchTestConfigElement.
-     *
-     * @return the SearchTestConfigElement.
-     * @throws ServiceException
-     */
-    SearchTestConfigElement getSearchTestConfigElement() throws ServiceException;
+    ReportConfig getReportConfig() throws ServiceException;
 
     /**
      * Getter for the TestEngineService.
@@ -144,20 +84,4 @@ public interface ConfigComponent extends Component {
      * @throws ServiceException
      */
     TestEngineService getTestEngineService() throws ServiceException;
-
-    /**
-     * Getter for the ExportConfig.
-     *
-     * @return the ExportConfig.
-     * @throws ServiceException
-     */
-    ExportConfig getExportConfig() throws ServiceException;
-
-    /**
-     * Getter for the ImportConfig.
-     *
-     * @return the ImportConfig.
-     * @throws ServiceException
-     */
-    ImportConfig getImportConfig() throws ServiceException;
 }

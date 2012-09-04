@@ -25,6 +25,6 @@ import org.nabucco.testautomation.config.facade.datatype.attribute.AttributeValu
 @Description	The code value of an attribute
 public Datatype CodeAttributeValue extends AttributeValue {
 	
-	private Datatype Code[1] value;
+	private Datatype Code[0..1] value;
 	
 }

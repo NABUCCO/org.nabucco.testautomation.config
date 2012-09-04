@@ -1,10 +1,21 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ * 
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at
+ * 
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language governing permissions
+ * and limitations under the License.
  */
 package org.nabucco.testautomation.config.ui.rcp.search.config.model;
 
 import org.nabucco.framework.base.facade.datatype.DatatypeState;
-import org.nabucco.framework.base.facade.datatype.Description;
+import org.nabucco.framework.base.facade.datatype.Key;
 import org.nabucco.framework.base.facade.datatype.Name;
 import org.nabucco.framework.plugin.base.component.search.model.NabuccoComponentSearchParameter;
 import org.nabucco.framework.plugin.base.component.search.model.NabuccoComponentSearchViewModel;
@@ -16,17 +27,16 @@ import org.nabucco.testautomation.config.facade.datatype.TestConfiguration;
  * @version 1.0
  * @author Steffen Schmidt, PRODYNA AG, 2010-04-15
  */
-public class TestConfigurationSearchViewModel extends
-        NabuccoComponentSearchViewModel<TestConfiguration> implements
+public class TestConfigurationSearchViewModel extends NabuccoComponentSearchViewModel<TestConfiguration> implements
         NabuccoComponentSearchParameter {
 
-    public static final String ID = "org.nabucco.testautomation.config.ui.search.config.TestConfigSearchViewModel";
+    public static final String ID = "org.nabucco.testautomation.config.ui.search.config.TestConfigurationSearchViewModel";
 
     private TestConfiguration testConfiguration;
 
     public static final String PROPERTY_TESTCONFIGURATION_NAME = "testConfigurationName";
 
-    public static final String PROPERTY_TESTCONFIGURATION_DESCRIPTION = "testConfigurationDescription";
+    public static final String PROPERTY_TESTCONFIGURATION_IDENTIFICATIONKEY = "testConfigurationIdentificationKey";
 
     public static String TITLE = (ID + "Title");
 
@@ -73,8 +83,7 @@ public class TestConfigurationSearchViewModel extends
         String oldVal = testConfiguration.getName().getValue();
         testConfiguration.getName().setValue(newName);
         this.updateProperty(PROPERTY_TESTCONFIGURATION_NAME, oldVal, newName);
-        if (((!oldVal.equals(newName)) && testConfiguration.getDatatypeState().equals(
-                DatatypeState.PERSISTENT))) {
+        if (((!oldVal.equals(newName)) && testConfiguration.getDatatypeState().equals(DatatypeState.PERSISTENT))) {
             testConfiguration.setDatatypeState(DatatypeState.MODIFIED);
         }
     }
@@ -85,43 +94,43 @@ public class TestConfigurationSearchViewModel extends
      * @return the String.
      */
     public String getTestConfigurationName() {
-        if ((((testConfiguration == null) || (testConfiguration.getName() == null)) || (testConfiguration
-                .getName().getValue() == null))) {
+        if ((((testConfiguration == null) || (testConfiguration.getName() == null)) || (testConfiguration.getName()
+                .getValue() == null))) {
             return "";
         }
         return testConfiguration.getName().getValue();
     }
 
     /**
-     * Setter for the TestConfigurationDescription.
+     * Setter for the TestConfigurationIdentificationKey.
      *
-     * @param newDescription the String.
+     * @param newIdentificationKey the String.
      */
-    public void setTestConfigurationDescription(String newDescription) {
-        if (((testConfiguration != null) && (testConfiguration.getDescription() == null))) {
-            Description description = new Description();
-            testConfiguration.setDescription(description);
+    public void setTestConfigurationIdentificationKey(String newIdentificationKey) {
+        if (((testConfiguration != null) && (testConfiguration.getIdentificationKey() == null))) {
+            Key identificationKey = new Key();
+            testConfiguration.setIdentificationKey(identificationKey);
         }
-        String oldVal = testConfiguration.getDescription().getValue();
-        testConfiguration.getDescription().setValue(newDescription);
-        this.updateProperty(PROPERTY_TESTCONFIGURATION_DESCRIPTION, oldVal, newDescription);
-        if (((!oldVal.equals(newDescription)) && testConfiguration.getDatatypeState().equals(
+        String oldVal = testConfiguration.getIdentificationKey().getValue();
+        testConfiguration.getIdentificationKey().setValue(newIdentificationKey);
+        this.updateProperty(PROPERTY_TESTCONFIGURATION_IDENTIFICATIONKEY, oldVal, newIdentificationKey);
+        if (((!oldVal.equals(newIdentificationKey)) && testConfiguration.getDatatypeState().equals(
                 DatatypeState.PERSISTENT))) {
             testConfiguration.setDatatypeState(DatatypeState.MODIFIED);
         }
     }
 
     /**
-     * Getter for the TestConfigurationDescription.
+     * Getter for the TestConfigurationIdentificationKey.
      *
      * @return the String.
      */
-    public String getTestConfigurationDescription() {
-        if ((((testConfiguration == null) || (testConfiguration.getDescription() == null)) || (testConfiguration
-                .getDescription().getValue() == null))) {
+    public String getTestConfigurationIdentificationKey() {
+        if ((((testConfiguration == null) || (testConfiguration.getIdentificationKey() == null)) || (testConfiguration
+                .getIdentificationKey().getValue() == null))) {
             return "";
         }
-        return testConfiguration.getDescription().getValue();
+        return testConfiguration.getIdentificationKey().getValue();
     }
 
     @Override

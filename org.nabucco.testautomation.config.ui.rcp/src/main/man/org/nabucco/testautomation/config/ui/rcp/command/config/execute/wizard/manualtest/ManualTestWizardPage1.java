@@ -1,19 +1,19 @@
 /*
-* Copyright 2010 PRODYNA AG
-*
-* Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.opensource.org/licenses/eclipse-1.0.php or
-* http://www.nabucco-source.org/nabucco-license.html
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.nabucco.testautomation.config.ui.rcp.command.config.execute.wizard.manualtest;
 
 import java.io.File;
@@ -42,17 +42,17 @@ import org.nabucco.framework.plugin.base.component.multipage.masterdetail.detail
 import org.nabucco.framework.plugin.base.layout.ImageProvider;
 import org.nabucco.testautomation.config.facade.datatype.TestConfigElement;
 import org.nabucco.testautomation.config.ui.rcp.images.ConfigImageRegistry;
-import org.nabucco.testautomation.facade.datatype.engine.TestConfigElementLink;
-import org.nabucco.testautomation.facade.datatype.property.base.Property;
+import org.nabucco.testautomation.property.facade.datatype.base.Property;
+import org.nabucco.testautomation.property.ui.rcp.base.property.PropertyViewer;
+import org.nabucco.testautomation.property.ui.rcp.base.text.OpenDialogListener;
+import org.nabucco.testautomation.property.ui.rcp.images.PropertyImageRegistry;
 import org.nabucco.testautomation.result.facade.datatype.manual.ManualTestResult;
 import org.nabucco.testautomation.result.facade.datatype.trace.FileTrace;
 import org.nabucco.testautomation.result.facade.datatype.trace.MessageTrace;
 import org.nabucco.testautomation.result.facade.datatype.trace.ScreenshotTrace;
 import org.nabucco.testautomation.result.ui.rcp.images.ResultImageRegistry;
 import org.nabucco.testautomation.result.ui.rcp.multipage.result.maintenance.masterdetail.detail.screenshot.OpenScreenshotListener;
-import org.nabucco.testautomation.ui.rcp.base.property.PropertyViewer;
-import org.nabucco.testautomation.ui.rcp.base.text.OpenDialogListener;
-import org.nabucco.testautomation.ui.rcp.images.TestautomationImageRegistry;
+import org.nabucco.testautomation.settings.facade.datatype.engine.TestConfigElementLink;
 
 /**
  * ManualTestWizardPage1
@@ -611,7 +611,7 @@ public class ManualTestWizardPage1 extends WizardPage {
 				rq.setText("RQ: ");
 				
 				Button button = new Button(page6, SWT.NONE);
-				button.setImage(ImageProvider.createImage(TestautomationImageRegistry.ICON_DETAILS_DIALOG.getId()));
+				button.setImage(ImageProvider.createImage(PropertyImageRegistry.ICON_DETAILS_DIALOG.getId()));
 				button.addSelectionListener(new OpenDialogListener(new NTextMiniModel(message.getRequest(), null, message), null, true));
 				data = new GridData();
 				data.horizontalAlignment = SWT.LEFT;
@@ -627,7 +627,7 @@ public class ManualTestWizardPage1 extends WizardPage {
 				rq.setText("RS: ");
 				
 				Button button = new Button(page6, SWT.NONE);
-				button.setImage(ImageProvider.createImage(TestautomationImageRegistry.ICON_DETAILS_DIALOG.getId()));
+				button.setImage(ImageProvider.createImage(PropertyImageRegistry.ICON_DETAILS_DIALOG.getId()));
 				button.addSelectionListener(new OpenDialogListener(new NTextMiniModel(message.getResponse(), null, message), null, true));
 				data = new GridData();
 				data.horizontalAlignment = SWT.LEFT;

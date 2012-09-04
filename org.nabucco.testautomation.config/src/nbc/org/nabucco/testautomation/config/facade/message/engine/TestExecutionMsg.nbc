@@ -16,6 +16,7 @@
 */
 package org.nabucco.testautomation.config.facade.message.engine;
 
+import org.nabucco.framework.base.facade.datatype.Flag;
 import org.nabucco.framework.base.facade.datatype.security.User;
 import org.nabucco.testautomation.config.facade.datatype.TestConfiguration;
 
@@ -29,5 +30,7 @@ public Message TestExecutionMsg {
 	private Datatype User[1] user;
 	
 	private Datatype TestConfiguration[1] testConfiguration;
+	
+	private Basetype Flag[0..1] resolveTestConfiguration; 
 	
 }

@@ -1,5 +1,16 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ * 
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at
+ * 
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language governing permissions
+ * and limitations under the License.
  */
 package org.nabucco.testautomation.config.impl.service.search;
 
@@ -7,19 +18,20 @@ import org.nabucco.framework.base.facade.exception.NabuccoException;
 import org.nabucco.framework.base.facade.exception.service.SearchException;
 import org.nabucco.framework.base.facade.message.ServiceRequest;
 import org.nabucco.framework.base.facade.message.ServiceResponse;
-import org.nabucco.framework.base.impl.service.handler.ServiceHandler;
-import org.nabucco.framework.base.impl.service.handler.ServiceHandlerSupport;
+import org.nabucco.framework.base.impl.service.ServiceHandler;
+import org.nabucco.framework.base.impl.service.maintain.PersistenceServiceHandler;
+import org.nabucco.framework.base.impl.service.maintain.PersistenceServiceHandlerSupport;
 import org.nabucco.testautomation.config.facade.message.TestConfigElementListMsg;
 import org.nabucco.testautomation.config.facade.message.TestConfigElementSearchMsg;
 
 /**
- * SearchTestConfigElementServiceHandler<p/>TestConfigElement search service<p/>
+ * SearchTestConfigElementServiceHandler<p/>Config search service<p/>
  *
  * @version 1.0
  * @author Steffen Schmidt, PRODYNA AG, 2010-04-15
  */
-public abstract class SearchTestConfigElementServiceHandler extends ServiceHandlerSupport implements
-        ServiceHandler {
+public abstract class SearchTestConfigElementServiceHandler extends PersistenceServiceHandlerSupport implements
+        ServiceHandler, PersistenceServiceHandler {
 
     private static final long serialVersionUID = 1L;
 
@@ -37,8 +49,8 @@ public abstract class SearchTestConfigElementServiceHandler extends ServiceHandl
      * @return the ServiceResponse<TestConfigElementListMsg>.
      * @throws SearchException
      */
-    protected ServiceResponse<TestConfigElementListMsg> invoke(
-            ServiceRequest<TestConfigElementSearchMsg> rq) throws SearchException {
+    protected ServiceResponse<TestConfigElementListMsg> invoke(ServiceRequest<TestConfigElementSearchMsg> rq)
+            throws SearchException {
         ServiceResponse<TestConfigElementListMsg> rs;
         TestConfigElementListMsg msg;
         try {
@@ -73,8 +85,8 @@ public abstract class SearchTestConfigElementServiceHandler extends ServiceHandl
      * @return the TestConfigElementListMsg.
      * @throws SearchException
      */
-    protected abstract TestConfigElementListMsg searchTestConfigElement(
-            TestConfigElementSearchMsg msg) throws SearchException;
+    protected abstract TestConfigElementListMsg searchTestConfigElement(TestConfigElementSearchMsg msg)
+            throws SearchException;
 
     /**
      * Getter for the Id.

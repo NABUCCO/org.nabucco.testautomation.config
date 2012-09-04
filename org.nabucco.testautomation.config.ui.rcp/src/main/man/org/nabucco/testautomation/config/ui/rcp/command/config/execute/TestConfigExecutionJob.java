@@ -1,19 +1,19 @@
 /*
-* Copyright 2010 PRODYNA AG
-*
-* Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.opensource.org/licenses/eclipse-1.0.php or
-* http://www.nabucco-source.org/nabucco-license.html
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.nabucco.testautomation.config.ui.rcp.command.config.execute;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -23,6 +23,9 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
+import org.nabucco.common.extension.ExtensionException;
+import org.nabucco.framework.base.facade.datatype.NabuccoSystem;
+import org.nabucco.framework.base.facade.datatype.extension.ExtensionPointType;
 import org.nabucco.framework.base.facade.exception.client.ClientException;
 import org.nabucco.framework.base.facade.exception.service.ServiceException;
 import org.nabucco.framework.plugin.base.Activator;
@@ -33,14 +36,14 @@ import org.nabucco.testautomation.config.ui.rcp.command.config.execute.wizard.ma
 import org.nabucco.testautomation.config.ui.rcp.communication.ConfigComponentServiceDelegateFactory;
 import org.nabucco.testautomation.config.ui.rcp.communication.engine.TestEngineServiceDelegate;
 import org.nabucco.testautomation.config.ui.rcp.images.ConfigImageRegistry;
-
-import org.nabucco.testautomation.facade.datatype.engine.ExecutionStatusType;
-import org.nabucco.testautomation.facade.datatype.engine.TestEngineConfiguration;
-import org.nabucco.testautomation.facade.datatype.engine.TestExecutionInfo;
-import org.nabucco.testautomation.facade.exception.engine.TestEngineException;
 import org.nabucco.testautomation.result.facade.datatype.TestConfigurationResult;
+import org.nabucco.testautomation.result.facade.datatype.extension.TestResultExtension;
 import org.nabucco.testautomation.result.facade.datatype.status.TestConfigurationStatusType;
 import org.nabucco.testautomation.result.ui.rcp.multipage.result.maintenance.TestConfigurationResultMaintenanceMultiPageEditView;
+import org.nabucco.testautomation.settings.facade.datatype.engine.ExecutionStatusType;
+import org.nabucco.testautomation.settings.facade.datatype.engine.TestEngineConfiguration;
+import org.nabucco.testautomation.settings.facade.datatype.engine.TestExecutionInfo;
+import org.nabucco.testautomation.settings.facade.exception.engine.TestEngineException;
 
 /**
  * TestConfigExecutionJob
@@ -49,311 +52,305 @@ import org.nabucco.testautomation.result.ui.rcp.multipage.result.maintenance.Tes
  */
 public class TestConfigExecutionJob extends Job implements ExecutionConstants {
 
-	private TestEngineConfiguration configuration;
+    private TestEngineConfiguration configuration;
 
-	private TestExecutionInfo info;
+    private TestExecutionInfo info;
 
-	private TestEngineServiceDelegate service;
+    private TestEngineServiceDelegate service;
 
-	private TestConfigurationResultMaintenanceMultiPageEditView view;
+    private TestConfigurationResultMaintenanceMultiPageEditView view;
 
-	private static final int SLEEP_TIME = 2000;
-	
-	private boolean manualTestResultFinished = false;
+    private boolean manualTestResultFinished = false;
 
-	/**
-	 * Creates a new {@link TestConfigExecutionJob} instance.
-	 * 
-	 * @param name
-	 *            the job name
-	 * @param configuration
-	 *            the test engine configurationb
-	 * @param info
-	 *            the test engine information
-	 * 
-	 * @throws ClientException
-	 *             when the remote server is unavailable
-	 */
-	public TestConfigExecutionJob(String name,
-			TestEngineConfiguration configuration, TestExecutionInfo info,
-			TestConfigurationResultMaintenanceMultiPageEditView view)
-			throws ClientException {
-		super(name);
+    private long interval;
 
-		if (configuration == null) {
-			throw new IllegalStateException(
-					"Cannot start execution with TestEngineConfiguration [null].");
-		}
-		if (info == null) {
-			throw new IllegalStateException(
-					"Cannot start execution with TestExecutionInfo [null].");
-		}
-		if (view == null) {
-			throw new IllegalStateException(
-					"Cannot start execution for View [null].");
-		}
+    /**
+     * Creates a new {@link TestConfigExecutionJob} instance.
+     * 
+     * @param name
+     *            the job name
+     * @param configuration
+     *            the test engine configurationb
+     * @param info
+     *            the test engine information
+     * 
+     * @throws ClientException
+     *             when the remote server is unavailable
+     */
+    public TestConfigExecutionJob(String name, TestEngineConfiguration configuration, TestExecutionInfo info,
+            TestConfigurationResultMaintenanceMultiPageEditView view) throws ClientException {
+        super(name);
 
-		this.configuration = configuration;
-		this.info = info;
-		this.view = view;
+        if (configuration == null) {
+            throw new IllegalStateException("Cannot start execution with TestEngineConfiguration [null].");
+        }
+        if (info == null) {
+            throw new IllegalStateException("Cannot start execution with TestExecutionInfo [null].");
+        }
+        if (view == null) {
+            throw new IllegalStateException("Cannot start execution for View [null].");
+        }
 
-		this.init();
-	}
+        this.configuration = configuration;
+        this.info = info;
+        this.view = view;
 
-	/**
-	 * Initializes the execution job.
-	 * 
-	 * @throws ServiceException
-	 *             when the engine service is unavailable
-	 * @throws ClientException
-	 */
-	private void init() throws ClientException {
-		this.service = ConfigComponentServiceDelegateFactory.getInstance()
-				.getTestEngineService();
-	}
+        try {
+            TestResultExtension extension = (TestResultExtension) NabuccoSystem.getExtensionResolver()
+                    .resolveExtension(ExtensionPointType.ORG_NABUCCO_TESTAUTOMATION_TESTRESULT, "Default");
+            interval = extension.getRefreshInterval().getValue() * 1000;
+        } catch (ExtensionException e) {
+            throw new IllegalStateException("Cannot configure job: " + e.getMessage());
+        }
 
-	@Override
-	protected IStatus run(IProgressMonitor monitor) {
+        this.init();
+    }
 
-		try {
-			this.execute(0);
+    /**
+     * Initializes the execution job.
+     * 
+     * @throws ServiceException
+     *             when the engine service is unavailable
+     * @throws ClientException
+     */
+    private void init() throws ClientException {
+        this.service = ConfigComponentServiceDelegateFactory.getInstance().getTestEngineService();
+    }
 
-		} catch (Exception e) {
-			Activator.getDefault().logError(e);
-			return Status.CANCEL_STATUS;
-		}
+    @Override
+    protected IStatus run(IProgressMonitor monitor) {
 
-		return Status.OK_STATUS;
-	}
+        try {
+            this.execute(0);
 
-	/**
-	 * Getter for the configuration.
-	 * 
-	 * @return Returns the configuration.
-	 */
-	public TestEngineConfiguration getConfiguration() {
-		return this.configuration;
-	}
+        } catch (Exception e) {
+            Activator.getDefault().logError(e);
+            return Status.CANCEL_STATUS;
+        }
 
-	/**
-	 * Getter for the info.
-	 * 
-	 * @return Returns the info.
-	 */
-	public TestExecutionInfo getInfo() {
-		return this.info;
-	}
+        return Status.OK_STATUS;
+    }
 
-	/**
-	 * Executes the TestEngine with the given sleep time.
-	 * 
-	 * @param sleepTime
-	 *            the milliseconds to sleep
-	 * 
-	 * @throws Exception
-	 *             whether the execution did not end normally
-	 */
-	private void execute(int sleepTime) throws Exception {
+    /**
+     * Getter for the configuration.
+     * 
+     * @return Returns the configuration.
+     */
+    public TestEngineConfiguration getConfiguration() {
+        return this.configuration;
+    }
 
-		this.sleep(sleepTime);
-		TestConfigurationResult result = this.retrieveResult();
+    /**
+     * Getter for the info.
+     * 
+     * @return Returns the info.
+     */
+    public TestExecutionInfo getInfo() {
+        return this.info;
+    }
 
-		if (result == null) {
+    /**
+     * Executes the TestEngine with the given sleep time.
+     * 
+     * @param sleepTime
+     *            the milliseconds to sleep
+     * 
+     * @throws Exception
+     *             whether the execution did not end normally
+     */
+    private void execute(long sleepTime) throws Exception {
 
-			Activator.getDefault().logWarning(
-					"Execution hung up unexpectedly, retry.");
+        this.sleep(sleepTime);
+        TestConfigurationResult result = this.retrieveResult();
 
-			this.retrieveStatus();
+        if (result == null) {
 
-			if (this.info == null) {
-				Activator.getDefault().logWarning(
-						"Execution hung up unexpectedly, info [null].");
-				this.showErrorDialog();
-				return;
-			}
+            Activator.getDefault().logWarning("Execution hung up unexpectedly, retry.");
 
-			ExecutionStatusType status = this.info.getTestStatus();
-			if (status != ExecutionStatusType.RUNNING) {
-				Activator.getDefault().logWarning(
-						"Execution hung up unexpectedly, status [" + status
-								+ "].");
-				this.showErrorDialog();
-				return;
-			}
+            this.retrieveStatus();
 
-			result = this.retrieveResult();
+            if (this.info == null) {
+                Activator.getDefault().logWarning("Execution hung up unexpectedly, info [null].");
+                this.showErrorDialog();
+                return;
+            }
 
-			if (result == null) {
-				Activator.getDefault().logWarning(
-						"Execution hung up unexpectedly, result [null].");
+            ExecutionStatusType status = this.info.getTestStatus();
+            if (status != ExecutionStatusType.RUNNING) {
+                Activator.getDefault().logWarning("Execution hung up unexpectedly, status [" + status + "].");
+                this.showErrorDialog();
+                return;
+            }
 
-				this.showErrorDialog();
-				return;
-			}
-		}
+            result = this.retrieveResult();
 
-		this.evaluate(result);
-	}
+            if (result == null) {
+                Activator.getDefault().logWarning("Execution hung up unexpectedly, result [null].");
 
-	/**
-	 * Evaluate the test result.
-	 * 
-	 * @param result
-	 *            the result to evaluate
-	 * 
-	 * @throws Exception
-	 */
-	private void evaluate(TestConfigurationResult result) throws Exception {
-		TestConfigurationStatusType status = result.getStatus();
+                this.showErrorDialog();
+                return;
+            }
+        }
 
-		if (status == null) {
-			throw new IllegalStateException(
-					"Execution did not finish successful, status [null].");
-		}
+        this.evaluate(result);
+    }
 
-		Activator.getDefault().logDebug(
-				"TestEngine Execution Status: " + status);
+    /**
+     * Evaluate the test result.
+     * 
+     * @param result
+     *            the result to evaluate
+     * 
+     * @throws Exception
+     */
+    private void evaluate(TestConfigurationResult result) throws Exception {
+        TestConfigurationStatusType status = result.getStatus();
 
-		switch (status) {
+        if (status == null) {
+            throw new IllegalStateException("Execution did not finish successful, status [null].");
+        }
 
-		case CANCELLED:
-		case FINISHED:
-			this.updateModel(result);
-			break;
+        Activator.getDefault().logDebug("TestEngine Execution Status: " + status);
 
-		case INITIALIZED:
-			this.updateModel(result);
-			this.execute(SLEEP_TIME);
-			break;
+        switch (status) {
 
-		case RUNNING:
-			this.updateModel(result);
-			this.execute(SLEEP_TIME);
-			break;
-			
-		case WAITING:
-			userRequest(result);
-			this.execute(0);
-			break;
+        case CANCELLED:
+        case FINISHED:
+            this.updateModel(result);
+            break;
 
-		default:
-			break;
-		}
-	}
+        case INITIALIZED:
+            this.updateModel(result);
+            this.execute(this.interval);
+            break;
 
-	private boolean userRequest(final TestConfigurationResult result) {
-		Display.getDefault().syncExec(new Runnable() {
-			
-			@Override
-			public void run() {
-				ManualTestWizard wizard = new ManualTestWizard(result, configuration, info);
-	        	wizard.init(Activator.getDefault().getWorkbench(), StructuredSelection.EMPTY);
-	        	WizardDialog wizardDialog = new WizardDialog(null, wizard);
-	        	wizardDialog.setBlockOnOpen(true);
-	        	wizardDialog.setPageSize(600, 450);
-	        	wizardDialog.setTitleImage(ImageProvider.createImage(ConfigImageRegistry.ICON_CONFIG.getId()));
-	        	wizardDialog.open();
-			}
-		});
-		return manualTestResultFinished;
-	}
+        case RUNNING:
+            this.updateModel(result);
+            this.execute(this.interval);
+            break;
 
-	/**
-	 * Updates the test result view model.
-	 * 
-	 * @param result
-	 *            the new result
-	 */
-	private void updateModel(final TestConfigurationResult result) {
-		Runnable runnable = new TestResultModelUpdateThread(this.view, result);
-		Display.getDefault().asyncExec(runnable);
-	}
+        case WAITING:
+            userRequest(result);
+            this.execute(0);
+            break;
 
-	/**
-	 * Retrieves the current engine status.
-	 * 
-	 * @throws TestEngineException
-	 *             when the execution did not end normally
-	 * @throws ClientException
-	 */
-	private void retrieveStatus() throws ClientException {
+        default:
+            break;
+        }
+    }
 
-		TestInfoMsg request = new TestInfoMsg();
-		request.setTestExecutionInfo(this.info);
-		request.setTestEngineConfiguration(this.configuration);
+    private boolean userRequest(final TestConfigurationResult result) {
+        Display.getDefault().syncExec(new Runnable() {
 
-		TestInfoMsg response = this.service.getTestStatus(request);
+            @Override
+            public void run() {
+                ManualTestWizard wizard = new ManualTestWizard(result, configuration, info);
+                wizard.init(Activator.getDefault().getWorkbench(), StructuredSelection.EMPTY);
+                WizardDialog wizardDialog = new WizardDialog(null, wizard);
+                wizardDialog.setBlockOnOpen(true);
+                wizardDialog.setPageSize(600, 450);
+                wizardDialog.setTitleImage(ImageProvider.createImage(ConfigImageRegistry.ICON_CONFIG.getId()));
+                wizardDialog.open();
+            }
+        });
+        return manualTestResultFinished;
+    }
 
-		// if (response.getTestExecutionInfo() == null) {
-		// Activator.getDefault().logWarning(
-		// "Execution did not finish successful, TestExecutionInfo was [null].");
-		// }
-		// if (response.getTestEngineConfiguration() == null) {
-		// Activator.getDefault().logWarning(
-		// "Execution did not finish successful, TestEngineConfiguration was [null].");
-		// }
+    /**
+     * Updates the test result view model.
+     * 
+     * @param result
+     *            the new result
+     */
+    private void updateModel(final TestConfigurationResult result) {
+        Runnable runnable = new TestResultModelUpdateThread(this.view, result);
+        Display.getDefault().asyncExec(runnable);
+    }
 
-		this.info = response.getTestExecutionInfo();
-		this.configuration = response.getTestEngineConfiguration();
-	}
+    /**
+     * Retrieves the current engine status.
+     * 
+     * @throws TestEngineException
+     *             when the execution did not end normally
+     * @throws ClientException
+     */
+    private void retrieveStatus() throws ClientException {
 
-	/**
-	 * Retrieves the current engine result.
-	 * 
-	 * @return the result
-	 * 
-	 * @throws TestEngineException
-	 *             when the execution did not end normally
-	 * @throws ClientException
-	 */
-	private TestConfigurationResult retrieveResult() throws ClientException {
+        TestInfoMsg request = new TestInfoMsg();
+        request.setTestExecutionInfo(this.info);
+        request.setTestEngineConfiguration(this.configuration);
 
-		TestInfoMsg request = new TestInfoMsg();
-		request.setTestExecutionInfo(this.info);
-		request.setTestEngineConfiguration(this.configuration);
+        TestInfoMsg response = this.service.getTestStatus(request);
 
-		TestResultMsg response = this.service
-				.getTestConfigurationResult(request);
+        // if (response.getTestExecutionInfo() == null) {
+        // Activator.getDefault().logWarning(
+        // "Execution did not finish successful, TestExecutionInfo was [null].");
+        // }
+        // if (response.getTestEngineConfiguration() == null) {
+        // Activator.getDefault().logWarning(
+        // "Execution did not finish successful, TestEngineConfiguration was [null].");
+        // }
 
-		return response.getTestResult();
-	}
+        this.info = response.getTestExecutionInfo();
+        this.configuration = response.getTestEngineConfiguration();
+    }
 
-	/**
-	 * Sets the current job asleep for the amount of milliseconds.
-	 * 
-	 * @param sleepTime
-	 *            the milliseconds to sleep
-	 * 
-	 * @throws InterruptedException
-	 */
-	private void sleep(int sleepTime) throws InterruptedException {
-		if (sleepTime > 0) {
-			Thread.sleep(sleepTime);
-		}
-	}
+    /**
+     * Retrieves the current engine result.
+     * 
+     * @return the result
+     * 
+     * @throws TestEngineException
+     *             when the execution did not end normally
+     * @throws ClientException
+     */
+    private TestConfigurationResult retrieveResult() throws ClientException {
 
-	/**
-	 * Shows the error dialog.
-	 * 
-	 * @return <b>true</b> when ok clicked, <b>false</b> otherwise
-	 */
-	private void showErrorDialog() {
-		Runnable runnable = new TestResultErrorDialogThread();
-		Display.getDefault().asyncExec(runnable);
-	}
+        TestInfoMsg request = new TestInfoMsg();
+        request.setTestExecutionInfo(this.info);
+        request.setTestEngineConfiguration(this.configuration);
 
-	@Override
-	protected void canceling() {
-		if (configuration != null && info != null && service != null) {
-			TestInfoMsg rq = new TestInfoMsg();
-			rq.setTestEngineConfiguration(configuration);
-			rq.setTestExecutionInfo(info);
+        TestResultMsg response = this.service.getTestConfigurationResult(request);
 
-			try {
-				service.cancelTestConfiguration(rq);
-			} catch (ClientException e) {
-				Activator.getDefault().logError(e);
-			}
-		}
-	}
+        return response.getTestResult();
+    }
+
+    /**
+     * Sets the current job asleep for the amount of milliseconds.
+     * 
+     * @param sleepTime
+     *            the milliseconds to sleep
+     * 
+     * @throws InterruptedException
+     */
+    private void sleep(long sleepTime) throws InterruptedException {
+        if (sleepTime > 0) {
+            Thread.sleep(sleepTime);
+        }
+    }
+
+    /**
+     * Shows the error dialog.
+     * 
+     * @return <b>true</b> when ok clicked, <b>false</b> otherwise
+     */
+    private void showErrorDialog() {
+        Runnable runnable = new TestResultErrorDialogThread();
+        Display.getDefault().asyncExec(runnable);
+    }
+
+    @Override
+    protected void canceling() {
+        if (configuration != null && info != null && service != null) {
+            TestInfoMsg rq = new TestInfoMsg();
+            rq.setTestEngineConfiguration(configuration);
+            rq.setTestExecutionInfo(info);
+
+            try {
+                service.cancelTestConfiguration(rq);
+            } catch (ClientException e) {
+                Activator.getDefault().logError(e);
+            }
+        }
+    }
 }

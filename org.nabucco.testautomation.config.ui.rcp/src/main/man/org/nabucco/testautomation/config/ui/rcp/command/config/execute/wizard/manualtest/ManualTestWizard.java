@@ -1,19 +1,19 @@
 /*
-* Copyright 2010 PRODYNA AG
-*
-* Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.opensource.org/licenses/eclipse-1.0.php or
-* http://www.nabucco-source.org/nabucco-license.html
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.nabucco.testautomation.config.ui.rcp.command.config.execute.wizard.manualtest;
 
 import java.io.File;
@@ -39,17 +39,17 @@ import org.nabucco.testautomation.config.facade.message.TestConfigElementMsg;
 import org.nabucco.testautomation.config.facade.message.TestConfigElementSearchMsg;
 import org.nabucco.testautomation.config.facade.message.engine.ManualTestResultMsg;
 import org.nabucco.testautomation.config.ui.rcp.communication.ConfigComponentServiceDelegateFactory;
-import org.nabucco.testautomation.config.ui.rcp.communication.search.SearchTestConfigElementDelegate;
+import org.nabucco.testautomation.config.ui.rcp.communication.resolve.ResolveConfigDelegate;
 import org.nabucco.testautomation.config.ui.rcp.images.ConfigImageRegistry;
-import org.nabucco.testautomation.facade.datatype.engine.TestEngineConfiguration;
-import org.nabucco.testautomation.facade.datatype.engine.TestExecutionInfo;
 import org.nabucco.testautomation.result.facade.datatype.TestConfigurationResult;
 import org.nabucco.testautomation.result.facade.datatype.manual.ManualState;
 import org.nabucco.testautomation.result.facade.datatype.manual.ManualTestResult;
 import org.nabucco.testautomation.result.facade.datatype.trace.FileTrace;
 import org.nabucco.testautomation.result.facade.message.TraceMsg;
 import org.nabucco.testautomation.result.ui.rcp.communication.ResultComponentServiceDelegateFactory;
-import org.nabucco.testautomation.result.ui.rcp.communication.produce.ProduceTraceDelegate;
+import org.nabucco.testautomation.result.ui.rcp.communication.produce.ProduceResultDelegate;
+import org.nabucco.testautomation.settings.facade.datatype.engine.TestEngineConfiguration;
+import org.nabucco.testautomation.settings.facade.datatype.engine.TestExecutionInfo;
 
 
 
@@ -155,7 +155,7 @@ public class ManualTestWizard extends Wizard implements INewWizard {
 					byte[] b = new byte[(int) f.length()];
 					fis.read(b);
 					
-					ProduceTraceDelegate produceTrace = ResultComponentServiceDelegateFactory.getInstance().getProduceTrace();
+					ProduceResultDelegate produceTrace = ResultComponentServiceDelegateFactory.getInstance().getProduceResult();
 					TraceMsg rs = produceTrace.produceFileTrace(new EmptyServiceMessage());
 					FileTrace fileTrace = (FileTrace) rs.getTrace();
 					fileTrace.setName(f.getName());
@@ -202,13 +202,13 @@ public class ManualTestWizard extends Wizard implements INewWizard {
 	
 
 	private TestConfigElement loadTestConfigElement() {
-		SearchTestConfigElementDelegate searchTestConfigElement;
+		ResolveConfigDelegate resolveTestConfigElement;
 		try {
-			searchTestConfigElement = ConfigComponentServiceDelegateFactory.getInstance().getSearchTestConfigElement();
+			resolveTestConfigElement = ConfigComponentServiceDelegateFactory.getInstance().getResolveConfig();
 			TestConfigElementSearchMsg rq = new TestConfigElementSearchMsg();
 			rq.setId(this.manualTestResult.getTestConfigElementId());
 			TestConfigElementMsg response;
-			response = searchTestConfigElement.getTestConfigElement(rq);
+			response = resolveTestConfigElement.resolveTestConfigElement(rq);
 			return response.getTestConfigElement();
 		} catch (ClientException e) {
 			Activator.getDefault().logError(e);

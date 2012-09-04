@@ -1,11 +1,24 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ * 
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at
+ * 
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language governing permissions
+ * and limitations under the License.
  */
 package org.nabucco.testautomation.config.facade.message.engine;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import org.nabucco.framework.base.facade.datatype.Flag;
 import org.nabucco.framework.base.facade.datatype.property.NabuccoProperty;
 import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyContainer;
 import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyDescriptor;
@@ -27,19 +40,28 @@ public class TestExecutionMsg extends ServiceMessageSupport implements ServiceMe
 
     private static final long serialVersionUID = 1L;
 
-    private static final String[] PROPERTY_CONSTRAINTS = { "m1,1;", "m1,1;" };
+    private static final String[] PROPERTY_CONSTRAINTS = { "m1,1;", "m1,1;", "l0,n;u0,n;m0,1;" };
 
     public static final String USER = "user";
 
     public static final String TESTCONFIGURATION = "testConfiguration";
 
+    public static final String RESOLVETESTCONFIGURATION = "resolveTestConfiguration";
+
     private User user;
 
     private TestConfiguration testConfiguration;
 
+    private Flag resolveTestConfiguration;
+
     /** Constructs a new TestExecutionMsg instance. */
     public TestExecutionMsg() {
         super();
+        this.initDefaults();
+    }
+
+    /** InitDefaults. */
+    private void initDefaults() {
     }
 
     /**
@@ -49,21 +71,28 @@ public class TestExecutionMsg extends ServiceMessageSupport implements ServiceMe
      */
     protected static NabuccoPropertyContainer createPropertyContainer() {
         Map<String, NabuccoPropertyDescriptor> propertyMap = new HashMap<String, NabuccoPropertyDescriptor>();
-        propertyMap.put(USER, PropertyDescriptorSupport.createDatatype(USER, User.class, 0,
-                PROPERTY_CONSTRAINTS[0], false, PropertyAssociationType.COMPONENT));
-        propertyMap.put(TESTCONFIGURATION, PropertyDescriptorSupport.createDatatype(
-                TESTCONFIGURATION, TestConfiguration.class, 1, PROPERTY_CONSTRAINTS[1], false,
-                PropertyAssociationType.COMPOSITION));
+        propertyMap.put(USER, PropertyDescriptorSupport.createDatatype(USER, User.class, 0, PROPERTY_CONSTRAINTS[0],
+                false, PropertyAssociationType.COMPONENT));
+        propertyMap.put(TESTCONFIGURATION, PropertyDescriptorSupport.createDatatype(TESTCONFIGURATION,
+                TestConfiguration.class, 1, PROPERTY_CONSTRAINTS[1], false, PropertyAssociationType.COMPOSITION));
+        propertyMap.put(RESOLVETESTCONFIGURATION, PropertyDescriptorSupport.createBasetype(RESOLVETESTCONFIGURATION,
+                Flag.class, 2, PROPERTY_CONSTRAINTS[2], false));
         return new NabuccoPropertyContainer(propertyMap);
     }
 
+    /** Init. */
+    public void init() {
+        this.initDefaults();
+    }
+
     @Override
-    public List<NabuccoProperty> getProperties() {
-        List<NabuccoProperty> properties = super.getProperties();
-        properties
-                .add(super.createProperty(TestExecutionMsg.getPropertyDescriptor(USER), this.user));
-        properties.add(super.createProperty(
-                TestExecutionMsg.getPropertyDescriptor(TESTCONFIGURATION), this.testConfiguration));
+    public Set<NabuccoProperty> getProperties() {
+        Set<NabuccoProperty> properties = super.getProperties();
+        properties.add(super.createProperty(TestExecutionMsg.getPropertyDescriptor(USER), this.getUser()));
+        properties.add(super.createProperty(TestExecutionMsg.getPropertyDescriptor(TESTCONFIGURATION),
+                this.getTestConfiguration()));
+        properties.add(super.createProperty(TestExecutionMsg.getPropertyDescriptor(RESOLVETESTCONFIGURATION),
+                this.resolveTestConfiguration));
         return properties;
     }
 
@@ -77,6 +106,9 @@ public class TestExecutionMsg extends ServiceMessageSupport implements ServiceMe
             return true;
         } else if ((property.getName().equals(TESTCONFIGURATION) && (property.getType() == TestConfiguration.class))) {
             this.setTestConfiguration(((TestConfiguration) property.getInstance()));
+            return true;
+        } else if ((property.getName().equals(RESOLVETESTCONFIGURATION) && (property.getType() == Flag.class))) {
+            this.setResolveTestConfiguration(((Flag) property.getInstance()));
             return true;
         }
         return false;
@@ -107,6 +139,11 @@ public class TestExecutionMsg extends ServiceMessageSupport implements ServiceMe
                 return false;
         } else if ((!this.testConfiguration.equals(other.testConfiguration)))
             return false;
+        if ((this.resolveTestConfiguration == null)) {
+            if ((other.resolveTestConfiguration != null))
+                return false;
+        } else if ((!this.resolveTestConfiguration.equals(other.resolveTestConfiguration)))
+            return false;
         return true;
     }
 
@@ -115,7 +152,8 @@ public class TestExecutionMsg extends ServiceMessageSupport implements ServiceMe
         final int PRIME = 31;
         int result = super.hashCode();
         result = ((PRIME * result) + ((this.user == null) ? 0 : this.user.hashCode()));
-        result = ((PRIME * result) + ((this.testConfiguration == null) ? 0 : this.testConfiguration
+        result = ((PRIME * result) + ((this.testConfiguration == null) ? 0 : this.testConfiguration.hashCode()));
+        result = ((PRIME * result) + ((this.resolveTestConfiguration == null) ? 0 : this.resolveTestConfiguration
                 .hashCode()));
         return result;
     }
@@ -162,14 +200,31 @@ public class TestExecutionMsg extends ServiceMessageSupport implements ServiceMe
     }
 
     /**
+     * Missing description at method getResolveTestConfiguration.
+     *
+     * @return the Flag.
+     */
+    public Flag getResolveTestConfiguration() {
+        return this.resolveTestConfiguration;
+    }
+
+    /**
+     * Missing description at method setResolveTestConfiguration.
+     *
+     * @param resolveTestConfiguration the Flag.
+     */
+    public void setResolveTestConfiguration(Flag resolveTestConfiguration) {
+        this.resolveTestConfiguration = resolveTestConfiguration;
+    }
+
+    /**
      * Getter for the PropertyDescriptor.
      *
      * @param propertyName the String.
      * @return the NabuccoPropertyDescriptor.
      */
     public static NabuccoPropertyDescriptor getPropertyDescriptor(String propertyName) {
-        return PropertyCache.getInstance().retrieve(TestExecutionMsg.class)
-                .getProperty(propertyName);
+        return PropertyCache.getInstance().retrieve(TestExecutionMsg.class).getProperty(propertyName);
     }
 
     /**

@@ -1,28 +1,31 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ * 
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at
+ * 
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language governing permissions
+ * and limitations under the License.
  */
 package org.nabucco.testautomation.config.ui.rcp.communication;
 
-import org.nabucco.framework.base.facade.component.connection.Connection;
 import org.nabucco.framework.base.facade.component.connection.ConnectionException;
-import org.nabucco.framework.base.facade.component.connection.ConnectionFactory;
-import org.nabucco.framework.base.facade.component.connection.ConnectionSpecification;
 import org.nabucco.framework.base.facade.exception.client.ClientException;
 import org.nabucco.framework.base.facade.exception.service.ServiceException;
+import org.nabucco.framework.plugin.base.component.communication.ServiceDelegateFactorySupport;
 import org.nabucco.testautomation.config.facade.component.ConfigComponent;
 import org.nabucco.testautomation.config.facade.component.ConfigComponentLocator;
 import org.nabucco.testautomation.config.ui.rcp.communication.engine.TestEngineServiceDelegate;
-import org.nabucco.testautomation.config.ui.rcp.communication.export.ExportConfigDelegate;
-import org.nabucco.testautomation.config.ui.rcp.communication.importing.ImportConfigDelegate;
-import org.nabucco.testautomation.config.ui.rcp.communication.maintain.MaintainTestConfigurationDelegate;
-import org.nabucco.testautomation.config.ui.rcp.communication.produce.ProduceAttributeValueDelegate;
-import org.nabucco.testautomation.config.ui.rcp.communication.produce.ProduceDependencyDelegate;
-import org.nabucco.testautomation.config.ui.rcp.communication.produce.ProduceTestConfigElementContainerDelegate;
-import org.nabucco.testautomation.config.ui.rcp.communication.produce.ProduceTestConfigElementDelegate;
-import org.nabucco.testautomation.config.ui.rcp.communication.produce.ProduceTestConfigurationDelegate;
-import org.nabucco.testautomation.config.ui.rcp.communication.produce.ProduceTestScriptContainerDelegate;
-import org.nabucco.testautomation.config.ui.rcp.communication.search.SearchTestConfigElementDelegate;
-import org.nabucco.testautomation.config.ui.rcp.communication.search.SearchTestConfigurationDelegate;
+import org.nabucco.testautomation.config.ui.rcp.communication.maintain.MaintainConfigDelegate;
+import org.nabucco.testautomation.config.ui.rcp.communication.produce.ProduceConfigDelegate;
+import org.nabucco.testautomation.config.ui.rcp.communication.report.ReportConfigDelegate;
+import org.nabucco.testautomation.config.ui.rcp.communication.resolve.ResolveConfigDelegate;
+import org.nabucco.testautomation.config.ui.rcp.communication.search.SearchConfigDelegate;
 
 /**
  * ServiceDelegateFactoryTemplate<p/>Component for testautomation config<p/>
@@ -30,244 +33,119 @@ import org.nabucco.testautomation.config.ui.rcp.communication.search.SearchTestC
  * @version 1.0
  * @author Steffen Schmidt, PRODYNA AG, 2010-04-16
  */
-public class ConfigComponentServiceDelegateFactory {
+public class ConfigComponentServiceDelegateFactory extends ServiceDelegateFactorySupport<ConfigComponent> {
 
     private static ConfigComponentServiceDelegateFactory instance = new ConfigComponentServiceDelegateFactory();
 
-    private ConfigComponent component;
+    private MaintainConfigDelegate maintainConfigDelegate;
 
-    private MaintainTestConfigurationDelegate maintainTestConfigurationDelegate;
+    private ProduceConfigDelegate produceConfigDelegate;
 
-    private ProduceTestConfigurationDelegate produceTestConfigurationDelegate;
+    private SearchConfigDelegate searchConfigDelegate;
 
-    private ProduceTestConfigElementDelegate produceTestConfigElementDelegate;
+    private ResolveConfigDelegate resolveConfigDelegate;
 
-    private ProduceTestConfigElementContainerDelegate produceTestConfigElementContainerDelegate;
-
-    private ProduceDependencyDelegate produceDependencyDelegate;
-
-    private ProduceAttributeValueDelegate produceAttributeValueDelegate;
-
-    private ProduceTestScriptContainerDelegate produceTestScriptContainerDelegate;
-
-    private SearchTestConfigurationDelegate searchTestConfigurationDelegate;
-
-    private SearchTestConfigElementDelegate searchTestConfigElementDelegate;
+    private ReportConfigDelegate reportConfigDelegate;
 
     private TestEngineServiceDelegate testEngineServiceDelegate;
 
-    private ExportConfigDelegate exportConfigDelegate;
-
-    private ImportConfigDelegate importConfigDelegate;
-
     /** Constructs a new ConfigComponentServiceDelegateFactory instance. */
     private ConfigComponentServiceDelegateFactory() {
-        super();
+        super(ConfigComponentLocator.getInstance());
     }
 
     /**
-     * Getter for the Component.
+     * Getter for the MaintainConfig.
      *
-     * @return the ConfigComponent.
-     * @throws ConnectionException
-     */
-    private ConfigComponent getComponent() throws ConnectionException {
-        if ((this.component == null)) {
-            this.initComponent();
-        }
-        return this.component;
-    }
-
-    /**
-     * InitComponent.
-     *
-     * @throws ConnectionException
-     */
-    private void initComponent() throws ConnectionException {
-        ConnectionSpecification specification = ConnectionSpecification.getCurrentSpecification();
-        Connection connection = ConnectionFactory.getInstance().createConnection(specification);
-        this.component = ConfigComponentLocator.getInstance().getComponent(connection);
-    }
-
-    /**
-     * Getter for the MaintainTestConfiguration.
-     *
-     * @return the MaintainTestConfigurationDelegate.
+     * @return the MaintainConfigDelegate.
      * @throws ClientException
      */
-    public MaintainTestConfigurationDelegate getMaintainTestConfiguration() throws ClientException {
+    public MaintainConfigDelegate getMaintainConfig() throws ClientException {
         try {
-            if ((this.maintainTestConfigurationDelegate == null)) {
-                this.maintainTestConfigurationDelegate = new MaintainTestConfigurationDelegate(this
-                        .getComponent().getMaintainTestConfiguration());
+            if ((this.maintainConfigDelegate == null)) {
+                this.maintainConfigDelegate = new MaintainConfigDelegate(this.getComponent().getMaintainConfig());
             }
-            return this.maintainTestConfigurationDelegate;
+            return this.maintainConfigDelegate;
         } catch (ConnectionException e) {
             throw new ClientException("Cannot connect to component: ConfigComponent", e);
         } catch (ServiceException e) {
-            throw new ClientException("Cannot locate service: MaintainTestConfiguration", e);
+            throw new ClientException("Cannot locate service: MaintainConfig", e);
         }
     }
 
     /**
-     * Getter for the ProduceTestConfiguration.
+     * Getter for the ProduceConfig.
      *
-     * @return the ProduceTestConfigurationDelegate.
+     * @return the ProduceConfigDelegate.
      * @throws ClientException
      */
-    public ProduceTestConfigurationDelegate getProduceTestConfiguration() throws ClientException {
+    public ProduceConfigDelegate getProduceConfig() throws ClientException {
         try {
-            if ((this.produceTestConfigurationDelegate == null)) {
-                this.produceTestConfigurationDelegate = new ProduceTestConfigurationDelegate(this
-                        .getComponent().getProduceTestConfiguration());
+            if ((this.produceConfigDelegate == null)) {
+                this.produceConfigDelegate = new ProduceConfigDelegate(this.getComponent().getProduceConfig());
             }
-            return this.produceTestConfigurationDelegate;
+            return this.produceConfigDelegate;
         } catch (ConnectionException e) {
             throw new ClientException("Cannot connect to component: ConfigComponent", e);
         } catch (ServiceException e) {
-            throw new ClientException("Cannot locate service: ProduceTestConfiguration", e);
+            throw new ClientException("Cannot locate service: ProduceConfig", e);
         }
     }
 
     /**
-     * Getter for the ProduceTestConfigElement.
+     * Getter for the SearchConfig.
      *
-     * @return the ProduceTestConfigElementDelegate.
+     * @return the SearchConfigDelegate.
      * @throws ClientException
      */
-    public ProduceTestConfigElementDelegate getProduceTestConfigElement() throws ClientException {
+    public SearchConfigDelegate getSearchConfig() throws ClientException {
         try {
-            if ((this.produceTestConfigElementDelegate == null)) {
-                this.produceTestConfigElementDelegate = new ProduceTestConfigElementDelegate(this
-                        .getComponent().getProduceTestConfigElement());
+            if ((this.searchConfigDelegate == null)) {
+                this.searchConfigDelegate = new SearchConfigDelegate(this.getComponent().getSearchConfig());
             }
-            return this.produceTestConfigElementDelegate;
+            return this.searchConfigDelegate;
         } catch (ConnectionException e) {
             throw new ClientException("Cannot connect to component: ConfigComponent", e);
         } catch (ServiceException e) {
-            throw new ClientException("Cannot locate service: ProduceTestConfigElement", e);
+            throw new ClientException("Cannot locate service: SearchConfig", e);
         }
     }
 
     /**
-     * Getter for the ProduceTestConfigElementContainer.
+     * Getter for the ResolveConfig.
      *
-     * @return the ProduceTestConfigElementContainerDelegate.
+     * @return the ResolveConfigDelegate.
      * @throws ClientException
      */
-    public ProduceTestConfigElementContainerDelegate getProduceTestConfigElementContainer()
-            throws ClientException {
+    public ResolveConfigDelegate getResolveConfig() throws ClientException {
         try {
-            if ((this.produceTestConfigElementContainerDelegate == null)) {
-                this.produceTestConfigElementContainerDelegate = new ProduceTestConfigElementContainerDelegate(
-                        this.getComponent().getProduceTestConfigElementContainer());
+            if ((this.resolveConfigDelegate == null)) {
+                this.resolveConfigDelegate = new ResolveConfigDelegate(this.getComponent().getResolveConfig());
             }
-            return this.produceTestConfigElementContainerDelegate;
+            return this.resolveConfigDelegate;
         } catch (ConnectionException e) {
             throw new ClientException("Cannot connect to component: ConfigComponent", e);
         } catch (ServiceException e) {
-            throw new ClientException("Cannot locate service: ProduceTestConfigElementContainer", e);
+            throw new ClientException("Cannot locate service: ResolveConfig", e);
         }
     }
 
     /**
-     * Getter for the ProduceDependency.
+     * Getter for the ReportConfig.
      *
-     * @return the ProduceDependencyDelegate.
+     * @return the ReportConfigDelegate.
      * @throws ClientException
      */
-    public ProduceDependencyDelegate getProduceDependency() throws ClientException {
+    public ReportConfigDelegate getReportConfig() throws ClientException {
         try {
-            if ((this.produceDependencyDelegate == null)) {
-                this.produceDependencyDelegate = new ProduceDependencyDelegate(this.getComponent()
-                        .getProduceDependency());
+            if ((this.reportConfigDelegate == null)) {
+                this.reportConfigDelegate = new ReportConfigDelegate(this.getComponent().getReportConfig());
             }
-            return this.produceDependencyDelegate;
+            return this.reportConfigDelegate;
         } catch (ConnectionException e) {
             throw new ClientException("Cannot connect to component: ConfigComponent", e);
         } catch (ServiceException e) {
-            throw new ClientException("Cannot locate service: ProduceDependency", e);
-        }
-    }
-
-    /**
-     * Getter for the ProduceAttributeValue.
-     *
-     * @return the ProduceAttributeValueDelegate.
-     * @throws ClientException
-     */
-    public ProduceAttributeValueDelegate getProduceAttributeValue() throws ClientException {
-        try {
-            if ((this.produceAttributeValueDelegate == null)) {
-                this.produceAttributeValueDelegate = new ProduceAttributeValueDelegate(this
-                        .getComponent().getProduceAttributeValue());
-            }
-            return this.produceAttributeValueDelegate;
-        } catch (ConnectionException e) {
-            throw new ClientException("Cannot connect to component: ConfigComponent", e);
-        } catch (ServiceException e) {
-            throw new ClientException("Cannot locate service: ProduceAttributeValue", e);
-        }
-    }
-
-    /**
-     * Getter for the ProduceTestScriptContainer.
-     *
-     * @return the ProduceTestScriptContainerDelegate.
-     * @throws ClientException
-     */
-    public ProduceTestScriptContainerDelegate getProduceTestScriptContainer()
-            throws ClientException {
-        try {
-            if ((this.produceTestScriptContainerDelegate == null)) {
-                this.produceTestScriptContainerDelegate = new ProduceTestScriptContainerDelegate(
-                        this.getComponent().getProduceTestScriptContainer());
-            }
-            return this.produceTestScriptContainerDelegate;
-        } catch (ConnectionException e) {
-            throw new ClientException("Cannot connect to component: ConfigComponent", e);
-        } catch (ServiceException e) {
-            throw new ClientException("Cannot locate service: ProduceTestScriptContainer", e);
-        }
-    }
-
-    /**
-     * Getter for the SearchTestConfiguration.
-     *
-     * @return the SearchTestConfigurationDelegate.
-     * @throws ClientException
-     */
-    public SearchTestConfigurationDelegate getSearchTestConfiguration() throws ClientException {
-        try {
-            if ((this.searchTestConfigurationDelegate == null)) {
-                this.searchTestConfigurationDelegate = new SearchTestConfigurationDelegate(this
-                        .getComponent().getSearchTestConfiguration());
-            }
-            return this.searchTestConfigurationDelegate;
-        } catch (ConnectionException e) {
-            throw new ClientException("Cannot connect to component: ConfigComponent", e);
-        } catch (ServiceException e) {
-            throw new ClientException("Cannot locate service: SearchTestConfiguration", e);
-        }
-    }
-
-    /**
-     * Getter for the SearchTestConfigElement.
-     *
-     * @return the SearchTestConfigElementDelegate.
-     * @throws ClientException
-     */
-    public SearchTestConfigElementDelegate getSearchTestConfigElement() throws ClientException {
-        try {
-            if ((this.searchTestConfigElementDelegate == null)) {
-                this.searchTestConfigElementDelegate = new SearchTestConfigElementDelegate(this
-                        .getComponent().getSearchTestConfigElement());
-            }
-            return this.searchTestConfigElementDelegate;
-        } catch (ConnectionException e) {
-            throw new ClientException("Cannot connect to component: ConfigComponent", e);
-        } catch (ServiceException e) {
-            throw new ClientException("Cannot locate service: SearchTestConfigElement", e);
+            throw new ClientException("Cannot locate service: ReportConfig", e);
         }
     }
 
@@ -288,46 +166,6 @@ public class ConfigComponentServiceDelegateFactory {
             throw new ClientException("Cannot connect to component: ConfigComponent", e);
         } catch (ServiceException e) {
             throw new ClientException("Cannot locate service: TestEngineService", e);
-        }
-    }
-
-    /**
-     * Getter for the ExportConfig.
-     *
-     * @return the ExportConfigDelegate.
-     * @throws ClientException
-     */
-    public ExportConfigDelegate getExportConfig() throws ClientException {
-        try {
-            if ((this.exportConfigDelegate == null)) {
-                this.exportConfigDelegate = new ExportConfigDelegate(this.getComponent()
-                        .getExportConfig());
-            }
-            return this.exportConfigDelegate;
-        } catch (ConnectionException e) {
-            throw new ClientException("Cannot connect to component: ConfigComponent", e);
-        } catch (ServiceException e) {
-            throw new ClientException("Cannot locate service: ExportConfig", e);
-        }
-    }
-
-    /**
-     * Getter for the ImportConfig.
-     *
-     * @return the ImportConfigDelegate.
-     * @throws ClientException
-     */
-    public ImportConfigDelegate getImportConfig() throws ClientException {
-        try {
-            if ((this.importConfigDelegate == null)) {
-                this.importConfigDelegate = new ImportConfigDelegate(this.getComponent()
-                        .getImportConfig());
-            }
-            return this.importConfigDelegate;
-        } catch (ConnectionException e) {
-            throw new ClientException("Cannot connect to component: ConfigComponent", e);
-        } catch (ServiceException e) {
-            throw new ClientException("Cannot locate service: ImportConfig", e);
         }
     }
 

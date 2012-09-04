@@ -1,5 +1,16 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ * 
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at
+ * 
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language governing permissions
+ * and limitations under the License.
  */
 package org.nabucco.testautomation.config.ui.rcp.search.config.model;
 
@@ -16,8 +27,7 @@ import org.nabucco.testautomation.config.facade.datatype.TestConfigElement;
  * @version 1.0
  * @author Markus Jorroch, PRODYNA AG, 2010-09-27
  */
-public class TestConfigElementSearchViewModel extends
-        NabuccoComponentSearchViewModel<TestConfigElement> implements
+public class TestConfigElementSearchViewModel extends NabuccoComponentSearchViewModel<TestConfigElement> implements
         NabuccoComponentSearchParameter {
 
     public static final String ID = "org.nabucco.testautomation.config.ui.search.config.TestConfigElementSearchViewModel";
@@ -73,8 +83,7 @@ public class TestConfigElementSearchViewModel extends
         String oldVal = testConfigElement.getName().getValue();
         testConfigElement.getName().setValue(newName);
         this.updateProperty(PROPERTY_TESTCONFIGELEMENT_NAME, oldVal, newName);
-        if (((!oldVal.equals(newName)) && testConfigElement.getDatatypeState().equals(
-                DatatypeState.PERSISTENT))) {
+        if (((!oldVal.equals(newName)) && testConfigElement.getDatatypeState().equals(DatatypeState.PERSISTENT))) {
             testConfigElement.setDatatypeState(DatatypeState.MODIFIED);
         }
     }
@@ -85,8 +94,8 @@ public class TestConfigElementSearchViewModel extends
      * @return the String.
      */
     public String getTestConfigElementName() {
-        if ((((testConfigElement == null) || (testConfigElement.getName() == null)) || (testConfigElement
-                .getName().getValue() == null))) {
+        if ((((testConfigElement == null) || (testConfigElement.getName() == null)) || (testConfigElement.getName()
+                .getValue() == null))) {
             return "";
         }
         return testConfigElement.getName().getValue();
@@ -105,8 +114,7 @@ public class TestConfigElementSearchViewModel extends
         String oldVal = testConfigElement.getDescription().getValue();
         testConfigElement.getDescription().setValue(newDescription);
         this.updateProperty(PROPERTY_TESTCONFIGELEMENT_DESCRIPTION, oldVal, newDescription);
-        if (((!oldVal.equals(newDescription)) && testConfigElement.getDatatypeState().equals(
-                DatatypeState.PERSISTENT))) {
+        if (((!oldVal.equals(newDescription)) && testConfigElement.getDatatypeState().equals(DatatypeState.PERSISTENT))) {
             testConfigElement.setDatatypeState(DatatypeState.MODIFIED);
         }
     }

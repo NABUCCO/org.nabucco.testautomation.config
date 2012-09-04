@@ -1,19 +1,19 @@
 /*
-* Copyright 2010 PRODYNA AG
-*
-* Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.opensource.org/licenses/eclipse-1.0.php or
-* http://www.nabucco-source.org/nabucco-license.html
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.nabucco.testautomation.config.ui.rcp.edit.config.model;
 
 import java.util.ArrayList;
@@ -33,17 +33,14 @@ import org.nabucco.testautomation.config.facade.message.TestConfigurationListMsg
 import org.nabucco.testautomation.config.facade.message.TestConfigurationMsg;
 import org.nabucco.testautomation.config.facade.message.TestConfigurationSearchMsg;
 import org.nabucco.testautomation.config.ui.rcp.communication.ConfigComponentServiceDelegateFactory;
-import org.nabucco.testautomation.config.ui.rcp.communication.maintain.MaintainTestConfigurationDelegate;
-import org.nabucco.testautomation.config.ui.rcp.communication.produce.ProduceTestConfigurationDelegate;
-import org.nabucco.testautomation.config.ui.rcp.communication.search.SearchTestConfigElementDelegate;
-import org.nabucco.testautomation.config.ui.rcp.communication.search.SearchTestConfigurationDelegate;
-
-import org.nabucco.testautomation.facade.datatype.property.PropertyList;
+import org.nabucco.testautomation.config.ui.rcp.communication.maintain.MaintainConfigDelegate;
+import org.nabucco.testautomation.config.ui.rcp.communication.produce.ProduceConfigDelegate;
+import org.nabucco.testautomation.config.ui.rcp.communication.resolve.ResolveConfigDelegate;
 import org.nabucco.testautomation.schema.facade.datatype.SchemaConfig;
 import org.nabucco.testautomation.schema.facade.message.SchemaConfigListMsg;
 import org.nabucco.testautomation.schema.facade.message.SchemaConfigSearchMsg;
 import org.nabucco.testautomation.schema.ui.rcp.communication.SchemaComponentServiceDelegateFactory;
-import org.nabucco.testautomation.schema.ui.rcp.communication.search.SearchSchemaConfigDelegate;
+import org.nabucco.testautomation.schema.ui.rcp.communication.search.SearchSchemaDelegate;
 
 /**
  * TestConfigurationEditViewBusinessModel
@@ -52,146 +49,134 @@ import org.nabucco.testautomation.schema.ui.rcp.communication.search.SearchSchem
  */
 public class TestConfigurationEditViewBusinessModel implements BusinessModel, Loggable {
 
-	public static String ID = "org.nabucco.testautomation.config.ui.rcp.edit.config.model.TestConfigurationEditViewBusinessModel";
+    public static String ID = "org.nabucco.testautomation.config.ui.rcp.edit.config.model.TestConfigurationEditViewBusinessModel";
 
-	/**
-	 * Saves a TestConfiguration .
-	 * 
-	 * @param testConfiguration
-	 *            the TestConfiguration
-	 * @return the TestConfiguration
-	 * @throws ClientException 
-	 */
-	public TestConfiguration save(final TestConfiguration testConfiguration) throws ClientException {
-		ConfigComponentServiceDelegateFactory configComponentServiceDelegateFactory = ConfigComponentServiceDelegateFactory
-		.getInstance();
-		try{
-			MaintainTestConfigurationDelegate maintainTestConfigurationDelegate = configComponentServiceDelegateFactory
-			.getMaintainTestConfiguration();
+    private ResolveConfigDelegate resolveConfigDelegate;
 
-			TestConfigurationMsg request = createTestConfigurationMsg(testConfiguration);
-			TestConfigurationMsg response = maintainTestConfigurationDelegate
-			.maintainTestConfiguration(request);
+    private MaintainConfigDelegate maintainConfigDelegate;
 
-			if (response != null) {
-				return response.getTestConfiguration();
-			}
-		} catch (ClientException e){
-			throw e; // for debugging issues
-		}
-		return testConfiguration;
-	}
+    private ProduceConfigDelegate produceConfigDelegate;
+    
+    private SearchSchemaDelegate searchSchemaDelegate;
+    
+    /**
+     * Saves a TestConfiguration .
+     * 
+     * @param testConfiguration
+     *            the TestConfiguration
+     * @return the TestConfiguration
+     * @throws ClientException
+     */
+    public TestConfiguration save(final TestConfiguration testConfiguration) throws ClientException {
+        init();
+        TestConfigurationMsg request = createTestConfigurationMsg(testConfiguration);
+        TestConfigurationMsg response = maintainConfigDelegate.maintainTestConfiguration(request);
 
-	/**
-	 * Deletes a TestConfiguration.
-	 * 
-	 * @param testConfiguration
-	 *            the test configuration to remove
-	 * @throws ClientException
-	 */
-	public void delete(TestConfiguration testConfiguration) throws ClientException {
-		ConfigComponentServiceDelegateFactory configComponent = ConfigComponentServiceDelegateFactory
-		.getInstance();
+        if (response != null) {
+            return response.getTestConfiguration();
+        }
+        return testConfiguration;
+    }
 
-		MaintainTestConfigurationDelegate maintainDelegate = configComponent
-		.getMaintainTestConfiguration();
+    /**
+     * Deletes a TestConfiguration.
+     * 
+     * @param testConfiguration
+     *            the test configuration to remove
+     * @throws ClientException
+     */
+    public void delete(TestConfiguration testConfiguration) throws ClientException {
+        init();
+        TestConfigurationMsg request = this.createTestConfigurationMsg(testConfiguration);
+        maintainConfigDelegate.maintainTestConfiguration(request);
+    }
 
-		TestConfigurationMsg request = this.createTestConfigurationMsg(testConfiguration);
-		maintainDelegate.maintainTestConfiguration(request);
+    private TestConfigurationMsg createTestConfigurationMsg(TestConfiguration testConfiguration) {
+        TestConfigurationMsg msg = new TestConfigurationMsg();
+        msg.setTestConfiguration(testConfiguration);
+        return msg;
+    }
 
-	}
+    @Override
+    public String getID() {
+        return TestConfigurationEditViewBusinessModel.ID;
+    }
 
-	private TestConfigurationMsg createTestConfigurationMsg(TestConfiguration testConfiguration) {
-		TestConfigurationMsg msg = new TestConfigurationMsg();
-		msg.setTestConfiguration(testConfiguration);
-		return msg;
-	}
+    public TestConfiguration readTestConfiguration(TestConfiguration testConfiguration) throws ClientException {
+        init();
+        TestConfigurationSearchMsg rq = new TestConfigurationSearchMsg();
+        rq.setId(new Identifier(testConfiguration.getId()));
+        TestConfigurationListMsg response = resolveConfigDelegate.resolveTestConfiguration(rq);
+        
+        if (response != null && response.getTestConfigList().size() == 1) {
+            return response.getTestConfigList().get(0);
+        }
+        return testConfiguration;
+    }
 
-	@Override
-	public String getID() {
-		return TestConfigurationEditViewBusinessModel.ID;
-	}
+    public TestConfigElement readTestConfigElement(TestConfigElement testConfigElement) throws ClientException {
+        init();
+        TestConfigElementSearchMsg rq = new TestConfigElementSearchMsg();
+        rq.setId(new Identifier(testConfigElement.getId()));
+        TestConfigElementMsg response = resolveConfigDelegate.resolveTestConfigElement(rq);
+        
+        if (response != null && response.getTestConfigElement() != null) {
+            return response.getTestConfigElement();
+        }
+        return testConfigElement;
+    }
 
-	public TestConfiguration readTestConfiguration(TestConfiguration testConfiguration) {
-		try {
-			ConfigComponentServiceDelegateFactory configComponentServiceDelegateFactory = ConfigComponentServiceDelegateFactory
-			.getInstance();
-			SearchTestConfigurationDelegate searchTestConfigurationDelegate = configComponentServiceDelegateFactory
-			.getSearchTestConfiguration();
+    public List<SchemaConfig> getSchemaConfigList() {
+        init();
+        try {
+            SchemaConfigSearchMsg rq = new SchemaConfigSearchMsg();
+            SchemaConfigListMsg response = searchSchemaDelegate.searchSchemaConfig(rq);
+            List<SchemaConfig> resultList = response.getSchemaConfigList();
+            return resultList;
+        } catch (ClientException e) {
+            Activator.getDefault().logError(e);
+        }
+        return new ArrayList<SchemaConfig>();
+    }
 
-			TestConfigurationSearchMsg rq = new TestConfigurationSearchMsg();
-			rq.setId(new Identifier(testConfiguration.getId()));
-			TestConfigurationListMsg response = searchTestConfigurationDelegate
-			.getTestConfiguration(rq);
-			if (response != null && response.getTestConfigList().size() == 1) {
-				return response.getTestConfigList().get(0);
-			}
-		} catch (ClientException e) {
-			Activator.getDefault().logError(e);
-		}
-		return testConfiguration;
-	}
-
-	public TestConfigElement readTestConfigElement(TestConfigElement testConfigElement) {
-		try {
-			ConfigComponentServiceDelegateFactory configComponentServiceDelegateFactory = ConfigComponentServiceDelegateFactory
-			.getInstance();
-			SearchTestConfigElementDelegate searchTestConfigElementDelegate = configComponentServiceDelegateFactory
-			.getSearchTestConfigElement();
-
-			TestConfigElementSearchMsg rq = new TestConfigElementSearchMsg();
-			rq.setId(new Identifier(testConfigElement.getId()));
-			TestConfigElementMsg response = searchTestConfigElementDelegate
-			.getTestConfigElement(rq);
-			if (response != null && response.getTestConfigElement() != null) {
-				return response.getTestConfigElement();
-			}
-		} catch (ClientException e) {
-			Activator.getDefault().logError(e);
-		}
-		return testConfigElement;
-	}
-
-	public PropertyList readPropertyList(PropertyList propertyList) {
-		return propertyList;
-	}
-
-	public List<SchemaConfig> getSchemaConfigList() {
-		SchemaComponentServiceDelegateFactory schemaComponentServiceDelegateFactory = SchemaComponentServiceDelegateFactory
-		.getInstance();
-		SearchSchemaConfigDelegate searchSchemaConfigDelegate;
-		try {
-			searchSchemaConfigDelegate = schemaComponentServiceDelegateFactory.getSearchSchemaConfig();
-			SchemaConfigSearchMsg rq = new SchemaConfigSearchMsg();
-			rq.setOwner(Activator.getDefault().getModel().getSecurityModel().getSubject().getOwner());
-			SchemaConfigListMsg response = searchSchemaConfigDelegate.searchSchemaConfig(rq);
-			List<SchemaConfig> resultList = response.getSchemaConfigList();
-			return resultList;
-		} catch (ClientException e) {
-			Activator.getDefault().logError(e);
-		}
-		return new ArrayList<SchemaConfig>();
-	}
-
-	public TestConfiguration importDatatype(TestConfiguration testConfiguration) {
-		try {
-			ConfigComponentServiceDelegateFactory configComponentServiceDelegateFactory = ConfigComponentServiceDelegateFactory
-			.getInstance();
-			ProduceTestConfigurationDelegate produceTestConfigurationDelegate = configComponentServiceDelegateFactory
-			.getProduceTestConfiguration();
-
-			TestConfigurationMsg rq = new TestConfigurationMsg();
-			rq.setTestConfiguration(testConfiguration);
-			rq.setImportConfig(new Flag(Boolean.TRUE));
-			TestConfigurationMsg response = produceTestConfigurationDelegate
-			.produceTestConfigurationClone(rq);
-			if (response != null && response.getTestConfiguration() != null) {
-				return response.getTestConfiguration();
-			}
-		} catch (ClientException e) {
-			Activator.getDefault().logError(e);
-		}
-		return testConfiguration;
-	}
+    public TestConfiguration importDatatype(TestConfiguration testConfiguration) {
+        init();
+        try {
+            TestConfigurationMsg rq = new TestConfigurationMsg();
+            rq.setTestConfiguration(testConfiguration);
+            rq.setImportConfig(new Flag(Boolean.TRUE));
+            TestConfigurationMsg response = produceConfigDelegate.produceTestConfigurationClone(rq);
+            
+            if (response != null && response.getTestConfiguration() != null) {
+                return response.getTestConfiguration();
+            }
+        } catch (ClientException e) {
+            Activator.getDefault().logError(e);
+        }
+        return testConfiguration;
+    }
+    
+    private void init() {
+        try {
+            
+            if (resolveConfigDelegate == null) {
+                resolveConfigDelegate = ConfigComponentServiceDelegateFactory.getInstance().getResolveConfig();
+            }
+            
+            if (maintainConfigDelegate == null) {
+                maintainConfigDelegate = ConfigComponentServiceDelegateFactory.getInstance().getMaintainConfig();
+            }
+            
+            if (produceConfigDelegate == null) {
+                produceConfigDelegate = ConfigComponentServiceDelegateFactory.getInstance().getProduceConfig();
+            }
+            
+            if (searchSchemaDelegate == null) {
+                searchSchemaDelegate = SchemaComponentServiceDelegateFactory.getInstance().getSearchSchema();
+            }
+        } catch (ClientException e) {
+            Activator.getDefault().logError(e);
+        }
+    }
 
 }

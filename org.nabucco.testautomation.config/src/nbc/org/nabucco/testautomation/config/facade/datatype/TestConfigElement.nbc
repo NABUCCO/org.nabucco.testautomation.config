@@ -16,25 +16,25 @@
 */
 package org.nabucco.testautomation.config.facade.datatype;
 
-import org.nabucco.framework.base.facade.datatype.Name;
-import org.nabucco.framework.base.facade.datatype.Flag;
 import org.nabucco.framework.base.facade.datatype.Description;
-import org.nabucco.framework.base.facade.datatype.documentation.Documentation;
+import org.nabucco.framework.base.facade.datatype.Flag;
+import org.nabucco.framework.base.facade.datatype.Name;
 import org.nabucco.framework.base.facade.datatype.code.Code;
-import org.nabucco.testautomation.facade.datatype.base.ExportDatatype;
-import org.nabucco.testautomation.facade.datatype.property.PropertyList;
+import org.nabucco.framework.base.facade.datatype.documentation.Documentation;
+import org.nabucco.testautomation.config.facade.datatype.Dependency;
 import org.nabucco.testautomation.config.facade.datatype.TestConfigElementContainer;
 import org.nabucco.testautomation.config.facade.datatype.TestScriptContainer;
 import org.nabucco.testautomation.config.facade.datatype.attribute.AttributeValue;
-import org.nabucco.testautomation.schema.facade.datatype.SchemaElement;
-import org.nabucco.testautomation.config.facade.datatype.Dependency;
+import org.nabucco.testautomation.property.facade.datatype.PropertyList;
+import org.nabucco.testautomation.property.facade.datatype.base.TestAutomationDatatype;
 import org.nabucco.testautomation.result.facade.datatype.ExecutionType;
+import org.nabucco.testautomation.schema.facade.datatype.SchemaElement;
 
 @Author			Steffen Schmidt
 @Company		PRODYNA AG
 @Date			2010-04-14
 @Description	One Element of a test configuration
-public Datatype TestConfigElement extends ExportDatatype {
+public Datatype TestConfigElement extends TestAutomationDatatype {
 
 	@Default AUTOMATED
 	private Enumeration ExecutionType[1] executionType;
@@ -60,10 +60,10 @@ public Datatype TestConfigElement extends ExportDatatype {
 	
 	private Datatype TestConfigElementContainer[0..*] testConfigElementList;
 	
-	private Datatype Dependency[0..*] dependencyList;
-	
 	private Basetype Flag[0..1] reused;
-	
+
 	private Datatype TestScriptContainer[0..*] testScriptList;
+
+	private Datatype Dependency[0..*] dependencyList;
 		
 }

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding=".dummy" kind="src" path="src/main/gen"/>
+	<classpathentry excluding=".dummy" kind="src" path="src/main/man"/>
+	<classpathentry excluding=".dummy" kind="src" path="src/test/gen"/>
+	<classpathentry excluding=".dummy" kind="src" path="src/test/man"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.nabucco.testautomation.config.facade.component"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.nabucco.testautomation.config.facade.service"/>
+	<classpathentry kind="lib" path="/org.nabucco.testautomation.config/lib/impl/org.nabucco.framework.base.facade.jar"/>
+	<classpathentry kind="lib" path="/org.nabucco.testautomation.config/lib/impl/org.nabucco.framework.common.dynamiccode.facade.jar"/>
+	<classpathentry kind="lib" path="/org.nabucco.testautomation.config/lib/impl/org.nabucco.testautomation.property.facade.jar"/>
+	<classpathentry kind="lib" path="/org.nabucco.testautomation.config/lib/impl/org.nabucco.testautomation.result.facade.jar"/>
+	<classpathentry kind="lib" path="/org.nabucco.testautomation.config/lib/impl/org.nabucco.testautomation.schema.facade.jar"/>
+	<classpathentry kind="lib" path="/org.nabucco.testautomation.config/lib/impl/org.nabucco.testautomation.settings.facade.jar"/>
+	<classpathentry kind="lib" path="/org.nabucco.testautomation.config/lib/impl/org.nabucco.framework.base.impl.jar"/>
+	<classpathentry kind="output" path="out/ide"/>
+</classpath>

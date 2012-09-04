@@ -1,28 +1,34 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ * 
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at
+ * 
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language governing permissions
+ * and limitations under the License.
  */
 package org.nabucco.testautomation.config.impl.component;
 
+import org.nabucco.framework.base.facade.component.handler.PostConstructHandler;
+import org.nabucco.framework.base.facade.component.handler.PreDestroyHandler;
 import org.nabucco.framework.base.facade.exception.service.ServiceException;
 import org.nabucco.framework.base.facade.service.componentrelation.ComponentRelationService;
+import org.nabucco.framework.base.facade.service.injection.InjectionProvider;
+import org.nabucco.framework.base.facade.service.queryfilter.QueryFilterService;
 import org.nabucco.framework.base.impl.component.ComponentSupport;
-import org.nabucco.framework.common.dynamiccode.facade.component.DynamicCodeComponent;
-import org.nabucco.testautomation.config.facade.component.ConfigComponent;
+import org.nabucco.testautomation.config.facade.component.ConfigComponentLocal;
+import org.nabucco.testautomation.config.facade.component.ConfigComponentRemote;
 import org.nabucco.testautomation.config.facade.service.engine.TestEngineService;
-import org.nabucco.testautomation.config.facade.service.export.ExportConfig;
-import org.nabucco.testautomation.config.facade.service.importing.ImportConfig;
-import org.nabucco.testautomation.config.facade.service.maintain.MaintainTestConfiguration;
-import org.nabucco.testautomation.config.facade.service.produce.ProduceAttributeValue;
-import org.nabucco.testautomation.config.facade.service.produce.ProduceDependency;
-import org.nabucco.testautomation.config.facade.service.produce.ProduceTestConfigElement;
-import org.nabucco.testautomation.config.facade.service.produce.ProduceTestConfigElementContainer;
-import org.nabucco.testautomation.config.facade.service.produce.ProduceTestConfiguration;
-import org.nabucco.testautomation.config.facade.service.produce.ProduceTestScriptContainer;
-import org.nabucco.testautomation.config.facade.service.search.SearchTestConfigElement;
-import org.nabucco.testautomation.config.facade.service.search.SearchTestConfiguration;
-import org.nabucco.testautomation.facade.component.TestautomationComponent;
-import org.nabucco.testautomation.schema.facade.component.SchemaComponent;
-import org.nabucco.testautomation.script.facade.component.ScriptComponent;
+import org.nabucco.testautomation.config.facade.service.maintain.MaintainConfig;
+import org.nabucco.testautomation.config.facade.service.produce.ProduceConfig;
+import org.nabucco.testautomation.config.facade.service.report.ReportConfig;
+import org.nabucco.testautomation.config.facade.service.resolve.ResolveConfig;
+import org.nabucco.testautomation.config.facade.service.search.SearchConfig;
 
 /**
  * ConfigComponentImpl<p/>Component for testautomation config<p/>
@@ -30,43 +36,11 @@ import org.nabucco.testautomation.script.facade.component.ScriptComponent;
  * @version 1.0
  * @author Steffen Schmidt, PRODYNA AG, 2010-04-16
  */
-public class ConfigComponentImpl extends ComponentSupport implements ConfigComponent {
+public class ConfigComponentImpl extends ComponentSupport implements ConfigComponentLocal, ConfigComponentRemote {
 
     private static final long serialVersionUID = 1L;
 
-    private ComponentRelationService componentRelationService;
-
-    private TestautomationComponent testautomationComponent;
-
-    private SchemaComponent schemaComponent;
-
-    private DynamicCodeComponent dynamicCodeComponent;
-
-    private ScriptComponent scriptComponent;
-
-    private MaintainTestConfiguration maintainTestConfiguration;
-
-    private ProduceTestConfiguration produceTestConfiguration;
-
-    private ProduceTestConfigElement produceTestConfigElement;
-
-    private ProduceTestConfigElementContainer produceTestConfigElementContainer;
-
-    private ProduceDependency produceDependency;
-
-    private ProduceAttributeValue produceAttributeValue;
-
-    private ProduceTestScriptContainer produceTestScriptContainer;
-
-    private SearchTestConfiguration searchTestConfiguration;
-
-    private SearchTestConfigElement searchTestConfigElement;
-
-    private TestEngineService testEngineService;
-
-    private ExportConfig exportConfig;
-
-    private ImportConfig importConfig;
+    private static final String ID = "ConfigComponent";
 
     /** Constructs a new ConfigComponentImpl instance. */
     public ConfigComponentImpl() {
@@ -74,151 +48,129 @@ public class ConfigComponentImpl extends ComponentSupport implements ConfigCompo
     }
 
     @Override
+    public void postConstruct() {
+        super.postConstruct();
+        InjectionProvider injector = InjectionProvider.getInstance(ID);
+        PostConstructHandler handler = injector.inject(PostConstructHandler.getId());
+        if ((handler == null)) {
+            if (super.getLogger().isDebugEnabled()) {
+                super.getLogger().debug("No post construct handler configured for \'", ID, "\'.");
+            }
+            return;
+        }
+        handler.setLocatable(this);
+        handler.setLogger(super.getLogger());
+        handler.invoke();
+    }
+
+    @Override
+    public void preDestroy() {
+        super.preDestroy();
+        InjectionProvider injector = InjectionProvider.getInstance(ID);
+        PreDestroyHandler handler = injector.inject(PreDestroyHandler.getId());
+        if ((handler == null)) {
+            if (super.getLogger().isDebugEnabled()) {
+                super.getLogger().debug("No pre destroy handler configured for \'", ID, "\'.");
+            }
+            return;
+        }
+        handler.setLocatable(this);
+        handler.setLogger(super.getLogger());
+        handler.invoke();
+    }
+
+    @Override
+    public String getId() {
+        return ID;
+    }
+
+    @Override
+    public String getName() {
+        return COMPONENT_NAME;
+    }
+
+    @Override
+    public String getJndiName() {
+        return JNDI_NAME;
+    }
+
+    @Override
     public ComponentRelationService getComponentRelationService() throws ServiceException {
-        return this.componentRelationService;
+        return super.lookup(ConfigComponentJndiNames.COMPONENT_RELATION_SERVICE_REMOTE, ComponentRelationService.class);
     }
 
-    /**
-     * Getter for the TestautomationComponent.
-     *
-     * @return the TestautomationComponent.
-     */
-    public TestautomationComponent getTestautomationComponent() {
-        return this.testautomationComponent;
+    @Override
+    public ComponentRelationService getComponentRelationServiceLocal() throws ServiceException {
+        return super.lookup(ConfigComponentJndiNames.COMPONENT_RELATION_SERVICE_LOCAL, ComponentRelationService.class);
     }
 
-    /**
-     * Getter for the SchemaComponent.
-     *
-     * @return the SchemaComponent.
-     */
-    public SchemaComponent getSchemaComponent() {
-        return this.schemaComponent;
+    @Override
+    public QueryFilterService getQueryFilterService() throws ServiceException {
+        return super.lookup(ConfigComponentJndiNames.QUERY_FILTER_SERVICE_REMOTE, QueryFilterService.class);
     }
 
-    /**
-     * Getter for the DynamicCodeComponent.
-     *
-     * @return the DynamicCodeComponent.
-     */
-    public DynamicCodeComponent getDynamicCodeComponent() {
-        return this.dynamicCodeComponent;
+    @Override
+    public QueryFilterService getQueryFilterServiceLocal() throws ServiceException {
+        return super.lookup(ConfigComponentJndiNames.QUERY_FILTER_SERVICE_LOCAL, QueryFilterService.class);
     }
 
-    /**
-     * Getter for the ScriptComponent.
-     *
-     * @return the ScriptComponent.
-     */
-    public ScriptComponent getScriptComponent() {
-        return this.scriptComponent;
+    @Override
+    public MaintainConfig getMaintainConfigLocal() throws ServiceException {
+        return super.lookup(ConfigComponentJndiNames.MAINTAIN_CONFIG_LOCAL, MaintainConfig.class);
     }
 
-    /**
-     * Getter for the MaintainTestConfiguration.
-     *
-     * @return the MaintainTestConfiguration.
-     */
-    public MaintainTestConfiguration getMaintainTestConfiguration() {
-        return this.maintainTestConfiguration;
+    @Override
+    public MaintainConfig getMaintainConfig() throws ServiceException {
+        return super.lookup(ConfigComponentJndiNames.MAINTAIN_CONFIG_REMOTE, MaintainConfig.class);
     }
 
-    /**
-     * Getter for the ProduceTestConfiguration.
-     *
-     * @return the ProduceTestConfiguration.
-     */
-    public ProduceTestConfiguration getProduceTestConfiguration() {
-        return this.produceTestConfiguration;
+    @Override
+    public ProduceConfig getProduceConfigLocal() throws ServiceException {
+        return super.lookup(ConfigComponentJndiNames.PRODUCE_CONFIG_LOCAL, ProduceConfig.class);
     }
 
-    /**
-     * Getter for the ProduceTestConfigElement.
-     *
-     * @return the ProduceTestConfigElement.
-     */
-    public ProduceTestConfigElement getProduceTestConfigElement() {
-        return this.produceTestConfigElement;
+    @Override
+    public ProduceConfig getProduceConfig() throws ServiceException {
+        return super.lookup(ConfigComponentJndiNames.PRODUCE_CONFIG_REMOTE, ProduceConfig.class);
     }
 
-    /**
-     * Getter for the ProduceTestConfigElementContainer.
-     *
-     * @return the ProduceTestConfigElementContainer.
-     */
-    public ProduceTestConfigElementContainer getProduceTestConfigElementContainer() {
-        return this.produceTestConfigElementContainer;
+    @Override
+    public SearchConfig getSearchConfigLocal() throws ServiceException {
+        return super.lookup(ConfigComponentJndiNames.SEARCH_CONFIG_LOCAL, SearchConfig.class);
     }
 
-    /**
-     * Getter for the ProduceDependency.
-     *
-     * @return the ProduceDependency.
-     */
-    public ProduceDependency getProduceDependency() {
-        return this.produceDependency;
+    @Override
+    public SearchConfig getSearchConfig() throws ServiceException {
+        return super.lookup(ConfigComponentJndiNames.SEARCH_CONFIG_REMOTE, SearchConfig.class);
     }
 
-    /**
-     * Getter for the ProduceAttributeValue.
-     *
-     * @return the ProduceAttributeValue.
-     */
-    public ProduceAttributeValue getProduceAttributeValue() {
-        return this.produceAttributeValue;
+    @Override
+    public ResolveConfig getResolveConfigLocal() throws ServiceException {
+        return super.lookup(ConfigComponentJndiNames.RESOLVE_CONFIG_LOCAL, ResolveConfig.class);
     }
 
-    /**
-     * Getter for the ProduceTestScriptContainer.
-     *
-     * @return the ProduceTestScriptContainer.
-     */
-    public ProduceTestScriptContainer getProduceTestScriptContainer() {
-        return this.produceTestScriptContainer;
+    @Override
+    public ResolveConfig getResolveConfig() throws ServiceException {
+        return super.lookup(ConfigComponentJndiNames.RESOLVE_CONFIG_REMOTE, ResolveConfig.class);
     }
 
-    /**
-     * Getter for the SearchTestConfiguration.
-     *
-     * @return the SearchTestConfiguration.
-     */
-    public SearchTestConfiguration getSearchTestConfiguration() {
-        return this.searchTestConfiguration;
+    @Override
+    public ReportConfig getReportConfigLocal() throws ServiceException {
+        return super.lookup(ConfigComponentJndiNames.REPORT_CONFIG_LOCAL, ReportConfig.class);
     }
 
-    /**
-     * Getter for the SearchTestConfigElement.
-     *
-     * @return the SearchTestConfigElement.
-     */
-    public SearchTestConfigElement getSearchTestConfigElement() {
-        return this.searchTestConfigElement;
+    @Override
+    public ReportConfig getReportConfig() throws ServiceException {
+        return super.lookup(ConfigComponentJndiNames.REPORT_CONFIG_REMOTE, ReportConfig.class);
     }
 
-    /**
-     * Getter for the TestEngineService.
-     *
-     * @return the TestEngineService.
-     */
-    public TestEngineService getTestEngineService() {
-        return this.testEngineService;
+    @Override
+    public TestEngineService getTestEngineServiceLocal() throws ServiceException {
+        return super.lookup(ConfigComponentJndiNames.TEST_ENGINE_SERVICE_LOCAL, TestEngineService.class);
     }
 
-    /**
-     * Getter for the ExportConfig.
-     *
-     * @return the ExportConfig.
-     */
-    public ExportConfig getExportConfig() {
-        return this.exportConfig;
-    }
-
-    /**
-     * Getter for the ImportConfig.
-     *
-     * @return the ImportConfig.
-     */
-    public ImportConfig getImportConfig() {
-        return this.importConfig;
+    @Override
+    public TestEngineService getTestEngineService() throws ServiceException {
+        return super.lookup(ConfigComponentJndiNames.TEST_ENGINE_SERVICE_REMOTE, TestEngineService.class);
     }
 }

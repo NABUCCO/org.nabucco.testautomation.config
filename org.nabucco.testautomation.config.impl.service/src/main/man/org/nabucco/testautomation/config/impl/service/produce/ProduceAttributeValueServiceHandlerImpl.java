@@ -1,26 +1,26 @@
 /*
-* Copyright 2010 PRODYNA AG
-*
-* Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.opensource.org/licenses/eclipse-1.0.php or
-* http://www.nabucco-source.org/nabucco-license.html
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.nabucco.testautomation.config.impl.service.produce;
 
 import org.nabucco.framework.base.facade.datatype.DatatypeState;
 import org.nabucco.framework.base.facade.exception.service.ProduceException;
 import org.nabucco.testautomation.config.facade.datatype.attribute.AttributeValue;
 import org.nabucco.testautomation.config.facade.datatype.attribute.CodeAttributeValue;
-import org.nabucco.testautomation.config.facade.datatype.attribute.StringAttributeValue;
+import org.nabucco.testautomation.config.facade.datatype.attribute.TextAttributeValue;
 import org.nabucco.testautomation.config.facade.message.AttributeValueMsg;
 import org.nabucco.testautomation.config.facade.message.ProduceAttributeValueMsg;
 import org.nabucco.testautomation.schema.facade.datatype.attribute.Attribute;
@@ -47,7 +47,7 @@ public class ProduceAttributeValueServiceHandlerImpl extends ProduceAttributeVal
 			value = new CodeAttributeValue();
 			break;
 		case STRING:
-			value = new StringAttributeValue();
+			value = new TextAttributeValue();
 			break;
 		default:
 			throw new ProduceException("Unsupported AttributeType: " + attribute.getType());

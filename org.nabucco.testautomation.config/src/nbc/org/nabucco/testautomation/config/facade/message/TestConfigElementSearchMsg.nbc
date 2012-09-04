@@ -21,7 +21,7 @@ import org.nabucco.framework.base.facade.datatype.Flag;
 import org.nabucco.framework.base.facade.datatype.Name;
 import org.nabucco.framework.base.facade.datatype.Description;
 import org.nabucco.framework.base.facade.datatype.Identifier;
-import org.nabucco.testautomation.facade.datatype.base.HierarchyLevelType;
+import org.nabucco.testautomation.property.facade.datatype.base.HierarchyLevelType;
 import org.nabucco.testautomation.schema.facade.datatype.SchemaElement;
 
 @Author			Steffen Schmidt

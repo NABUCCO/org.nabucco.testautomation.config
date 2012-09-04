@@ -23,7 +23,7 @@ import org.nabucco.testautomation.config.facade.datatype.TestConfiguration;
 @Date			2010-04-15
 @Version		1.0
 @Description 	Search view for datatype TestConfiguration
-@Id				org.nabucco.testautomation.config.ui.search.config.TestConfigSearchView
+@Id				org.nabucco.testautomation.config.ui.search.config.TestConfigurationSearchView
 public SearchView TestConfigurationSearchView {
 
 	private Datatype TestConfiguration[1] testConfiguration;
@@ -33,9 +33,9 @@ public SearchView TestConfigurationSearchView {
 	@FieldLabelDefault 	"Name"
 	private LabeledInputField testConfigurationName;
 	
-	@MappedField 		testConfiguration.description
-	@FieldLabelId		testConfiguration.description
-	@FieldLabelDefault 	"Description"
-	private LabeledInputField testConfigurationDescription;
+	@MappedField 		testConfiguration.identificationKey
+	@FieldLabelId		testConfiguration.identificationKey
+	@FieldLabelDefault 	"Element Key"
+	private LabeledInputField testConfigurationKey;
 	
 }

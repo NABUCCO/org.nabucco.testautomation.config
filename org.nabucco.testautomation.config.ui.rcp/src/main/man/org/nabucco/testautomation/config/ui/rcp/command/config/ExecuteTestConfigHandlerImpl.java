@@ -1,19 +1,19 @@
 /*
-* Copyright 2010 PRODYNA AG
-*
-* Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.opensource.org/licenses/eclipse-1.0.php or
-* http://www.nabucco-source.org/nabucco-license.html
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.nabucco.testautomation.config.ui.rcp.command.config;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -29,17 +29,14 @@ import org.nabucco.framework.plugin.base.view.ManagedFormViewPart;
 import org.nabucco.testautomation.config.facade.datatype.TestConfiguration;
 import org.nabucco.testautomation.config.facade.message.engine.TestExecutionMsg;
 import org.nabucco.testautomation.config.facade.message.engine.TestInfoMsg;
-import org.nabucco.testautomation.config.ui.rcp.command.config.ExecuteTestConfigHandler;
-import org.nabucco.testautomation.config.ui.rcp.command.config.SaveTestConfigCommand;
 import org.nabucco.testautomation.config.ui.rcp.command.config.execute.ExecutionConstants;
 import org.nabucco.testautomation.config.ui.rcp.command.config.execute.TestConfigExecutionJob;
 import org.nabucco.testautomation.config.ui.rcp.communication.ConfigComponentServiceDelegateFactory;
 import org.nabucco.testautomation.config.ui.rcp.communication.engine.TestEngineServiceDelegate;
-import org.nabucco.testautomation.config.ui.rcp.multipage.config.maintainance.model.TestConfigurationMaintainanceMultiplePageEditViewModel;
-
-import org.nabucco.testautomation.facade.datatype.engine.TestEngineConfiguration;
-import org.nabucco.testautomation.facade.datatype.engine.TestExecutionInfo;
+import org.nabucco.testautomation.config.ui.rcp.multipage.config.maintenance.model.TestConfigurationMaintenanceMultiPageEditViewModel;
 import org.nabucco.testautomation.result.ui.rcp.multipage.result.maintenance.TestConfigurationResultMaintenanceMultiPageEditView;
+import org.nabucco.testautomation.settings.facade.datatype.engine.TestEngineConfiguration;
+import org.nabucco.testautomation.settings.facade.datatype.engine.TestExecutionInfo;
 
 /**
  * ExecuteTestConfigHandlerImpl
@@ -142,8 +139,8 @@ public class ExecuteTestConfigHandlerImpl extends
     private TestConfiguration getTestConfiguration() {
         ViewModel viewModel = Activator.getDefault().getModel().getCurrentViewModel();
 
-        if (viewModel instanceof TestConfigurationMaintainanceMultiplePageEditViewModel) {
-            TestConfigurationMaintainanceMultiplePageEditViewModel model = (TestConfigurationMaintainanceMultiplePageEditViewModel) viewModel;
+        if (viewModel instanceof TestConfigurationMaintenanceMultiPageEditViewModel) {
+            TestConfigurationMaintenanceMultiPageEditViewModel model = (TestConfigurationMaintenanceMultiPageEditViewModel) viewModel;
 
             return model.getTestConfiguration();
         }
@@ -164,7 +161,7 @@ public class ExecuteTestConfigHandlerImpl extends
     private void startJob(TestExecutionInfo engineInfo, TestEngineConfiguration engineConfiguration)
             throws ClientException {
 
-        if (engineInfo == null || engineConfiguration == null) {
+        if (engineInfo == null) {
             throw new IllegalArgumentException("Cannot Start Job for arguments [null].");
         }
 
@@ -185,10 +182,15 @@ public class ExecuteTestConfigHandlerImpl extends
             break;
 
         case INTERRUPTED:
-            Activator.getDefault().logWarning("Test Execution interupted.");
+            Activator.getDefault().logWarning("Test Execution interrupted.");
             break;
 
         default:
+            
+            if (engineConfiguration == null) {
+                throw new IllegalArgumentException("Cannot Start Job because of missing TestEngineConfiguration");
+            }
+            
             Activator.getDefault().logInfo("Test Execution started successfully.");
 
             TestConfigurationResultMaintenanceMultiPageEditView view = this.openView();

@@ -1,11 +1,23 @@
 /*
- * NABUCCO Generator, Copyright (c) 2010, PRODYNA AG, Germany. All rights reserved.
+ * Copyright 2012 PRODYNA AG
+ * 
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the License at
+ * 
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language governing permissions
+ * and limitations under the License.
  */
 package org.nabucco.testautomation.config.facade.message;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.nabucco.framework.base.facade.datatype.property.NabuccoProperty;
 import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyContainer;
 import org.nabucco.framework.base.facade.datatype.property.NabuccoPropertyDescriptor;
@@ -40,6 +52,11 @@ public class ProduceTestScriptContainerMsg extends ServiceMessageSupport impleme
     /** Constructs a new ProduceTestScriptContainerMsg instance. */
     public ProduceTestScriptContainerMsg() {
         super();
+        this.initDefaults();
+    }
+
+    /** InitDefaults. */
+    private void initDefaults() {
     }
 
     /**
@@ -49,23 +66,25 @@ public class ProduceTestScriptContainerMsg extends ServiceMessageSupport impleme
      */
     protected static NabuccoPropertyContainer createPropertyContainer() {
         Map<String, NabuccoPropertyDescriptor> propertyMap = new HashMap<String, NabuccoPropertyDescriptor>();
-        propertyMap.put(TESTSCRIPT, PropertyDescriptorSupport.createDatatype(TESTSCRIPT,
-                TestScript.class, 0, PROPERTY_CONSTRAINTS[0], false,
-                PropertyAssociationType.COMPONENT));
-        propertyMap.put(TESTSCRIPTCONTAINER, PropertyDescriptorSupport.createDatatype(
-                TESTSCRIPTCONTAINER, TestScriptContainer.class, 1, PROPERTY_CONSTRAINTS[1], false,
-                PropertyAssociationType.COMPOSITION));
+        propertyMap.put(TESTSCRIPT, PropertyDescriptorSupport.createDatatype(TESTSCRIPT, TestScript.class, 0,
+                PROPERTY_CONSTRAINTS[0], false, PropertyAssociationType.COMPONENT));
+        propertyMap.put(TESTSCRIPTCONTAINER, PropertyDescriptorSupport.createDatatype(TESTSCRIPTCONTAINER,
+                TestScriptContainer.class, 1, PROPERTY_CONSTRAINTS[1], false, PropertyAssociationType.COMPOSITION));
         return new NabuccoPropertyContainer(propertyMap);
     }
 
+    /** Init. */
+    public void init() {
+        this.initDefaults();
+    }
+
     @Override
-    public List<NabuccoProperty> getProperties() {
-        List<NabuccoProperty> properties = super.getProperties();
-        properties.add(super.createProperty(
-                ProduceTestScriptContainerMsg.getPropertyDescriptor(TESTSCRIPT), this.testScript));
-        properties.add(super.createProperty(
-                ProduceTestScriptContainerMsg.getPropertyDescriptor(TESTSCRIPTCONTAINER),
-                this.testScriptContainer));
+    public Set<NabuccoProperty> getProperties() {
+        Set<NabuccoProperty> properties = super.getProperties();
+        properties.add(super.createProperty(ProduceTestScriptContainerMsg.getPropertyDescriptor(TESTSCRIPT),
+                this.getTestScript()));
+        properties.add(super.createProperty(ProduceTestScriptContainerMsg.getPropertyDescriptor(TESTSCRIPTCONTAINER),
+                this.getTestScriptContainer()));
         return properties;
     }
 
@@ -117,8 +136,7 @@ public class ProduceTestScriptContainerMsg extends ServiceMessageSupport impleme
         final int PRIME = 31;
         int result = super.hashCode();
         result = ((PRIME * result) + ((this.testScript == null) ? 0 : this.testScript.hashCode()));
-        result = ((PRIME * result) + ((this.testScriptContainer == null) ? 0
-                : this.testScriptContainer.hashCode()));
+        result = ((PRIME * result) + ((this.testScriptContainer == null) ? 0 : this.testScriptContainer.hashCode()));
         return result;
     }
 
@@ -170,8 +188,7 @@ public class ProduceTestScriptContainerMsg extends ServiceMessageSupport impleme
      * @return the NabuccoPropertyDescriptor.
      */
     public static NabuccoPropertyDescriptor getPropertyDescriptor(String propertyName) {
-        return PropertyCache.getInstance().retrieve(ProduceTestScriptContainerMsg.class)
-                .getProperty(propertyName);
+        return PropertyCache.getInstance().retrieve(ProduceTestScriptContainerMsg.class).getProperty(propertyName);
     }
 
     /**
@@ -180,7 +197,6 @@ public class ProduceTestScriptContainerMsg extends ServiceMessageSupport impleme
      * @return the List<NabuccoPropertyDescriptor>.
      */
     public static List<NabuccoPropertyDescriptor> getPropertyDescriptorList() {
-        return PropertyCache.getInstance().retrieve(ProduceTestScriptContainerMsg.class)
-                .getAllProperties();
+        return PropertyCache.getInstance().retrieve(ProduceTestScriptContainerMsg.class).getAllProperties();
     }
 }

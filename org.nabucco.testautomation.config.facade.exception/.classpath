@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding=".dummy" kind="src" path="src/main/gen"/>
+	<classpathentry excluding=".dummy" kind="src" path="src/main/man"/>
+	<classpathentry excluding=".dummy" kind="src" path="src/test/gen"/>
+	<classpathentry excluding=".dummy" kind="src" path="src/test/man"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/org.nabucco.testautomation.config/lib/facade/org.nabucco.framework.base.facade.jar"/>
+	<classpathentry kind="output" path="out/ide"/>
+</classpath>

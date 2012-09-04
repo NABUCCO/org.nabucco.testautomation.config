@@ -1,19 +1,19 @@
 /*
-* Copyright 2010 PRODYNA AG
-*
-* Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.opensource.org/licenses/eclipse-1.0.php or
-* http://www.nabucco-source.org/nabucco-license.html
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.nabucco.testautomation.config.impl.service.engine.visitor;
 
 import java.util.HashMap;
@@ -25,18 +25,18 @@ import org.nabucco.framework.base.facade.datatype.Identifier;
 import org.nabucco.framework.base.facade.datatype.code.Code;
 import org.nabucco.framework.base.facade.datatype.documentation.Documentation;
 import org.nabucco.framework.base.facade.datatype.visitor.VisitorException;
-import org.nabucco.framework.base.facade.exception.service.SearchException;
+import org.nabucco.framework.base.facade.exception.service.ResolveException;
 import org.nabucco.framework.base.facade.exception.service.ServiceException;
 import org.nabucco.framework.base.facade.message.ServiceRequest;
 import org.nabucco.framework.base.facade.message.context.ServiceMessageContext;
-import org.nabucco.testautomation.config.facade.component.ConfigComponentLocator;
 import org.nabucco.testautomation.config.facade.datatype.TestConfigElement;
 import org.nabucco.testautomation.config.facade.datatype.TestConfiguration;
 import org.nabucco.testautomation.config.facade.datatype.TestScriptContainer;
 import org.nabucco.testautomation.config.facade.datatype.visitor.TestConfigurationVisitor;
+import org.nabucco.testautomation.script.facade.component.ScriptComponentLocator;
 import org.nabucco.testautomation.script.facade.datatype.dictionary.TestScript;
 import org.nabucco.testautomation.script.facade.message.TestScriptSearchMsg;
-import org.nabucco.testautomation.script.facade.service.search.SearchTestScript;
+import org.nabucco.testautomation.script.facade.service.resolve.ResolveScript;
 
 /**
  * TestConfigurationPreparationVisitor
@@ -48,7 +48,7 @@ public class TestConfigurationPreparationVisitor extends
 
 	private final Map<Long, TestScript> scriptCache;
 	
-	private final SearchTestScript search;
+	private final ResolveScript resolve;
 	
 	private ServiceRequest<TestScriptSearchMsg> rq;
 	
@@ -64,8 +64,7 @@ public class TestConfigurationPreparationVisitor extends
 	
 	public TestConfigurationPreparationVisitor(ServiceMessageContext ctx) throws ServiceException, ConnectionException {
 		this.scriptCache = new HashMap<Long, TestScript>();
-		this.search = ConfigComponentLocator.getInstance().getComponent()
-				.getScriptComponent().getSearchTestScript();
+		this.resolve = ScriptComponentLocator.getInstance().getComponent().getResolveScript();
 		this.ctx = ctx;
 		this.rq = new ServiceRequest<TestScriptSearchMsg>(ctx);
 		this.msg = new TestScriptSearchMsg();
@@ -124,9 +123,9 @@ public class TestConfigurationPreparationVisitor extends
 		rq.setRequestMessage(msg);
 		
 		try {
-			script = this.search.getTestScript(rq).getResponseMessage().getTestScript();
-		} catch (SearchException ex) {
-			throw new VisitorException("Error loading TestScript with Id " + id);
+			script = this.resolve.resolveTestScript(rq).getResponseMessage().getTestScript();
+		} catch (ResolveException ex) {
+			throw new VisitorException("Error resolving TestScript with Id " + id);
 		}
 		
 		if (script == null) {
@@ -141,7 +140,7 @@ public class TestConfigurationPreparationVisitor extends
 		}
 		
 		new TestScriptPreparationVisitor(this.environment, this.release,
-				this.brand, this.ctx, this.scriptCache, this.search).visit(script);
+				this.brand, this.ctx, this.scriptCache, this.resolve).visit(script);
 		return script;
 	}
 	

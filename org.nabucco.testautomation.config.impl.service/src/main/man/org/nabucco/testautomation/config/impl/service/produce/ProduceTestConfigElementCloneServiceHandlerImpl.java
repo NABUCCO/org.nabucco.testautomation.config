@@ -1,19 +1,19 @@
 /*
-* Copyright 2010 PRODYNA AG
-*
-* Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.opensource.org/licenses/eclipse-1.0.php or
-* http://www.nabucco-source.org/nabucco-license.html
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2012 PRODYNA AG
+ *
+ * Licensed under the Eclipse Public License (EPL), Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/eclipse-1.0.php or
+ * http://www.nabucco.org/License.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.nabucco.testautomation.config.impl.service.produce;
 
 import org.nabucco.framework.base.facade.component.connection.ConnectionException;
@@ -28,7 +28,7 @@ import org.nabucco.testautomation.config.facade.datatype.TestConfigElement;
 import org.nabucco.testautomation.config.facade.datatype.TestConfigElementContainer;
 import org.nabucco.testautomation.config.facade.message.TestConfigElementMsg;
 import org.nabucco.testautomation.config.facade.message.TestConfigElementSearchMsg;
-import org.nabucco.testautomation.config.facade.service.search.SearchTestConfigElement;
+import org.nabucco.testautomation.config.facade.service.resolve.ResolveConfig;
 import org.nabucco.testautomation.config.impl.service.produce.clone.TestConfigElementCloneVisitor;
 
 
@@ -87,12 +87,12 @@ public class ProduceTestConfigElementCloneServiceHandlerImpl extends
     private TestConfigElement clone(TestConfigElement element) throws ProduceException {
     	try {
     		// Load TestConfigElement deep
-    		SearchTestConfigElement search = ConfigComponentLocator.getInstance().getComponent().getSearchTestConfigElement();
+    		ResolveConfig resolve = ConfigComponentLocator.getInstance().getComponent().getResolveConfig();
     		ServiceRequest<TestConfigElementSearchMsg> rq = new ServiceRequest<TestConfigElementSearchMsg>(getContext());
     		TestConfigElementSearchMsg message = new TestConfigElementSearchMsg();
     		message.setId(new Identifier(element.getId()));
 			rq.setRequestMessage(message);
-			element = search.getTestConfigElement(rq).getResponseMessage().getTestConfigElement();
+			element = resolve.resolveTestConfigElement(rq).getResponseMessage().getTestConfigElement();
     		
 			// Clone
             TestConfigElementCloneVisitor cloneVisitor = new TestConfigElementCloneVisitor();
